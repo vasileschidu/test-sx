@@ -1,0 +1,178 @@
+<!doctype html>
+<html class="h-full bg-gray-100 dark:bg-gray-950">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Cards - Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Roboto+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="../../../src/scripts/theme-init.js?v=20261123mrg"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="../../scripts/tailwind-theme.js"></script>
+    <script src="../../../src/scripts/design-tokens.js"></script>
+    <link rel="stylesheet" href="../../../src/styles/cursor.css" />
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:where(.dark, .dark *));
+    </style>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1"
+      type="module"
+    ></script>
+
+    <script src="../../../src/scripts/sidebar-boot.js?v=20261112cmp"></script>
+    <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
+    <script src="../../../src/scripts/app-plans.js"></script>
+    <script src="../../../src/scripts/nav-component.js?v=20261123mrg"></script>
+    <script src="../../../src/scripts/stp-state.js?v=20261123mrg"></script>
+    <script src="../../../src/scripts/app-switch.js?v=20261123mrg"></script>
+    <script src="../../../src/scripts/topbar-component.js?v=20261123mrg"></script>
+    <script src="../../scripts/checkbox-component.js"></script>
+    <script src="../../../src/scripts/sidebar.js?v=20261116m2" defer></script>
+    <script src="../../../src/scripts/data-source.js"></script>
+    <script src="../../../src/scripts/shared.js?v=20261123mrg" defer></script>
+    <script src="../../../src/scripts/shell-navigation.js?v=20261123mrg" defer></script>
+    <script src="../../../src/scripts/table-skeleton.js" defer></script>
+    <link rel="stylesheet" href="../../styles/checkbox.css" />
+  </head>
+
+  <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
+    <div id="app-shell" class="min-h-screen">
+      <app-nav></app-nav>
+
+      <div
+        id="main-content-wrapper"
+        class="min-w-0 min-h-screen flex flex-col lg:pl-[360px]"
+      >
+        <app-topbar></app-topbar>
+
+        <!-- Figma "SMART Cards (Empty State)" 8007:126803, "List of Cards" 10001:272320,
+             "Card Inactive" 10001:269861: gray content area, p-24 / gap-24, one card for
+             the tabs (SE/Main Tab) and one content card per tab below it. The page title
+             "Manage Cards" lives in the top bar only. -->
+        <main class="flex w-full justify-center p-2 lg:p-6">
+          <div class="flex w-full min-w-0 flex-col gap-6">
+            <h1 class="sr-only">Manage Cards</h1>
+
+            <!-- Tab card. Hidden while a card is open (the details view brings its own header). -->
+            <div data-cm-chrome>
+              <div
+                class="rounded-lg bg-white p-4 shadow-sm sm:hidden dark:bg-gray-900"
+              >
+                <div class="grid grid-cols-1">
+                  <select
+                    id="cm-tab-select"
+                    aria-label="Select a tab"
+                    class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-gray-800/50 dark:text-gray-100 dark:*:bg-gray-800 dark:outline-white/10 dark:focus:outline-indigo-500"
+                  >
+                    <option value="smart">SMART Cards</option>
+                    <option value="linked">Linked Credit Cards</option>
+                  </select>
+                  <svg
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500 dark:fill-gray-400"
+                  >
+                    <path
+                      d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+                      clip-rule="evenodd"
+                      fill-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <nav
+                id="cm-tab-nav"
+                aria-label="Tabs"
+                class="hidden rounded-lg bg-white shadow-sm sm:flex dark:bg-gray-900"
+              >
+                <a
+                  href="?tab=smart"
+                  data-tab="smart"
+                  aria-current="page"
+                  class="flex h-13.5 min-w-0 flex-1 items-center justify-center gap-2 rounded-l-lg border-b-2 border-blue-500 px-1 py-2.5 text-sm/5 font-medium text-blue-600 transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:border-blue-400 dark:text-blue-300"
+                >
+                  <span class="truncate">SMART Cards</span>
+                  <span
+                    data-tab-count="smart"
+                    class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
+                    >0</span
+                  >
+                </a>
+                <span
+                  aria-hidden="true"
+                  class="w-px shrink-0 bg-gray-300 dark:bg-white/10"
+                ></span>
+                <a
+                  href="?tab=linked"
+                  data-tab="linked"
+                  class="flex h-13.5 min-w-0 flex-1 items-center justify-center gap-2 rounded-r-lg border-b-2 border-transparent px-1 py-2.5 text-sm/5 font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-700 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200"
+                >
+                  <span class="truncate">Linked Credit Cards</span>
+                  <span
+                    data-tab-count="linked"
+                    hidden
+                    class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300"
+                    >0</span
+                  >
+                </a>
+              </nav>
+            </div>
+
+            <!-- Content cards (Figma "SMART Cards (inside)"): later stories fill them through
+                 window.CardManager. Empty until then, so they stay out of sight. -->
+            <div
+              id="cm-mount-smart"
+              data-cm-mount="smart"
+              class="overflow-hidden rounded-lg bg-white shadow-sm empty:hidden dark:bg-gray-900"
+            ></div>
+            <div
+              id="cm-mount-linked"
+              data-cm-mount="linked"
+              class="overflow-hidden rounded-lg bg-white shadow-sm empty:hidden dark:bg-gray-900"
+              hidden
+            ></div>
+            <div
+              id="cm-mount-details"
+              data-cm-mount="details"
+              class="overflow-hidden rounded-lg bg-white shadow-sm empty:hidden dark:bg-gray-900"
+              hidden
+            ></div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="../../../src/scripts/card-manager.js?v=20261123mrg" defer></script>
+    <script src="../../../src/scripts/table-ui.js?v=20261113es3" defer></script>
+    <script src="../../../src/scripts/card-manager-list.js?v=20261123mrg" defer></script>
+    <script src="../../../src/scripts/card-manager-details.js?v=20261123mrg" defer></script>
+    <script src="../../../src/scripts/card-manager-bills.js?v=20261123mrg" defer></script>
+    <script src="../../../src/scripts/card-manager-transactions.js?v=20261123mrg" defer></script>
+    <script src="../../../src/scripts/card-manager-status.js?v=20261123mrg" defer></script>
+    <script src="../../../src/scripts/card-manager-close.js?v=20261123mrg" defer></script>
+    <!-- Create a Card (TCDM-5221): dialog shell + card logos + the story script -->
+    <script src="../../../src/scripts/onboarding-modal.js?v=20261123mrg" defer></script>
+    <script src="../../../src/scripts/onboarding-field.js" defer></script>
+    <script src="../../../src/scripts/payment-preferences-components.js?v=20261113mf" defer></script>
+    <script src="../../../src/scripts/card-manager-account-picker.js?v=20261123mrg" defer></script>
+    <script src="../../../src/scripts/card-manager-create.js?v=20261123mrg" defer></script>
+    <!-- Add Funds / Transfer Funds (TCDM-5223 / 5224) and Export Monthly Statements (TCDM-5225) -->
+    <script src="../../../src/scripts/card-manager-funds.js?v=20261123mrg" defer></script>
+    <script src="../../../src/scripts/card-manager-statements.js?v=20261123mrg" defer></script>
+    <!-- Linked Credit Cards (TCDM-5231) -->
+    <script src="../../../src/scripts/column-filter.js?v=20261120cf11"></script>
+    <script src="../../../src/scripts/card-manager-linked.js?v=20261123mrg" defer></script>
+    <!-- Add linked card (TCDM-5232) -->
+    <script src="../../../src/scripts/card-manager-linked-add.js?v=20261123mrg" defer></script>
+    <!-- Linked card details (TCDM-5233) -->
+    <script src="../../../src/scripts/card-manager-linked-details.js?v=20261123mrg" defer></script>
+  </body>
+</html>

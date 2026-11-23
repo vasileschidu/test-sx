@@ -496,9 +496,9 @@
       '<div class="fixed inset-0 z-[100] bg-gray-900/75 transition-opacity duration-300 ease-out motion-reduce:transition-none"></div>' +
       '<div class="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6">' +
       '  <div class="relative flex h-auto max-h-[calc(100vh-2rem)] w-full max-w-[800px] flex-col overflow-y-auto rounded-3xl bg-white shadow-xl md:overflow-hidden dark:bg-gray-900 dark:ring-1 dark:ring-white/10 md:flex-row">' +
-      '    <button type="button" data-inline-stp-close class="absolute top-4 right-4 z-20 rounded-md bg-gray-900/8 p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200">' +
+      '    <button type="button" data-inline-stp-close class="absolute top-4 right-4 z-20 rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
       '      <span class="sr-only">Close</span>' +
-      '      <svg viewBox="0 0 20 20" fill="currentColor" class="size-5"><path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>' +
+      '      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>' +
       "    </button>" +
       '    <div class="relative p-2 md:w-64 md:shrink-0">' +
       '      <div class="relative h-[220px] overflow-hidden rounded-2xl md:h-[608px]" style="background-image: linear-gradient(180deg, #ECF2FF 0%, #F8F4FF 100%);">' +
@@ -725,9 +725,9 @@
       '<div class="fixed inset-0 z-[100] bg-gray-900/75 transition-opacity duration-300 ease-out motion-reduce:transition-none"></div>' +
       '<div class="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6">' +
       '  <div class="relative flex h-auto max-h-[calc(100vh-2rem)] w-full max-w-[800px] flex-col overflow-y-auto rounded-3xl bg-white shadow-xl md:overflow-hidden dark:bg-gray-900 dark:ring-1 dark:ring-white/10 md:flex-row">' +
-      '    <button type="button" data-stp-pending-close class="absolute top-4 right-4 z-20 rounded-md bg-gray-900/8 p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200">' +
+      '    <button type="button" data-stp-pending-close class="absolute top-4 right-4 z-20 rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
       '      <span class="sr-only">Close</span>' +
-      '      <svg viewBox="0 0 20 20" fill="currentColor" class="size-5"><path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>' +
+      '      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>' +
       "    </button>" +
       // Hugs the content. Card + terminal keep the opt-in dialog's sizes and
       // horizontal offsets, as one group centred vertically in the panel.
@@ -875,9 +875,9 @@
       '<div class="fixed inset-0 z-[100] bg-gray-900/75 transition-opacity duration-300 ease-out motion-reduce:transition-none"></div>' +
       '<div class="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6">' +
       '  <div class="relative flex h-auto max-h-[calc(100vh-2rem)] w-full max-w-[800px] flex-col overflow-y-auto rounded-3xl bg-white shadow-xl md:overflow-hidden dark:bg-gray-900 dark:ring-1 dark:ring-white/10">' +
-      '    <button type="button" data-inline-next-close class="absolute top-4 right-4 z-20 rounded-md bg-gray-900/8 p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200">' +
+      '    <button type="button" data-inline-next-close class="absolute top-4 right-4 z-20 rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
       '      <span class="sr-only">Close</span>' +
-      '      <svg viewBox="0 0 20 20" fill="currentColor" class="size-5"><path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>' +
+      '      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>' +
       "    </button>" +
       '    <div class="grid h-auto w-full grid-cols-1 gap-0 md:grid-cols-3">' +
       '      <div class="col-span-1 p-2 md:w-64 md:shrink-0">' +
@@ -1134,9 +1134,9 @@
       '<div class="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6">' +
       '  <div class="relative w-full max-w-lg transform overflow-hidden rounded-xl bg-white text-left shadow-xl dark:bg-gray-900 dark:ring-1 dark:ring-white/10">' +
       '    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">' +
-      '      <button type="button" data-inline-verify-close class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">' +
+      '      <button type="button" data-inline-verify-close class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
       '        <span class="sr-only">Close</span>' +
-      '        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>' +
+      '        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>' +
       "      </button>" +
       "    </div>" +
       '    <div class="flex flex-col gap-6 p-6 px-8 pt-0">' +
@@ -1307,7 +1307,7 @@
       '<div class="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6">' +
       '  <div class="relative w-full max-w-lg transform overflow-hidden rounded-xl bg-white text-left shadow-xl dark:bg-gray-900 dark:ring-1 dark:ring-white/10">' +
       '    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">' +
-      '      <button type="button" data-inline-verify-success-close class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">' +
+      '      <button type="button" data-inline-verify-success-close class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
       '        <span class="sr-only">Close</span>' +
       '        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>' +
       "      </button>" +

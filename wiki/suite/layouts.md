@@ -68,7 +68,7 @@ As built (`src/pages/onboarding/`, `src/scripts/onboarding-sidebar.js`, `onboard
   Every method ends in **One Final Step** (summary, consents, sign dialog) and a confirmation with a receipt.
 - **Below 1024px:** the rail is replaced by a sticky top bar with the current step, position and progress. Its menu holds
   Contact / Decline. Content is capped at 640px, centred.
-- **Dialogs:** one shared dialog shell (`onboarding-modal.js`): blurred backdrop, close (X), Escape, focus trap.
+- **Dialogs:** one shared dialog shell (`onboarding-modal.js`): flat `bg-gray-900/75` backdrop (same as the el-dialog dialogs) with a smooth open (300ms ease-out) and close (200ms ease-in), close (X) = the Decline Payment X (20px icon, `p-1` `rounded-md` button, gray-400, gray-100 hover), Escape, focus trap. The SMART Disburse onboarding flow (`/pages/onboarding/`) keeps its Figma backdrop: black 75% + 5px blur, no motion.
 - **Loading:** each step fades in once, and its data shows skeletons for 1.0–1.5 s (`onboarding-transitions.js`).
 - No portal navigation.
 - **SMART Exchange** also has a token flow, next to its portal. In the code it uses this same shell: Hub Pay's SMART

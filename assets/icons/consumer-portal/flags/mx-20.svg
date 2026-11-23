@@ -1,0 +1,13 @@
+<svg width="20" height="15" viewBox="0 0 20 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mx_mask" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="15">
+<rect width="20" height="15" fill="white"/>
+</mask>
+<g mask="url(#mx_mask)">
+<rect width="20" height="15" fill="#F7FCFF"/>
+<rect width="6.66667" height="15" fill="#006847"/>
+<rect x="13.3333" width="6.66667" height="15" fill="#CE1126"/>
+<path d="M7.9 8.4C8.3 9.9 11.7 9.9 12.1 8.4" stroke="#006847" stroke-width="0.6" stroke-linecap="round"/>
+<ellipse cx="10" cy="7.3" rx="1.25" ry="1.05" fill="#A8793A"/>
+<path d="M9.2 6.6L10 6.1L10.8 6.6L10.5 7.5H9.5L9.2 6.6Z" fill="#6B4A1F"/>
+</g>
+</svg>

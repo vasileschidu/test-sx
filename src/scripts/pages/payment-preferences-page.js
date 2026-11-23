@@ -3180,20 +3180,33 @@ window.__ppStorageKey = function (name) {
 
   function getBankValidationDialog() {
     if (bankValidationDialog) return bankValidationDialog;
-    var d = document.createElement("dialog");
-    d.id = "pp-bank-validation-dialog";
-    d.className =
-      "m-auto w-[450px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg bg-white p-0 text-left shadow-xl backdrop:bg-gray-900/75 dark:bg-gray-900";
-    d.addEventListener("cancel", function (event) {
-      if (d.getAttribute("data-state") === "loading") event.preventDefault();
+    // el-dialog shell = the Decline Payment motion (backdrop 300ms ease-out in, 200ms ease-in out; panel slides/scales).
+    var wrap = document.createElement("el-dialog");
+    wrap.innerHTML =
+      '<dialog id="pp-bank-validation-dialog" class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">' +
+      '<el-dialog-backdrop class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>' +
+      '<div tabindex="0" class="flex min-h-full items-center justify-center p-4 text-center focus:outline-none sm:p-6">' +
+      '<el-dialog-panel data-validation-panel class="relative w-[450px] max-w-full transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:data-closed:translate-y-0 sm:data-closed:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10"></el-dialog-panel>' +
+      '</div></dialog>';
+    var d = wrap.firstElementChild;
+    d._panel = d.querySelector('[data-validation-panel]');
+    d.addEventListener('cancel', function (event) {
+      if (d.getAttribute('data-state') === 'loading') event.preventDefault();
     });
-    document.body.appendChild(d);
+    document.body.appendChild(wrap);
     bankValidationDialog = d;
     return d;
   }
 
+  // Create the el-dialog up front: a dialog appended and opened in the same tick is closed again while el-dialog upgrades it.
+  (function () {
+    function warm() { setTimeout(getBankValidationDialog, 0); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', warm);
+    else warm();
+  })();
+
   var VALIDATION_X_ICON =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
   var VALIDATION_WARNING_ICON =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-11 text-amber-500" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" /></svg>';
   var VALIDATION_ENVELOPE_ICON =
@@ -3215,7 +3228,7 @@ window.__ppStorageKey = function (name) {
         '<p class="text-sm/5 font-normal text-gray-500 dark:text-gray-400">The account is being verified. This may take a few moments.</p></div></div>';
     } else {
       html =
-        '<div class="flex h-14 items-end justify-end px-4 pt-4"><button type="button" data-validation-close aria-label="Close" class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10">' +
+        '<div class="flex h-14 items-end justify-end px-4 pt-4"><button type="button" data-validation-close aria-label="Close" class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
         VALIDATION_X_ICON +
         "</button></div>" +
         '<div class="flex flex-col items-center gap-6 px-6 pt-3 pb-6 text-center">' +
@@ -3236,7 +3249,7 @@ window.__ppStorageKey = function (name) {
         config.action +
         "</button></div>";
     }
-    d.innerHTML = html;
+    d._panel.innerHTML = html;
     if (!d.open) d.showModal();
     var closeBtn = d.querySelector("[data-validation-close]");
     var actionBtn = d.querySelector("[data-validation-action]");

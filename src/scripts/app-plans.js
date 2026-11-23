@@ -70,8 +70,8 @@ window.AppPlans = (function () {
       order: 32,
       nav: {
         type: "link",
-        label: "Card Manager",
-        href: "#",
+        label: "Cards Manager",
+        href: "card-manager.html",
         icon: "card-manager",
       },
     },
@@ -541,6 +541,7 @@ window.AppPlans = (function () {
       "payables-pay.html": "bills",
       "vendors.html": "vendors",
       "vendor-profile.html": "vendors",
+      "card-manager.html": "card-manager",
       "my-company-profile.html": "my-company-profile",
       "user-management.html": "settings",
       "user-profile.html": "settings",

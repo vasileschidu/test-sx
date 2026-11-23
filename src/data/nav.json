@@ -26,8 +26,8 @@
     {
       "type": "link",
       "id": "card-manager",
-      "label": "Card Manager",
-      "href": "#",
+      "label": "Cards Manager",
+      "href": "card-manager.html",
       "icon": "card-manager"
     },
     { "type": "divider" },

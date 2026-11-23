@@ -292,8 +292,9 @@
       '.sx-top-action-toast[data-state="visible"]{transform:translate(-50%,0);opacity:1;}' +
       '.sx-top-action-toast[data-state="leaving"]{transform:translate(-50%,8px);opacity:0;}' +
       ".sx-top-action-toast__msg{font-size:14px;line-height:20px;font-weight:500;}" +
-      ".sx-top-action-toast__close{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:0;border-radius:6px;background:transparent;color:#D1D5DB;cursor:pointer;}" +
-      ".sx-top-action-toast__close:hover{background:rgba(255,255,255,.12);color:#fff;}";
+      ".sx-top-action-toast__close{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;padding:4px;border:0;border-radius:6px;background:transparent;color:#9CA3AF;cursor:pointer;}" +
+      ".sx-top-action-toast__close:hover{background:rgba(255,255,255,.1);color:#D1D5DB;}" +
+    ".sx-top-action-toast__close:focus-visible{outline:2px solid #3B82F6;outline-offset:2px;}";
     document.head.appendChild(style);
   }
 
@@ -344,9 +345,7 @@
       escapeHtml(text) +
       "</span>" +
       '<button type="button" aria-label="Dismiss notification" class="sx-top-action-toast__close">' +
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">' +
-      '<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/>' +
-      "</svg>" +
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>' +
       "</button>";
     document.body.appendChild(toast);
     topActionToast.el = toast;

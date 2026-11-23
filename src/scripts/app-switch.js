@@ -228,9 +228,11 @@ window.AppSwitch = (function () {
     overlay.setAttribute("aria-live", "polite");
     // Backdrop = the modals' (bg-gray-900/75).
     overlay.className =
-      "fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/75 p-4 opacity-0 transition-opacity duration-200 ease-out motion-reduce:transition-none";
+      "fixed inset-0 z-[100] flex items-center justify-center p-4";
+    // Same motion as the el-dialog modals: scrim fades 300ms ease-out in / 200ms ease-in out, panel slides up / scales.
     overlay.innerHTML =
-      '<div class="flex w-full max-w-md flex-col items-center gap-6 rounded-2xl bg-white px-8 py-14 text-center shadow-xl dark:bg-gray-800 dark:ring-1 dark:ring-white/10">' +
+      '<div data-switch-scrim class="fixed inset-0 bg-gray-900/75 transition-opacity motion-reduce:transition-none data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></div>' +
+      '<div data-switch-panel class="relative flex w-full max-w-md transform flex-col items-center gap-6 rounded-2xl bg-white px-8 py-14 text-center shadow-xl transition-all motion-reduce:transition-none data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:data-closed:translate-y-0 sm:data-closed:scale-95 dark:bg-gray-800 dark:ring-1 dark:ring-white/10">' +
       '<span aria-hidden="true" class="flex size-14 items-center justify-center rounded-full bg-blue-600 text-xl font-medium text-white">' +
       escapeHtml(opts.initials || opts.name.charAt(0)) +
       "</span>" +
@@ -245,16 +247,22 @@ window.AppSwitch = (function () {
       '<span class="app-switch-dot size-2 rounded-full bg-blue-600 dark:bg-blue-400"></span>' +
       '<span class="app-switch-dot size-2 rounded-full bg-blue-600 dark:bg-blue-400"></span>' +
       "</span></div>";
+    var parts = overlay.querySelectorAll("[data-switch-scrim],[data-switch-panel]");
+    parts.forEach(function (el) { el.setAttribute("data-closed", ""); el.setAttribute("data-enter", ""); });
     document.body.appendChild(overlay);
     requestAnimationFrame(function () {
-      overlay.classList.remove("opacity-0");
+      requestAnimationFrame(function () { parts.forEach(function (el) { el.removeAttribute("data-closed"); }); });
     });
     return overlay;
   }
 
   function hideSwitchModal(overlay) {
     if (!overlay) return;
-    overlay.classList.add("opacity-0");
+    overlay.querySelectorAll("[data-switch-scrim],[data-switch-panel]").forEach(function (el) {
+      el.removeAttribute("data-enter");
+      el.setAttribute("data-leave", "");
+      el.setAttribute("data-closed", "");
+    });
     window.setTimeout(function () {
       overlay.remove();
     }, 200);

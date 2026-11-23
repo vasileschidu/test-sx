@@ -223,11 +223,8 @@
           '<div class="flex items-center gap-2.5">' +
             '<div class="flex items-center gap-2.5" aria-hidden="true">' + dots(index) + '</div>' +
             '<p class="flex-1 text-sm leading-5 text-gray-500 dark:text-gray-400">' + (index + 1) + ' of ' + docs.length + '</p>' +
-            // -m-1.5 keeps the 32px hit area while the row stays 20 tall, as in Figma.
-            '<button type="button" data-ob-modal-close class="-m-1.5 inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
-              '<span class="sr-only">Close</span>' +
-              '<img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5">' +
-            '</button>' +
+            // Dialog X: the shared OBModal close button (Decline Payment look; Figma X on the Disburse flow).
+            window.OBModal.closeButton('data-ob-modal-close', '-m-1.5') +
           '</div>' +
           '<h2 id="doc-viewer-title" class="text-2xl leading-8 font-semibold text-gray-800 dark:text-gray-100">' + esc(doc.name) + '</h2>' +
           // On mobile a long description is cut to two lines ending "… Show more".
