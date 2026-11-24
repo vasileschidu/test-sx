@@ -112,3 +112,6 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   `hover:outline-gray-400` reads as no-hover (give the chevron a `group-hover` tone). Text colour set only on an inner span → dark-low-contrast 1.2: colour the button.
 - 2026-11-23 [tokens][smart-enroll] Progress bars stay class-only with Tailwind v4 fractions (`w-37/100`, browser build generates them); no inline width.
   A `sr-only` skip link at the start of `<body>` is flagged controls-overlap at 390 against a top-left menu button.
+- 2026-11-24 [layout][smart-enroll] A `<fieldset>` is min-width: min-content: a list of `truncate` cards inside it overflows a 375 phone. Give it `min-w-0`.
+- 2026-11-24 [qa][smart-enroll] QA a multi-step single page by passing `page.html?step=N` in `--pages` plus an `--init` seed that marks the steps
+  reached (`tools/ui-qa/init/smart-enroll-sign-up.js`). OBConsents outside SD: define a tiny `window.SDOnboardingContext` on the page state.
