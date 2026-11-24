@@ -112,3 +112,6 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   `hover:outline-gray-400` reads as no-hover (give the chevron a `group-hover` tone). Text colour set only on an inner span → dark-low-contrast 1.2: colour the button.
 - 2026-11-23 [tokens][smart-enroll] Progress bars stay class-only with Tailwind v4 fractions (`w-37/100`, browser build generates them); no inline width.
   A `sr-only` skip link at the start of `<body>` is flagged controls-overlap at 390 against a top-left menu button.
+- 2026-11-24 [qa][smart-enroll] hover-audit counts buttons inside a closed `<details>` as no-hover: build the list on `toggle` (empty when closed).
+  A full-screen layer over the page leaves the page links "covered": add `hidden` to the page wrapper while the layer is open.
+- 2026-11-24 [worktree][git] Isolated agents: `git show a:b`, `for … git …` and multi-branch loops are refused; one plain `git grep -h -o "<re>" <ref1> <ref2> -- <path>` reads a file across branches (e.g. next free DS-number).

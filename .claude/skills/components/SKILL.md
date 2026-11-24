@@ -441,6 +441,22 @@ SmartEnroll.on('tab-change' | 'progress' | 'status-change' | 'readonly-change' |
 - Left panel: progress Badge (blue, emerald at 100) + `h-2` bar `role=progressbar`; status box `rounded-md p-3` amber / blue / green / red-50 tint + 20px icon (dashed ring, check, exclamation, x) + `type-label` / `type-body` (dark `{c}-400/10` + `{c}-300`); product rows `rounded-md border p-2.5`, add = dashed ⊕ + blue `type-label`, added = tile + trash (remove → OBModal "Information will be discarded", danger + secondary **xl** stacked), Supply Chain = disabled + gray "Coming soon" Badge; Help from Transcard = disclosure (`aria-expanded`, chevron rotates). Information circle tooltips at the panel's right edge use the end-aligned variant (`right-0 -mr-1`, arrow `before:right-1.5`).
 - Main card: underline tabs (Card details `TAB_BASE`) + status icon (green check-circle / blue dashed ring / none, sr-only text), `h1 type-title-section` + `type-description`, footer ‹ prev / next › text buttons (`type-button px-2 py-1`, hover gray-100).
 
+### SMART Enroll sign in — `smart-enroll/sign-in.js` + `src/pages/smart-enroll/sign-in.html` (Figma Enroll page `28003:23013`, TCDM-5242)
+Auth card = `invite/accept.html` / `um-accept.js` (card `max-w-107 rounded-3xl shadow-lg ring-1`, header `p-8 border-b` logo + `h1#si-title type-title-section`,
+body `p-8`, bg cubes, Powered by Transcard footer). Fields OBField. Logos: `assets/smart-enroll/suite-logo(-dark).svg` top-left, `suite-logo-hex.svg` (colour cube) on
+sign-in cards and the loader, `assets/invite/portal-logo-hex.svg` (pale) on Choose a Business / Select Platform.
+- **6-digit code boxes**: copied from `um-accept.js` (`h-10 flex-1 rounded-md outline-1 … aria-invalid:outline-red-300`, `gap-2.5`, `fieldset` + sr-only legend,
+  `autocomplete="one-time-code"` on the first). Typing moves on, paste fills from the focused box, Backspace on empty clears + goes back, ←/→/Home/End, focus selects.
+  Empty or partial → "The code is required" + all boxes invalid.
+- **Soft primary xl** (Resend Code): `rounded-md bg-blue-50 px-3.5 py-2.5 text-base/6 font-semibold text-blue-600 hover:bg-blue-100 active:bg-blue-200`, dark `bg-blue-500/10 text-blue-400 hover:bg-blue-500/20`.
+- **Top alert (error, dismissable)**: `fixed inset-x-0 top-4 z-40` centre; box `w-fit max-w-xl rounded-md bg-red-50 p-4 shadow-lg ring-1 ring-red-600/10`, x-circle `size-5 text-red-400`,
+  `type-body text-red-800`, shared dismiss X; dark `bg-gray-900` + `bg-linear-to-r from-red-500/15 to-red-500/15 ring-red-500/25`, text `red-200`. `role="alert"`.
+- **Inline warning**: `flex gap-3 rounded-md bg-yellow-50 p-4` + exclamation-triangle `text-yellow-400` + `type-body text-yellow-700`; dark `bg-yellow-500/10 outline outline-yellow-500/15`, `yellow-300` / `yellow-200`.
+- **Business picker row**: `button` `px-4 py-4 gap-3 text-default hover:bg-gray-50` (dark `white/5`), initials avatar `size-10`, `type-label` name, gray ID chip + • + inviter (`type-caption`, truncate + title); list `max-h-83 divide-y`, search = OBField + leading icon.
+- **Platform card** (Select Platform): whole card is an `<a>`: `rounded-3xl bg-white p-8 shadow-lg ring-1 ring-black/5 hover:shadow-xl hover:ring-blue-600/30`, dark `gray-900` → hover `gray-800` + `ring-blue-400/40`; pale hex logo, `h2 type-title-section` ("SMART" + normal product), `type-description`, `type-link` action + arrow-up-right.
+- **Full-page loader** between steps: `#si-loading[data-open]` `fixed inset-0 bg-gray-100 dark:bg-gray-950`, hex logo `motion-safe:animate-pulse`, `role=status`.
+- Microsoft picker: own full-screen layer (`#si-microsoft`), the SMART page underneath gets `hidden`. Prototype "Demo emails" `<details>` builds its buttons only while open.
+
 ## Adding a component
 1. Build every state (default, hover, focus-visible, active, disabled, error, loading; dark on dashboard).
 2. Add a row/snippet here, and a note to `wiki/design-system/` when it is a product pattern.

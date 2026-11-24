@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "_comment": "SMART Enroll sign-in demo data (TCDM-5242). Every name, email and number is invented. Script: src/scripts/smart-enroll/sign-in.js. Spec: wiki/products/smart-enroll/flows/sign-in.md (D-7, D-8). Business ids that also exist in smart-enroll.json open with that name in the application shell.",
+  "failedAttemptsBeforeLock": 5,
+  "businesses": {
+    "biz_brightline": { "name": "Brightline Supply Co.", "number": "593596832", "status": "not-submitted", "invitedBy": "maya.chen@brightline-supply.example" },
+    "biz_northwind": { "name": "Northwind Garden Market Inc.", "number": "937028371", "status": "approved", "invitedBy": "owner@northwind-garden.example" },
+    "biz_harbor": { "name": "Harbor Point Bakery", "number": "816037418", "status": "pending-approval", "invitedBy": "admin@harbor-point.example" },
+    "biz_cedar": { "name": "Cedar Ridge Organic Foods", "number": "692730137", "status": "pending-enrollment-data", "invitedBy": "finance@cedar-ridge.example" },
+    "biz_lumen": { "name": "Lumen Flower Studio", "number": "502568093", "status": "declined", "invitedBy": "hello@lumen-flowers.example" }
+  },
+  "accounts": [
+    {
+      "email": "multi@smart-enroll.demo",
+      "hint": "2+ businesses: Choose a Business (Northwind is Approved → Select Platform)",
+      "firstName": "Jordan",
+      "lastName": "Ellis",
+      "businesses": ["biz_brightline", "biz_northwind", "biz_harbor", "biz_cedar", "biz_lumen"]
+    },
+    {
+      "email": "approved@smart-enroll.demo",
+      "hint": "one Approved business → Select Platform",
+      "firstName": "Jordan",
+      "lastName": "Ellis",
+      "businesses": ["biz_northwind"]
+    },
+    {
+      "email": "microsoft@smart-enroll.demo",
+      "hint": "Microsoft-linked: account picker instead of the code",
+      "firstName": "Jordan",
+      "lastName": "Ellis",
+      "microsoft": true,
+      "businesses": ["biz_brightline", "biz_northwind"]
+    },
+    {
+      "email": "locked@smart-enroll.demo",
+      "hint": "every code is wrong; 5 wrong codes lock the account",
+      "firstName": "Jordan",
+      "lastName": "Ellis",
+      "wrongCode": true,
+      "businesses": ["biz_brightline"]
+    },
+    {
+      "email": "unknown@smart-enroll.demo",
+      "hint": "not in our records",
+      "unknown": true
+    }
+  ],
+  "defaultAccount": {
+    "_comment": "Any other email: one Not submitted business → the application.",
+    "businesses": ["biz_brightline"]
+  }
+}
