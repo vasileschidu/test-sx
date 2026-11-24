@@ -120,3 +120,6 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-24 [layout][smart-enroll] A `<fieldset>` is min-width: min-content: a list of `truncate` cards inside it overflows a 375 phone. Give it `min-w-0`.
 - 2026-11-24 [qa][smart-enroll] QA a multi-step single page by passing `page.html?step=N` in `--pages` plus an `--init` seed that marks the steps
   reached (`tools/ui-qa/init/smart-enroll-sign-up.js`). OBConsents outside SD: define a tiny `window.SDOnboardingContext` on the page state.
+- 2026-11-24 [layout][smart-enroll] `body.h-full` + `pb-*` doesn't add scroll room (content overflows the body box): a fixed demo bar then covers the
+  last control (hover-audit "covered"). Use `min-h-full` on body. code-audit still flags fixed overlays vs content at scroll 0: scope it (`--scope "#se-main"`).
+- 2026-11-24 [smart-enroll] Gate the shell's Next Step from a tab without editing shell.js: `document` click listener in capture phase + stopPropagation; `rerender()` reuses the body element — bind its listeners once (data flag).
