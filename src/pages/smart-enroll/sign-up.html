@@ -1,0 +1,73 @@
+<!--
+  @file smart-enroll/sign-up.html
+  @description SMART Enroll Speedy Sign up (TCDM-5243, T3): 3 steps — Business Information, "Is this your business?",
+    Your Contact Information — then the application (application.html). One page; steps swap in place (?step=1|2|3).
+    Logic: smart-enroll/sign-up.js. Data: src/data/smart-enroll-sign-up.json (matches), sd-virtual-card.json
+    (US states + Terms of Use / Privacy Policy text). State: sessionStorage `se_signup_v1` (shape in sign-up.js).
+    Spec: wiki/products/smart-enroll/flows/speedy-sign-up.md (D-9).
+    Figma [R1] SMART Enroll jLooCmHwqJcYV5p5d8BHnO: 28400:43229 / 28400:43289 / 28667:87991 (step 1),
+    28416:1664 / 28416:7482 (step 2), 28416:7678 / 28416:8156 / 28667:88052 (step 3).
+-->
+<!doctype html>
+<html lang="en" class="h-full bg-white dark:bg-gray-900">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign up · SMART Enroll</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="../../scripts/theme-init.js?v=20261123mrg"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:where(.dark, .dark *));
+    </style>
+    <script src="../../scripts/tailwind-theme.js"></script>
+    <script src="../../scripts/design-tokens.js"></script>
+    <link rel="stylesheet" href="../../styles/cursor.css" />
+    <link rel="stylesheet" href="../../styles/checkbox.css" />
+    <link rel="stylesheet" href="../../styles/onboarding-checkbox.css" />
+    <script src="../../scripts/data-source.js"></script>
+    <script src="../../scripts/onboarding-field.js?v=20261106a"></script>
+    <script src="../../scripts/onboarding-modal.js?v=20261124fix"></script>
+    <script src="../../scripts/checkbox-component.js"></script>
+    <script src="../../scripts/onboarding-consents.js?v=20261109d"></script>
+    <script src="../../scripts/shared.js?v=20261123mrg" defer></script>
+    <script src="../../scripts/smart-enroll/sign-up.js?v=20261124t3" defer></script>
+  </head>
+  <body class="min-h-full font-['Inter'] antialiased">
+    <!-- Top Menu (Figma 96px: logo · "Not sure where to start?" · Contact Us) -->
+    <header class="sticky top-0 z-30 border-b border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900">
+      <div class="mx-auto flex h-16 max-w-384 items-center gap-4 px-4 sm:px-8 lg:h-24">
+        <a href="sign-in.html" class="shrink-0 rounded-md transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">
+          <img src="../../assets/illustrations/SMART%20Hub.svg" width="140" height="35" alt="SMART Hub · Sign in" class="h-8 w-auto lg:h-12 dark:hidden" />
+          <img src="../../assets/illustrations/SMART%20Hub%20Dark.svg" width="140" height="35" alt="SMART Hub · Sign in" class="hidden h-8 w-auto lg:h-12 dark:block" />
+        </a>
+        <div class="ml-auto flex items-center gap-6">
+          <div class="hidden flex-col items-end md:flex">
+            <p class="type-title-small text-secondary">Not sure where to start?</p>
+            <p class="type-caption text-tertiary">Contact a Transcard SMART Specialist to help</p>
+          </div>
+          <button type="button" data-su-contact class="inline-flex shrink-0 cursor-pointer items-center rounded-md bg-blue-600 px-3.5 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-400">Contact Us</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="su-main" class="px-4 sm:px-8">
+      <div class="mx-auto flex max-w-240 flex-col gap-4 py-8 sm:py-14">
+        <!-- Progress Indicator/Bullet/List -->
+        <div class="flex items-center gap-8">
+          <p data-su-step-label class="type-label text-default">Step 1 of 3</p>
+          <ol data-su-bullets aria-label="Progress" class="flex items-center gap-2.5"></ol>
+        </div>
+
+        <!-- Step bodies are rendered by sign-up.js -->
+        <form data-su-form novalidate class="flex flex-col gap-4">
+          <div data-su-step="1" class="flex flex-col gap-4"></div>
+          <div data-su-step="2" hidden class="flex flex-col gap-4"></div>
+          <div data-su-step="3" hidden class="flex flex-col gap-4"></div>
+        </form>
+      </div>
+    </main>
+  </body>
+</html>

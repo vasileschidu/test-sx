@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "_comment": "SMART Enroll Speedy Sign up (TCDM-5243): business match results shown on Step 2 'Is this your business?'. Every name and address is invented. Page: src/pages/smart-enroll/sign-up.html, script: src/scripts/smart-enroll/sign-up.js. Spec: wiki/products/smart-enroll/flows/speedy-sign-up.md. The demo search always returns this list; a picked match pre-fills Business Information (sessionStorage se_signup_v1).",
+  "matches": [
+    {
+      "id": "match_1",
+      "name": "Brightline Supply Company LLC",
+      "legalAddress": "120 Harbor View Dr Ste 400",
+      "city": "Portland",
+      "state": "Oregon",
+      "zip": "97209",
+      "country": "United States"
+    },
+    {
+      "id": "match_2",
+      "name": "Brightline Supply Co.",
+      "legalAddress": "120 Harbor View Dr FL 4",
+      "city": "Portland",
+      "state": "Oregon",
+      "zip": "97209",
+      "country": "United States"
+    },
+    {
+      "id": "match_3",
+      "name": "BRIGHTLINE SUPPLY COMPANY",
+      "legalAddress": "2210 NW Front Ave Ste 110",
+      "city": "Portland",
+      "state": "Oregon",
+      "zip": "97209",
+      "country": "United States"
+    },
+    {
+      "id": "match_4",
+      "name": "BRIGHTLINE SUPPLY COMPANY",
+      "legalAddress": "915 SE Water Ave Bsmt B-12",
+      "city": "Portland",
+      "state": "Oregon",
+      "zip": "97214",
+      "country": "United States"
+    },
+    {
+      "id": "match_5",
+      "name": "BRIGHTLINE SUPPLY GROUP, LLC",
+      "legalAddress": "48 NE Broadway St",
+      "city": "Portland",
+      "state": "Oregon",
+      "zip": "97232",
+      "country": "United States"
+    },
+    {
+      "id": "match_6",
+      "name": "BRIGHTLINE SUPPLY COMPANY",
+      "legalAddress": "3305 SW Corbett Ave",
+      "city": "Portland",
+      "state": "Oregon",
+      "zip": "97239",
+      "country": "United States"
+    },
+    {
+      "id": "match_7",
+      "name": "BRIGHTLINE SUPPLY GROUP LLC",
+      "legalAddress": "7700 SW Barnes Rd",
+      "city": "Portland",
+      "state": "Oregon",
+      "zip": "97225",
+      "country": "United States"
+    }
+  ]
+}

@@ -266,16 +266,29 @@ window.OBModal = (function () {
       // A dialog marked busy (e.g. "processing") can't be dismissed.
       if (event.key === 'Escape') { if (!backdrop.hasAttribute('data-busy')) close(); return; }
       if (event.key !== 'Tab') return;
-      // Keep focus inside the dialog.
+      // Keep focus inside the dialog. The list is built at keydown time and skips what Tab skips (disabled, hidden,
+      // tabindex=-1, unchecked radios of a group with a checked one), else a disabled last button let Tab escape.
       var focusable = Array.prototype.filter.call(
-        dialog.querySelectorAll('a[href], button, textarea, [tabindex="0"]'),
-        function (el) { return el.offsetParent !== null; }
+        dialog.querySelectorAll('a[href], button, input, select, textarea, [tabindex]'),
+        function (el) {
+          if (el.disabled || el.getAttribute('tabindex') === '-1' || el.offsetParent === null) return false;
+          if (el.closest('[inert], fieldset:disabled')) return false;
+          if (el.type === 'hidden') return false;
+          if (el.type === 'radio' && el.name) {
+            var group = dialog.querySelectorAll('input[type="radio"][name="' + (window.CSS && CSS.escape ? CSS.escape(el.name) : el.name) + '"]');
+            var checked = Array.prototype.filter.call(group, function (r) { return r.checked; })[0];
+            return checked ? el === checked : el === group[0];
+          }
+          return true;
+        }
       );
       if (!focusable.length) return;
       var first = focusable[0];
       var last = focusable[focusable.length - 1];
-      if (event.shiftKey && (document.activeElement === first || document.activeElement === dialog)) { event.preventDefault(); last.focus(); }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      var active = document.activeElement;
+      if (!dialog.contains(active)) { event.preventDefault(); (event.shiftKey ? last : first).focus(); }
+      else if (event.shiftKey && (active === first || active === dialog)) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && active === last) { event.preventDefault(); first.focus(); }
     }
 
     backdrop.addEventListener('click', function (event) {

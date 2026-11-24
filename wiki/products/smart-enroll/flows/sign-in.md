@@ -2,7 +2,7 @@
 title: SMART Enroll — Sign in
 type: flow
 status: draft
-last_reviewed: 2026-11-18
+last_reviewed: 2026-11-24
 product: smart-enroll
 area: sign-in
 version: "R1"
@@ -43,5 +43,26 @@ TODO(confirm): support address — Figma shows two different domains (locked-acc
 The prototype uses a single placeholder support address.
 
 ## Prototype notes
-- No real auth: any email works; code `000000` (or any 6 digits) passes; a demo email triggers the locked state.
-- Number of failed attempts before locking: TODO(confirm); the prototype uses 5.
+Page: `src/pages/smart-enroll/sign-in.html` (script `src/scripts/smart-enroll/sign-in.js`, data
+`src/data/smart-enroll-sign-in.json`). Built in TCDM-5242.
+- No real auth: any email works and any 6 digits pass, except for the demo emails below.
+- Number of failed attempts before locking: TODO(confirm); the prototype uses 5 (`failedAttemptsBeforeLock`). The lock lasts
+  for the browser tab (sessionStorage `se_signin_v1`).
+- Demo emails (also listed under "Demo emails" below the page footer):
+
+| Email | What happens |
+|---|---|
+| any other email | one Not submitted business → application |
+| `multi@smart-enroll.demo` | 5 businesses → Choose a Business; Northwind (Approved) → Select Platform, the others → application with their status |
+| `approved@smart-enroll.demo` | one Approved business → Select Platform |
+| `microsoft@smart-enroll.demo` | Microsoft account picker instead of the code, then Choose a Business |
+| `locked@smart-enroll.demo` | every code is wrong ("Code is invalid or expired."); the 5th locks the account |
+| `unknown@smart-enroll.demo` | "Your email address does not exist in our records…" |
+
+- Review links: `?step=email|code|microsoft|business|platform|locked&email=<demo email>`.
+- Entering the application stores the business id in sessionStorage `se_business_v1` and opens
+  `application.html?status=<business status>`. Businesses that are not in `smart-enroll.json` (Harbor, Cedar, Lumen) show the
+  shell's first business name.
+- TODO(confirm): the code info-circle tooltip text (not in Figma; the User Management invite copy is reused) and the ⋮ menu on
+  the Microsoft account row (not built; the screen is a bitmap in Figma). Empty email / code only: Figma has no "invalid
+  email format" message, so any non-empty email is accepted.

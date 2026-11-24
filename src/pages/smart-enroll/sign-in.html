@@ -1,0 +1,88 @@
+<!--
+  @file smart-enroll/sign-in.html
+  @description SMART Enroll sign in (TCDM-5242, T2): email → 6-digit code (everyone, D-7) or the Microsoft
+    account picker (Microsoft-linked accounts only) → Choose a Business (2+ businesses only) → Select Platform
+    (Approved business only, D-8) → otherwise the application (application.html). No real auth.
+    Logic: smart-enroll/sign-in.js; demo data: src/data/smart-enroll-sign-in.json.
+    Spec: wiki/products/smart-enroll/flows/sign-in.md. Figma [R1] SMART Enroll jLooCmHwqJcYV5p5d8BHnO:
+    28429:27507 (email), 28437:29823 (code), 28437:30146 (Microsoft), 28456:32053 (Choose a Business),
+    28437:30376 (Select Platform), 28465:1005 (loading), errors 28682:80726 / 80802 / 81133 / 81210 / 82192.
+    Demo: ?step=email|code|microsoft|business|platform|locked&email=<demo email> (see the "Demo emails" hint).
+-->
+<!doctype html>
+<html lang="en" class="h-full bg-gray-50 dark:bg-gray-950">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign in · SMART Suite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="../../scripts/theme-init.js?v=20261123mrg"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:where(.dark, .dark *));
+    </style>
+    <script src="../../scripts/tailwind-theme.js"></script>
+    <script src="../../scripts/design-tokens.js"></script>
+    <link rel="stylesheet" href="../../styles/cursor.css" />
+    <script src="../../scripts/data-source.js"></script>
+    <script src="../../scripts/onboarding-field.js?v=20261106a" defer></script>
+    <script src="../../scripts/smart-enroll/sign-in.js?v=20261124t2" defer></script>
+  </head>
+  <body class="h-full font-['Inter'] antialiased">
+    <div id="si-page" class="relative isolate flex min-h-full flex-col overflow-hidden">
+      <!-- Background cubes (same asset and placement as invite/accept.html; the SVG carries its 6% opacity). -->
+      <img src="../../assets/invite/bg-cubes.svg" alt="" aria-hidden="true" width="667" height="668" class="pointer-events-none absolute -bottom-12 -left-24 -z-10 hidden w-167 sm:block dark:opacity-15" />
+      <img src="../../assets/invite/bg-cubes.svg" alt="" aria-hidden="true" width="667" height="668" class="pointer-events-none absolute -top-14 -right-40 -z-10 hidden w-167 sm:block dark:opacity-15" />
+
+      <!-- Logo (Figma "Logo-SS": SMART Suite, Powered by Transcard) -->
+      <header class="px-4 pt-6 sm:px-10 lg:absolute lg:top-12 lg:left-16 lg:p-0">
+        <img src="../../assets/smart-enroll/suite-logo.svg" width="194" height="48" alt="SMART Suite, powered by Transcard" class="h-10 w-auto sm:h-12 dark:hidden" />
+        <img src="../../assets/smart-enroll/suite-logo-dark.svg" width="194" height="48" alt="SMART Suite, powered by Transcard" class="hidden h-10 w-auto sm:h-12 dark:block" />
+      </header>
+
+      <main class="flex flex-1 flex-col items-center justify-center gap-6 px-4 py-10 sm:py-16">
+        <div id="si-view" aria-live="polite" aria-busy="true" class="flex w-full flex-col items-center">
+          <div class="flex w-full max-w-107 animate-pulse flex-col items-center gap-4 rounded-3xl bg-white p-8 shadow-lg ring-1 ring-black/5 dark:bg-gray-900 dark:shadow-none dark:ring-white/10" aria-hidden="true">
+            <div class="size-18 rounded-2xl bg-gray-200 dark:bg-white/15"></div>
+            <div class="h-6 w-2/3 rounded-sm bg-gray-200 dark:bg-white/15"></div>
+            <div class="h-16 w-full rounded-lg bg-gray-100 dark:bg-white/10"></div>
+          </div>
+        </div>
+
+        <!-- Footer/Powered by Transcard (same markup as invite/accept.html). -->
+        <div class="flex flex-col items-center gap-2 py-4">
+          <div class="flex items-center gap-1">
+            <img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-4.5" />
+            <span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span>
+            <img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16 dark:invert" />
+          </div>
+          <div class="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+            <a href="https://smart-enroll.com/terms-of-use/EN" target="_blank" rel="noopener noreferrer" class="rounded-sm transition-colors hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:text-white">Terms of Use<span class="sr-only"> (opens in a new tab)</span></a>
+            <span aria-hidden="true">•</span>
+            <a href="https://smart-enroll.com/privacy-policy/EN" target="_blank" rel="noopener noreferrer" class="rounded-sm transition-colors hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:text-white">Privacy Policy<span class="sr-only"> (opens in a new tab)</span></a>
+          </div>
+        </div>
+
+        <!-- Prototype only: demo emails (filled by sign-in.js from smart-enroll-sign-in.json). -->
+        <details id="si-demo" class="group/demo w-full max-w-107 type-caption text-tertiary">
+          <summary class="mx-auto w-fit cursor-pointer list-none rounded-sm px-1 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:text-gray-300 dark:focus-visible:outline-blue-400 [&::-webkit-details-marker]:hidden">Demo emails <span aria-hidden="true" class="inline-block transition-transform group-open/demo:rotate-180 motion-reduce:transition-none">▾</span></summary>
+          <ul data-si-demo-list role="list" class="mt-2 flex flex-col gap-1 rounded-lg bg-white p-3 ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10"></ul>
+        </details>
+      </main>
+    </div>
+
+    <!-- Top alert (locked account, invalid code): Figma 28682:82192 / 28682:81210 -->
+    <div id="si-alert" class="pointer-events-none fixed inset-x-0 top-4 z-40 flex justify-center px-4"></div>
+
+    <!-- Microsoft account picker (Figma 28437:30146): covers the page, it is Microsoft's own screen. -->
+    <div id="si-microsoft" class="fixed inset-0 z-30 hidden items-center justify-center bg-linear-to-br from-rose-50 via-emerald-50 to-amber-50 p-4 data-open:flex dark:from-gray-900 dark:via-gray-950 dark:to-gray-900"></div>
+
+    <!-- Loading between steps (Figma "SMART Loading (Spinner)" 28465:1005) -->
+    <div id="si-loading" role="status" class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-100 data-open:flex dark:bg-gray-950">
+      <img src="../../assets/smart-enroll/suite-logo-hex.svg" width="72" height="72" alt="" class="size-12 motion-safe:animate-pulse" />
+      <span class="sr-only">Loading…</span>
+    </div>
+  </body>
+</html>

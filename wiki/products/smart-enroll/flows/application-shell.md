@@ -41,7 +41,8 @@ SMART Hub logo · **Invite people** (+ info icon) · avatars of people on the ap
   (its tabs, its Ownership/Connectors extras) is deleted. Cancel keeps it.
 
 ## Main card and tabs
-Card header: tab title + description + Invite people + avatars. Footer: ‹ previous tab / next tab ›.
+Card header: card title (the Figma heading, longer than the tab label on some tabs: Beneficial Ownership,
+Connections for Integration, Business and Financial Information, Cross Border Transactions) + description + Invite people + avatars. Footer: ‹ previous tab / next tab ›.
 Each tab has a status icon: ✓ complete, spinner = in progress, empty = not started.
 
 | Tab | Shown when | Page |
@@ -59,7 +60,7 @@ Each tab has a status icon: ✓ complete, spinner = in progress, empty = not sta
 Optional fields don't count. A tab is ✓ when all its required fields are filled and valid.
 
 ## Statuses (D-12)
-Set by compliance in the back office. The prototype simulates them with a demo switcher.
+Set by compliance in the back office. The prototype simulates them with a demo switcher in the left panel, under the status box (also `?status=<id>`).
 The application is **editable only before submission and in Pending enrollment data**; every other status is read-only.
 
 | Status | Colour | Status box text | Figma |
@@ -77,7 +78,12 @@ Once Approved, sign-in shows Select Platform ([sign-in.md](sign-in.md)).
 ## Invite people (D-14)
 Reuses the User Management **Invite People** modal (Invite / Members tabs). The invitee gets the role
 **Contributor** on this application only: can fill and edit tabs, cannot submit or sign. Their avatar appears in the top bar.
-"Invite someone to help" links inside tabs open the same modal.
+"Invite someone to help" links inside tabs open the same modal (put `data-se-invite="<where>"` on the link).
+
+Prototype: the modal offers only Contributor (preselected, no Create Role); it has two tabs, **Invite** and **Members**
+(everyone on the application with role and an "Invited" badge until they accept). A new invitee's avatar joins the top bar
+and the card header. `?role=contributor` shows the application as a Contributor: Next Step on the last tab is disabled with
+the tooltip "Only the applicant can submit this application". The Members tab layout is not in Figma, TODO(confirm) (DS-008).
 
 ## Responsive
 Figma is desktop only (1728). We build 375 / 768 / 1280 ourselves: below 1024 the left panel collapses into a

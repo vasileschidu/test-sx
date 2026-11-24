@@ -64,3 +64,37 @@ Email Address, Phone Number. Submit → loader → application at Business Infor
 
 ## Errors
 "<Field> is required" under each empty field (here without a full stop; the tabs use one — keep both as drawn).
+
+## Prototype (TCDM-5243)
+Page `src/pages/smart-enroll/sign-up.html` (`?step=1|2|3`, never past the furthest step reached; browser Back works),
+script `src/scripts/smart-enroll/sign-up.js`, matches `src/data/smart-enroll-sign-up.json` (invented; the demo search
+always returns this list). US states and the Terms of Use / Privacy Policy text come from `sd-virtual-card.json`.
+
+- Field order follows Figma (Legal Name · Legal Address · Country · City + State · Zip · Email + Phone), not the table above.
+- Next Step on Step 1 stays disabled until both consents are accepted (Review → scroll → Accept, `OBConsents`); then empty
+  fields show "<Field> is required" and focus goes to the first one. Errors clear as fields are fixed.
+- Step 3 Email Address = Step 1 Main Business Email, read-only (Figma 28416:7678); Phone Number starts with the Step 1 phone.
+- Next Step on Step 3 → spinner → `application.html?tab=business-information&status=not-submitted`.
+
+### Hand-off to the application: sessionStorage `se_signup_v1`
+`window.SmartEnrollSignUp.STORAGE_KEY` / `.getState()` on the sign-up page. JSON:
+
+| Key | Value |
+|---|---|
+| `version` | `1` |
+| `step`, `reached` | current step / furthest step reached (1–3) |
+| `business` | Step 1 as typed: `legalName, legalAddress, country, city, state, zip, email, phone` |
+| `consents` | `{ terms: bool, privacy: bool }` |
+| `matchId`, `match` | Step 2 pick (`{ id, name, legalAddress, city, state, zip, country }`) or `null` |
+| `manualReview` | `true` after "No, this isn't my business." (D-9); a later pick sets it back to `false` |
+| `contact` | Step 3: `firstName, lastName, role, email, phone` (= Applicant Information) |
+| `prefill` | what Business Information shows: the match's name and address over Step 1, Step 1 email and phone |
+| `submittedAt` | ISO time of the last Step 3 submit, else `null` |
+
+### TODO(confirm)
+- Next Step on Step 2 with nothing picked: Figma shows no state; the prototype shows "Select your business, or choose “No, this isn't my business.”".
+- Invalid email on Step 1: Figma shows only "is required"; the prototype says "Enter a valid email address".
+- Contact Us: no SMART Enroll frame; the prototype opens a dialog with the support phone / email from `smart-enroll.json` (copy buttons).
+- "Sign in": Figma has no Sign in link on these steps; the SMART Hub logo links to `sign-in.html`.
+- Figma error text "Zip/ Postal Code is required" is shipped as "Zip / Postal Code is required" (same as the label).
+- Title / subtitle text styles differ from the `type-*` roles: DS-010; "No, this isn't my business." button colour: DS-011.
