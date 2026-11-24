@@ -5,7 +5,7 @@
  * load and every change is written back there, so it survives reloads.
  *
  *   UMStore.load()                 → Promise<state>   (seed on first run)
- *   UMStore.getUsers() / getRoles() / getRole(id) / getUser(id)
+ *   UMStore.getUsers() / getRoles(all) / getRole(id) / getUser(id)   (getRoles hides app-scoped roles like Contributor unless all)
  *   UMStore.getCurrentUser()       → the signed-in user ("Me")
  *   UMStore.getViewer()            → { mode: "admin"|"member", isAdmin, user } — demo: ?as=member
  *   UMStore.updateUser(id, patch)  → firstName / lastName / phone / photo (data URL or null)
@@ -35,7 +35,7 @@ window.UMStore = (function () {
   var STORAGE_KEY = "sx_um_v1";
   var SEED = "user-management";
   // Bump with the seed's "version": an older saved copy is replaced by the new seed.
-  var SEED_VERSION = 10;
+  var SEED_VERSION = 11;
   var INVITE_DAYS = 7;
   var DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -319,12 +319,18 @@ window.UMStore = (function () {
     return getUser(id);
   }
 
-  function getRoles() {
-    return state ? state.roles.slice() : [];
+  // Roles with a `scope` (e.g. "enroll" Contributor) belong to one app: left out of the Hub lists
+  // (Roles tab, Invite Business Member) unless asked for with getRoles(true).
+  function getRoles(all) {
+    return state
+      ? state.roles.filter(function (role) {
+          return all || !role.scope;
+        })
+      : [];
   }
 
   function getRole(id) {
-    return getRoles().filter(function (role) {
+    return getRoles(true).filter(function (role) {
       return role.id === id;
     })[0] || null;
   }
