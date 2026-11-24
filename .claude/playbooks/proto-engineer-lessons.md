@@ -126,3 +126,7 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-24 [qa][smart-enroll] hover-audit counts buttons inside a closed `<details>` as no-hover: build the list on `toggle` (empty when closed).
   A full-screen layer over the page leaves the page links "covered": add `hidden` to the page wrapper while the layer is open.
 - 2026-11-24 [worktree][git] Isolated agents: `git show a:b`, `for … git …` and multi-branch loops are refused; one plain `git grep -h -o "<re>" <ref1> <ref2> -- <path>` reads a file across branches (e.g. next free DS-number).
+- 2026-11-24 [smart-enroll][forms] Two hidden-toggled variants of one form (Individual / Legal) that share field keys (zip, city…) need scoped ids
+  (`<owner>-<variant>-<key>`) and a `data-*-field` wrapper per field; find the visible one with `!el.closest("[hidden]")`.
+- 2026-11-24 [qa][smart-enroll] Audits only see the initial DOM: seed + auto-open with an `--init` file (`tools/ui-qa/init/se-ownership.js`). Long tabs show the
+  shell's fixed `#se-demo-bar` covering the footer "Next" button (controls-overlap / covered) — a T1 shell finding, not the tab's.

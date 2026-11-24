@@ -145,7 +145,7 @@
     {
       "id": "ownership",
       "title": "Ownership",
-      "description": "Tell us who owns the business, down to 100%.",
+      "description": "Please provide information on all owners of the business.",
       "required": 6,
       "filled": 0
     },

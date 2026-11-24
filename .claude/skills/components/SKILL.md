@@ -476,6 +476,15 @@ sign-in cards and the loader, `assets/invite/portal-logo-hex.svg` (pale) on Choo
 - **Full-page loader** between steps: `#si-loading[data-open]` `fixed inset-0 bg-gray-100 dark:bg-gray-950`, hex logo `motion-safe:animate-pulse`, `role=status`.
 - Microsoft picker: own full-screen layer (`#si-microsoft`), the SMART page underneath gets `hidden`. Prototype "Demo emails" `<details>` builds its buttons only while open.
 
+### SMART Enroll Ownership — `smart-enroll/ownership.js` (TCDM-5245; Figma Enroll `29777:35602`, details `30219:54511` / `30219:68324`, confirm `30219:79063`)
+Breakdown to 100% (D-5, D-6). Values in `SmartEnroll.storageKey('ownership')` = `{ owners, doc }`; QA seed `tools/ui-qa/init/se-ownership.js`.
+- **Collapsible owner card**: `li rounded-lg bg-gray-50 p-4 sm:p-5 dark:bg-white/5`; header = `h3 type-title-card` name + gray bordered Badge "N% ownership", **Remove** (text button `px-2 py-1 type-button text-gray-700 hover:bg-gray-100`), **Button/Gray 28px** toggle (`size-7 rounded-md bg-gray-100 text-gray-500 hover:bg-gray-200`, chevron rotates with `group-aria-expanded/tg`, `data-tooltip` Expand/Collapse). Open = `form` under `mt-5 border-t pt-6`; one open at a time; read-only shows every owner open, no actions.
+- **Radio group**: `fieldset` + `legend type-label text-secondary` + options `mt-3 gap-x-6`; label `group/radio type-body text-secondary hover:text-default` (colour on the label, not an inner span), radio = sx-enroll-acp `RADIO` + `not-checked:hover:border-gray-400`, checked hover `bg-blue-500`, `aria-invalid:border-red-300`; error `<p class="mt-2 …ERROR_TEXT">`.
+- **Fields**: `OBField.INPUT` (h-10, text-base); leading `%` icon (`pl-10`); trailing decorative calendar / phone / envelope icon `peer-aria-invalid:hidden` so the OBField (!) takes its place. Selects = skill trigger at `h-10 text-base/6 font-medium` + `group/select` chevron hover, flags `h-3 w-4 rounded-xs ring-1`. Masks: share `0.00`–`100.00`, DOB `MM-DD-YYYY`, phone `+1 (000) 000-0000`.
+- Errors after blur or Save; the > 100 error at once. Save (Primary **md**) + Cancel (text button, same height); saved owners show **Save changes**, disabled until something changed.
+- Upload rows: title `type-label-large` + `type-description` left, T1 File Upload `md:w-78` right (stacked below md).
+- Total row: "+ Add Owner" Link primary (hidden at 100%) · `Total breakdown` `N / 100%` (red + exclamation-circle when owners exist and ≠ 100, green check-circle at 100, `aria-live`).
+
 ## Adding a component
 1. Build every state (default, hover, focus-visible, active, disabled, error, loading; dark on dashboard).
 2. Add a row/snippet here, and a note to `wiki/design-system/` when it is a product pattern.
