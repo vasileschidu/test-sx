@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "_comment": "SMART Enroll Merchant Services add-on (TCDM-5248, T8): Financial and Business Plan tabs. Copy from Figma jLooCmHwqJcYV5p5d8BHnO (Financial 28582:53698, BlueSnap 30397:62328, change processor 28582:56003, Business Plan 28141:35114). Script: src/scripts/smart-enroll/merchant-services.js. Spec: wiki/products/smart-enroll/flows/merchant-services.md (D-3, D-4). Every name and number is invented.",
+  "upload": {
+    "accept": ".pdf,.png,.jpg,.jpeg",
+    "acceptLabel": "PDF, PNG, JPG up to 8MB",
+    "maxSizeMb": 8,
+    "_comment": "Same file rules as the T1 File Upload demo. Figma draws the library default 'PNG, JPG, GIF up to 10MB' (no PDF): TODO(confirm)."
+  },
+  "processors": {
+    "recommended": {
+      "id": "bluesnap",
+      "name": "BlueSnap",
+      "learnMoreHref": "https://www.bluesnap.com/",
+      "benefits": ["High volumes of transactions", "Tokenization and digital wallets", "24/7 customer support"],
+      "terms": [
+        { "id": "terms", "label": "Terms and Conditions", "href": "https://www.bluesnap.com/terms-and-conditions/" },
+        { "id": "privacy", "label": "Privacy Policy", "href": "https://www.bluesnap.com/privacy-policy/" }
+      ]
+    },
+    "own": [
+      "Chase Paymentech Salem - EMV",
+      "AIBMS APACS UK/EU - EMV",
+      "American Express Direct UK/EU - EMV",
+      "Barclaycard HISO UK/EU - EMV",
+      "Chase Paymentech NetConnect Tampa - EMV"
+    ],
+    "settlementPlatform": "bmshiso"
+  },
+  "currencies": [
+    { "value": "USD", "label": "US Dollar (USD)" },
+    { "value": "CAD", "label": "Canadian Dollar (CAD)" },
+    { "value": "EUR", "label": "Euro (EUR)" },
+    { "value": "GBP", "label": "British Pound (GBP)" },
+    { "value": "MXN", "label": "Mexican Peso (MXN)" }
+  ],
+  "mccCodes": [
+    { "value": "5045", "label": "5045 · Computers, Peripherals and Software" },
+    { "value": "5094", "label": "5094 · Precious Stones and Metals, Watches and Jewelry" },
+    { "value": "5311", "label": "5311 · Department Stores" },
+    { "value": "5399", "label": "5399 · Miscellaneous General Merchandise" },
+    { "value": "5734", "label": "5734 · Computer Software Stores" },
+    { "value": "7631", "label": "7631 · Watch, Clock and Jewelry Repair" },
+    { "value": "8999", "label": "8999 · Professional Services" }
+  ],
+  "operatingStatuses": [
+    { "value": "active", "label": "Active" },
+    { "value": "inactive", "label": "InActive" }
+  ],
+  "regions": [
+    { "id": "usa", "label": "USA", "flag": "flag-us.svg" },
+    { "id": "eu", "label": "EU", "flag": "flag-eu.svg" },
+    { "id": "canada", "label": "Canada", "flag": "flag-ca.svg" },
+    { "id": "mexico", "label": "Mexico", "flag": "flag-mx.svg" },
+    { "id": "japan", "label": "Japan", "flag": "flag-jp.svg" },
+    { "id": "korea", "label": "South Korea", "flag": "flag-kr.svg" },
+    { "id": "other", "label": "Other", "flag": "flag-ww.svg" }
+  ],
+  "cards": [
+    { "id": "visa", "label": "Visa", "logo": "card-visa.svg" },
+    { "id": "mastercard", "label": "Mastercard", "logo": "card-mastercard.svg" },
+    { "id": "amex", "label": "AMEX", "logo": "card-amex.svg" },
+    { "id": "discover", "label": "Discover", "logo": "card-discover.svg" }
+  ],
+  "cardPeriods": [
+    { "id": "p12", "label": "Last 12 months" },
+    { "id": "p24", "label": "Last 12-24 months" }
+  ],
+  "pciLevels": [
+    { "value": "level-1", "label": "Level 1: Merchants that process over 6 million card transactions annually." },
+    { "value": "level-2", "label": "Level 2: Merchants that process 1 to 6 million transactions annually." },
+    { "value": "level-3", "label": "Level 3: Merchants that process 20,000 to 1 million transactions annually." },
+    { "value": "level-4", "label": "Level 4: Merchants that process fewer than 20,000 transactions annually." },
+    { "value": "not-compliant", "label": "Not Compliant" },
+    { "value": "unknown", "label": "I do not know which level" }
+  ],
+  "delayPeriods": [
+    { "id": "w1", "label": "1 week" },
+    { "id": "w2", "label": "2 week" },
+    { "id": "m1", "label": "1 month" },
+    { "id": "m6", "label": "6 month" },
+    { "id": "m12", "label": "12 month" }
+  ],
+  "subscriptionPeriods": [
+    { "value": "daily", "label": "Daily" },
+    { "value": "weekly", "label": "Weekly" },
+    { "value": "bi-weekly", "label": "Bi-Weekly" },
+    { "value": "monthly", "label": "Monthly" },
+    { "value": "quarterly", "label": "Quarterly" },
+    { "value": "yearly", "label": "Yearly" }
+  ],
+  "industryClassifications": [
+    { "value": "ecommerce", "label": "ecommerce" },
+    { "value": "moto", "label": "moto" },
+    { "value": "retail", "label": "retail" }
+  ],
+  "bankAccounts": [
+    { "id": "ba_secondary", "name": "Secondary Bank Account", "bank": "Bank AG", "last4": "1010" },
+    { "id": "ba_insurance", "name": "Insurance Bank Account", "bank": "Bank AG", "last4": "1010" }
+  ],
+  "proofingDocuments": [
+    { "id": "shareholder-register", "name": "Shareholder Register", "description": "Including the list of Ultimate Beneficial Owners, including Ownership %, Signed by the Corporate Secretary", "optional": true },
+    { "id": "bank-statement", "name": "Bank Account Statement", "description": "3 months bank account statement or bank reference letter", "optional": false },
+    { "id": "financial-statements", "name": "Financial Statements", "description": "2 years audited financials or tax returns for unincorp, or 3 year projections for newly inc.", "optional": false },
+    { "id": "tax-id", "name": "Proof of Federal Tax Identification Number/VAT", "description": "", "optional": true },
+    { "id": "good-standing", "name": "Certificate of Good Standing / Certificate of Status", "description": "British Columbia, USA / all other provinces", "optional": true },
+    { "id": "source-of-funds", "name": "Evidence for the Source of Funds", "description": "Copy of Sale Contracts, Invoices", "optional": false },
+    { "id": "signatory-id", "name": "ID for the account signatory if not already someone listed above", "description": "", "optional": true },
+    { "id": "interim-financials", "name": "Interim Financials", "description": "", "optional": true },
+    { "id": "voided-check", "name": "Account voided check or letter from bank with ABA/DDA", "description": "Must contain ABA/DDA information", "optional": false }
+  ],
+  "businessPlan": {
+    "accept": ".pdf,.docx",
+    "acceptLabel": "PDF or DOCX up to 8MB",
+    "hint": "Upload .PDF or .DOCX file",
+    "_comment": "Figma 28579:53188 reads 'Upload .PDF or .DOCS file' (typo for .DOCX, wiki says .DOCX)."
+  }
+}
