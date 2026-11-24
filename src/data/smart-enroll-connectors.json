@@ -1,0 +1,119 @@
+{
+  "version": 1,
+  "_comment": "SMART Enroll Connectors tab fake data (TCDM-5246, T6). ERP and bank brand names are the ones Figma shows (jLooCmHwqJcYV5p5d8BHnO 28513:33218, 28555:40542); every account, key, number and address is invented. Script: src/scripts/smart-enroll/connectors.js. Spec: wiki/products/smart-enroll/flows/connectors.md (D-13).",
+  "copy": {
+    "dataSource": {
+      "title": "Data Source Preferences",
+      "text": "By selecting one of the options below, you will allow us to establish a connection to your AP/AR data that will be managed and configured through SMART Hub.",
+      "info": "Pick how SMART Hub receives your AP/AR data. Only one option is active at a time; you can switch later.",
+      "current": "This is your current selected preference.",
+      "switch": "Switch to Another Connection"
+    },
+    "bank": {
+      "title": "Bank Account",
+      "tableTitle": "Your Bank Accounts",
+      "text": "By connecting to your bank account, SMART Hub can draw the funds necessary to originate payments and deposit payments directly into your bank account.",
+      "emptyTitle": "No bank account added yet",
+      "emptyText": "{connect} your bank account and get started, {invite} from your team to help."
+    },
+    "lost": {
+      "title": "Information will be lost",
+      "text": "Once you change the option your current progress will be discarded. Do you wish to continue?"
+    },
+    "incomplete": "Your connections are incomplete. You can still submit; payments in SMART Hub stay blocked until a data source and a bank account are connected."
+  },
+  "sources": [
+    {
+      "id": "erp",
+      "name": "ERP/Accounting Software",
+      "text": "Connect your ERP or accounting software as a source for invoice data.",
+      "sectionText": "By connecting to your accounting software, SMART Hub can pull invoices, pull supplier data, and create payments against invoices in your accounting software.",
+      "modalTitle": "Enable ERP/Accounting Software",
+      "modalText": [
+        "Integrate your ERP or accounting software with your invoicing system for a seamless retrieval and synchronization of invoice data. This integration optimizes your invoicing processes, streamlines financial transactions, and enhances the overall efficiency and accuracy in managing your business's financial data.",
+        "You will need to select one of the existing providers below:"
+      ]
+    },
+    {
+      "id": "batch",
+      "name": "Batch Data Upload",
+      "text": "Connect via uploading a data file.",
+      "modalTitle": "Batch Data Upload",
+      "modalText": [
+        "This option allows for the simultaneous transfer of multiple records and is commonly used when migrating data from one system to another, updating large datasets, or performing bulk data imports. By utilizing batch data upload, you can streamline data management processes, reduce manual effort, and ensure data consistency and integrity.",
+        "You will be given details on how to upload a data file within the platform."
+      ]
+    },
+    {
+      "id": "api",
+      "name": "API Connection",
+      "text": "Connect your own API by following the {guide}.",
+      "modalTitle": "API Connection",
+      "modalText": [
+        "By creating an API connection, we enable the exchange of information, such as retrieving data from one system to be used in another, updating records, or triggering actions across connected applications. API connections facilitate integration, automation, and interoperability between software systems, enabling efficient and real-time data sharing and collaboration.",
+        "To connect to your own API, please follow the {guide}."
+      ]
+    }
+  ],
+  "guides": {
+    "api": "https://www.transcard.com/support",
+    "integration": "https://www.transcard.com/support",
+    "help": "https://www.transcard.com/support"
+  },
+  "providers": [
+    { "id": "sage-intacct", "name": "Sage Intacct", "tile": "Sage" },
+    { "id": "quickbooks", "name": "QuickBooks", "tile": "QuickBooks" },
+    { "id": "acumatica", "name": "Acumatica", "tile": "Acumatica" },
+    { "id": "knnx", "name": "KNNX", "tile": "KNNX" },
+    { "id": "guidewire-claimcenter", "name": "Guidewire ClaimCenter", "tile": "Guidewire ClaimCenter" },
+    { "id": "oracle-netsuite", "name": "Oracle NetSuite", "tile": "Oracle NetSuite" }
+  ],
+  "api": {
+    "clientId": "7c41e2d8-35b0-4f6a-9d1e-28a7b04c9f53",
+    "clientSecret": "sk_live_Q4vN8tR2mW6yB1",
+    "scope": "api://7c41e2d8-35b0-4f6a-9d1e-28a7b04c9f53/.default",
+    "accessTokenUrl": "https://login.smart-hub.example/oauth2/v2.0/token",
+    "payableKey": "pk_pay_5H2kL9mQ3rT7",
+    "partyKey": "pk_party_8J4nP6sV1xZ3",
+    "fields": {
+      "clientId": "Identifies your application when it asks SMART Hub for an access token.",
+      "clientSecret": "Shown once, when it is created. Generate a new one if it is lost.",
+      "scope": "The permission your application requests with the token.",
+      "accessTokenUrl": "Where your application requests its access token.",
+      "payableKey": "Sent with payable calls to identify your account.",
+      "partyKey": "Sent with supplier (party) calls to identify your account."
+    }
+  },
+  "banks": [
+    {
+      "id": "bofa",
+      "name": "Bank of America",
+      "portal": "CashPro",
+      "portalLink": "CashPro API Developer Portal (bankofamerica.com)",
+      "portalHref": "https://developer.bankofamerica.com"
+    },
+    { "id": "chase", "name": "JP Morgan Chase & Co." },
+    { "id": "goldman", "name": "Goldman Sachs" },
+    { "id": "usbank", "name": "US Bank" },
+    { "id": "wells", "name": "Wells Fargo" },
+    { "id": "jackhenry", "name": "Jack Henry" }
+  ],
+  "treasuryFields": [
+    "ProviderIdReporting",
+    "ApplicationIdReporting",
+    "ClientIdReporting",
+    "ClientSecretReporting",
+    "ProviderId",
+    "ApplicationId",
+    "ClientId",
+    "Client Secret"
+  ],
+  "states": ["California", "Illinois", "New York", "Ohio", "Oregon", "Texas", "Washington"],
+  "bankDefaults": {
+    "address": "120 Harbor View Drive, Suite 400, Portland, OR 97209",
+    "state": "Oregon",
+    "zip": "97209",
+    "routing": "110000099",
+    "account": "4401927731231"
+  }
+}

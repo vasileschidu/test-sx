@@ -112,3 +112,6 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   `hover:outline-gray-400` reads as no-hover (give the chevron a `group-hover` tone). Text colour set only on an inner span → dark-low-contrast 1.2: colour the button.
 - 2026-11-23 [tokens][smart-enroll] Progress bars stay class-only with Tailwind v4 fractions (`w-37/100`, browser build generates them); no inline width.
   A `sr-only` skip link at the start of `<body>` is flagged controls-overlap at 390 against a top-left menu button.
+- 2026-11-24 [tables][smart-enroll] `sr-only` spans (absolute) inside an `overflow-x-auto` table wrapper escape it and widen the page on phones unless the wrapper is `relative`.
+- 2026-11-24 [dialogs][OBModal] OBModal's Tab trap takes the last `<button>` even when disabled (Continue/Save before a choice) → Tab leaves the dialog. Add a backdrop keydown guard that filters `:disabled` (connectors.js `guardTrap`); fixing OBModal itself would cover every product.
+- 2026-11-24 [qa][dialogs] code-audit / hover-audit only see the page's first state: add a `?<tab>=demo` seed for table states and sweep dialogs with a small Playwright script (hover in dark, 30×Tab trap, Esc). Fieldset-disabled buttons match `:disabled`, not `.disabled`.
