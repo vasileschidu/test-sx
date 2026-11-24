@@ -183,8 +183,8 @@
     {
       "id": "configuration",
       "title": "Configuration",
-      "description": "Set up your SMART Exchange payment preferences.",
-      "required": 4,
+      "description": "This is the first step to configuring your SMART Hub and adjacent payment solutions. You'll be able to change these in the SMART Hub portal as well.",
+      "required": 1,
       "filled": 0
     }
   ],
@@ -197,6 +197,10 @@
     "href": "https://www.transcard.com/support",
     "info": "To view all SMART Suite FAQs and Transcard User Guides that will provide step by step instructions on how to use Transcard SMART Products."
   },
+  "bankAccounts": [
+    { "id": "ba_chk_4821", "name": "Pacific Coast Bank Checking", "last4": "4821" },
+    { "id": "ba_sav_7390", "name": "Pacific Coast Bank Savings", "last4": "7390" }
+  ],
   "uploadDemo": {
     "label": "Business or Service License",
     "description": "A current license for your business or the service you provide. You can add more than one file.",
