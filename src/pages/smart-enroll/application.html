@@ -26,11 +26,19 @@
     <script src="../../scripts/design-tokens.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
     <link rel="stylesheet" href="../../styles/cursor.css" />
+    <link rel="stylesheet" href="../../styles/checkbox.css" />
     <script src="../../scripts/data-source.js"></script>
     <script src="../../scripts/onboarding-modal.js?v=20261123mrg" defer></script>
     <script src="../../scripts/shared.js?v=20261123mrg" defer></script>
     <script src="../../scripts/smart-enroll/file-upload.js?v=20261123t1" defer></script>
-    <script src="../../scripts/smart-enroll/shell.js?v=20261123t1" defer></script>
+    <script src="../../scripts/checkbox-component.js"></script>
+    <script src="../../scripts/onboarding-field.js?v=20261106a" defer></script>
+    <script src="../../scripts/um-store.js?v=20261124t10" defer></script>
+    <script src="../../scripts/um-ui.js?v=20261113sq" defer></script>
+    <script src="../../scripts/um-email.js?v=20261113fg" defer></script>
+    <script src="../../scripts/um-invite.js?v=20261124t10" defer></script>
+    <script src="../../scripts/smart-enroll/shell.js?v=20261124t10" defer></script>
+    <script src="../../scripts/smart-enroll/invite.js?v=20261124t10" defer></script>
   </head>
   <body class="h-full font-['Inter'] antialiased">
 
@@ -48,7 +56,7 @@
         <div class="ml-auto flex min-w-0 items-center gap-4 lg:gap-6">
           <div data-se-people="top" class="hidden items-center gap-4 xl:flex"></div>
           <div data-se-business="top" class="hidden min-w-0 sm:block"></div>
-          <button type="button" data-se-next class="inline-flex shrink-0 cursor-pointer items-center rounded-md bg-blue-600 px-3 py-2 text-base font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-400 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">Next Step</button>
+          <button type="button" data-se-next class="inline-flex shrink-0 cursor-pointer items-center rounded-md bg-blue-600 px-3 py-2 text-base font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 aria-disabled:cursor-not-allowed aria-disabled:bg-blue-300 aria-disabled:hover:bg-blue-300 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-400 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 dark:aria-disabled:bg-blue-500/40 dark:aria-disabled:text-white/60 dark:aria-disabled:hover:bg-blue-500/40">Next Step</button>
         </div>
       </div>
     </header>

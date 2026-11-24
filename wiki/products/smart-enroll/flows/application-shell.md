@@ -77,7 +77,12 @@ Once Approved, sign-in shows Select Platform ([sign-in.md](sign-in.md)).
 ## Invite people (D-14)
 Reuses the User Management **Invite People** modal (Invite / Members tabs). The invitee gets the role
 **Contributor** on this application only: can fill and edit tabs, cannot submit or sign. Their avatar appears in the top bar.
-"Invite someone to help" links inside tabs open the same modal.
+"Invite someone to help" links inside tabs open the same modal (put `data-se-invite="<where>"` on the link).
+
+Prototype: the modal offers only Contributor (preselected, no Create Role); it has two tabs, **Invite** and **Members**
+(everyone on the application with role and an "Invited" badge until they accept). A new invitee's avatar joins the top bar
+and the card header. `?role=contributor` shows the application as a Contributor: Next Step on the last tab is disabled with
+the tooltip "Only the applicant can submit this application". The Members tab layout is not in Figma, TODO(confirm) (DS-008).
 
 ## Responsive
 Figma is desktop only (1728). We build 375 / 768 / 1280 ourselves: below 1024 the left panel collapses into a

@@ -112,3 +112,6 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   `hover:outline-gray-400` reads as no-hover (give the chevron a `group-hover` tone). Text colour set only on an inner span → dark-low-contrast 1.2: colour the button.
 - 2026-11-23 [tokens][smart-enroll] Progress bars stay class-only with Tailwind v4 fractions (`w-37/100`, browser build generates them); no inline width.
   A `sr-only` skip link at the start of `<body>` is flagged controls-overlap at 390 against a top-left menu button.
+- 2026-11-24 [smart-enroll][tooltip] A reason tooltip on a "disabled" button: use `aria-disabled="true"` + `data-tooltip` (Tailwind `aria-disabled:` variants, add `aria-disabled:hover:` too), not `disabled` — it stays focusable and the tooltip shows on hover and focus; guard the click in JS.
+- 2026-11-24 [um-store] A role that belongs to one app gets `scope` in the seed and is hidden by `getRoles()`; bump SEED_VERSION + json `version` and every page's `um-store.js?v=` (5 pages load it). macOS `sed -i` needs `''` — use python for edits.
+

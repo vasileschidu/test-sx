@@ -1,5 +1,7 @@
 /**
  * smart-enroll/shell.js
+ * Invite hook (T10): put data-se-invite="<where>" on ANY button/link ("Invite someone to help" in a tab, etc.) — the
+ * shell's delegated click fires `invite` and invite.js opens the User Management Invite People modal.
  * SMART Enroll application shell (TCDM-5241, T1). Own shell, not <app-nav>/<app-topbar>.
  * Spec: wiki/products/smart-enroll/flows/application-shell.md (D-10, D-11, D-12, D-14).
  * Figma [R1] SMART Enroll jLooCmHwqJcYV5p5d8BHnO: 28107:8955 (menu anatomy), 28471:37074 (standard frame),
@@ -23,7 +25,12 @@
  *   on(name, fn) → off()       events on document as `smart-enroll:<name>` CustomEvents:
  *     tab-change {tabId, previous} · progress {percent,…} · status-change {status, previous, readOnly} ·
  *     readonly-change {readOnly} · addon-change {addon, added, tabs} · addon-discard {addon, tabs} ·
- *     business-change {business} · invite {source} · submit {} (cancelable: preventDefault = handled)
+ *     business-change {business} · invite {source = the data-se-invite value} (cancelable; invite.js handles it) · submit {} (cancelable: preventDefault = handled)
+ *   getPeople() / addPerson({ id, name, role, initials, color, photo })   people shown as top-bar avatars (+ card header);
+ *                              addPerson re-renders them (no duplicate ids). Invite people itself is invite.js (T10).
+ *   getRole() / setRole(id)    "applicant" (default) | "contributor" — demo viewer, also ?role=contributor (kept for the tab).
+ *                              A contributor fills and edits tabs but cannot submit: Next Step on the last tab is
+ *                              aria-disabled with the tooltip "Only the applicant can submit this application" and next() does nothing.
  *   storageKey(tabId)          sessionStorage key a tab should keep its values in; dropped on add-on discard.
  */
 window.SmartEnroll = (function () {
@@ -31,12 +38,14 @@ window.SmartEnroll = (function () {
 
   var DATA_PATH = "../../data/smart-enroll.json";
   var ROOT = "../../";
-  var KEY = { status: "se_status_v1", addons: "se_addons_v1", business: "se_business_v1" };
+  var KEY = { status: "se_status_v1", addons: "se_addons_v1", business: "se_business_v1", role: "se_role_v1" };
+  var CONTRIBUTOR_REASON = "Only the applicant can submit this application";
   var LG = window.matchMedia("(min-width: 1024px)");
 
   var state = {
     data: null,
     status: "not-submitted",
+    role: "applicant",
     addons: {},
     businessId: null,
     activeTab: null,
@@ -237,6 +246,20 @@ window.SmartEnroll = (function () {
       '<span role="img" aria-label="' + esc(person.name) + '" data-tooltip="' + esc(person.name + " · " + person.role) + '" class="inline-flex size-8 items-center justify-center rounded-full ' + esc(person.color || "bg-gray-500") + " type-label-small text-white " + ring + '">' +
       esc(person.initials || "") + "</span>"
     );
+  }
+
+  function addPerson(person) {
+    if (!person || !person.id || !state.data) return;
+    state.data.people = state.data.people || [];
+    if (state.data.people.some(function (p) { return p.id === person.id; })) return;
+    state.data.people.push(person);
+    renderPeople();
+  }
+
+  function setRole(id) {
+    state.role = id === "contributor" ? "contributor" : "applicant";
+    store("sessionStorage", KEY.role, state.role);
+    if (state.data) renderFooterNav();
   }
 
   function renderPeople() {
@@ -510,7 +533,12 @@ window.SmartEnroll = (function () {
       ? '<button type="button" data-se-go="' + esc(next.id) + '" class="' + BTN_NAV + '"><span class="sr-only">Next: </span>' + esc(next.title) + ICON.chevronRight + "</button>"
       : "";
     var last = !next;
+    var noSubmit = last && state.role === "contributor";
     refs.next.disabled = last && isReadOnly();
+    // aria-disabled (not disabled) so the button stays focusable and the reason tooltip shows on hover and focus.
+    refs.next.setAttribute("aria-disabled", String(noSubmit));
+    if (noSubmit) refs.next.setAttribute("data-tooltip", CONTRIBUTOR_REASON);
+    else refs.next.removeAttribute("data-tooltip");
     refs.next.setAttribute("aria-label", last ? "Next Step: submit the application" : "Next Step: " + next.title);
   }
 
@@ -553,6 +581,7 @@ window.SmartEnroll = (function () {
 
   function next() {
     if (step(1)) return;
+    if (state.role === "contributor") return;
     // Last tab: Submission is T11. Stub event; listeners call preventDefault() when they handle it.
     var event = emit("submit", { status: state.status, progress: getProgress() }, true);
     if (!event.defaultPrevented) toast("Submission opens here in a later release.", "info");
@@ -765,9 +794,10 @@ window.SmartEnroll = (function () {
         return;
       }
       if ((el = t.closest("[data-se-invite]"))) {
-        // D-14: the Invite People modal is T10; until then the event is the hook.
+        // D-14: any [data-se-invite] (top bar, card header, "Invite someone to help" links in tabs) fires
+        // `invite`; invite.js (T10) handles it and opens the User Management modal.
         var ev = emit("invite", { source: el.getAttribute("data-se-invite") }, true);
-        if (!ev.defaultPrevented) toast("Invite people opens here in a later release.", "info");
+        if (!ev.defaultPrevented) toast("Invite people is not available on this page.", "info");
         return;
       }
       if ((el = t.closest("[data-se-help-toggle]"))) {
@@ -827,6 +857,9 @@ window.SmartEnroll = (function () {
     var fromUrl = params.get("status");
     state.status = statusById(fromUrl) ? fromUrl : statusById(store("sessionStorage", KEY.status)) ? store("sessionStorage", KEY.status) : "not-submitted";
     store("sessionStorage", KEY.status, state.status);
+    var roleParam = params.get("role");
+    state.role = (roleParam || store("sessionStorage", KEY.role)) === "contributor" ? "contributor" : "applicant";
+    store("sessionStorage", KEY.role, state.role);
     state.addons = store("sessionStorage", KEY.addons) || {};
     state.businessId = store("sessionStorage", KEY.business) || ((data.businesses || [])[0] || {}).id;
     (data.tabs || []).forEach(function (t) { if (!state.progress[t.id]) state.progress[t.id] = defaultProgress(t); });
@@ -879,6 +912,10 @@ window.SmartEnroll = (function () {
     getStatus: function () { return state.status; },
     setStatus: setStatus,
     isReadOnly: isReadOnly,
+    getPeople: function () { return ((state.data || {}).people || []).slice(); },
+    addPerson: addPerson,
+    getRole: function () { return state.role; },
+    setRole: setRole,
     getAddons: getAddons,
     hasAddon: function (id) { return !!state.addons[id]; },
     addAddon: addAddon,

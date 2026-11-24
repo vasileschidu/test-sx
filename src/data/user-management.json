@@ -1,5 +1,5 @@
 {
-  "version": 10,
+  "version": 11,
   "currentUserId": "u-johnny-anderson",
   "business": {
     "id": "big-kahuna-burger",
@@ -101,6 +101,14 @@
         "um-view-generic-and-business-list-of-the-roles",
         "um-view-hidden-list-of-the-roles"
       ]
+    },
+    {
+      "id": "contributor",
+      "name": "Contributor",
+      "description": "Can fill in and edit the tabs of this SMART Enroll application. Cannot submit or sign it.",
+      "apps": "SMART Enroll",
+      "scope": "enroll",
+      "permissionIds": []
     }
   ],
   "users": [
