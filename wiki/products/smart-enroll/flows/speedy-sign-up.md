@@ -97,4 +97,4 @@ always returns this list). US states and the Terms of Use / Privacy Policy text 
 - Contact Us: no SMART Enroll frame; the prototype opens a dialog with the support phone / email from `smart-enroll.json` (copy buttons).
 - "Sign in": Figma has no Sign in link on these steps; the SMART Hub logo links to `sign-in.html`.
 - Figma error text "Zip/ Postal Code is required" is shipped as "Zip / Postal Code is required" (same as the label).
-- Title / subtitle text styles differ from the `type-*` roles: DS-008; "No, this isn't my business." button colour: DS-009.
+- Title / subtitle text styles differ from the `type-*` roles: DS-010; "No, this isn't my business." button colour: DS-011.

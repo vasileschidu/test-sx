@@ -31,7 +31,7 @@ split by foreign currencies."
 | Purpose of Transactions | required, textarea, help "Provide a short description, preferably 1 or 2 sentences." |
 | Are you involved in any of the following activities? | required, **one** YES / NO for the list: Dealer of precious stones · Dealer in weapons · Dealer in virtual currency · Controlled substances related · Are you a financial institution |
 
-Order as in Figma (earlier drafts listed Highest first and a Yes/No per activity: DS-019). 5 required answers feed the
+Order as in Figma (earlier drafts listed Highest first and a Yes/No per activity: DS-026). 5 required answers feed the
 tab progress. Errors: "<Field> is required." on leaving an empty field; "Select Yes or No." (TODO confirm).
 Prototype: `src/scripts/smart-enroll/cross-border.js` (TCDM-5249).
 
