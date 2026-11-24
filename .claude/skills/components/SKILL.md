@@ -485,6 +485,39 @@ Breakdown to 100% (D-5, D-6). Values in `SmartEnroll.storageKey('ownership')` = 
 - Upload rows: title `type-label-large` + `type-description` left, T1 File Upload `md:w-78` right (stacked below md).
 - Total row: "+ Add Owner" Link primary (hidden at 100%) · `Total breakdown` `N / 100%` (red + exclamation-circle when owners exist and ≠ 100, green check-circle at 100, `aria-live`).
 
+### SMART Enroll Connectors tab — `smart-enroll/connectors.js` + `src/data/smart-enroll-connectors.json` (Figma Enroll `28276:88185`; spec `wiki/products/smart-enroll/flows/connectors.md`, D-13)
+Fills the `connectors` tab via `SmartEnroll.registerTab`. Page also loads `onboarding-field.js` (OBField). State in `sessionStorage[SmartEnroll.storageKey('connectors')]`; demo `?connectors=demo|api|reset`.
+```js
+SmartEnrollConnectors.ready.then(function () {});
+SmartEnrollConnectors.isComplete()        // data source selected AND one bank Connected (D-13: not required to submit)
+SmartEnrollConnectors.incompleteMessage() // warning text for the Submit modal (T11), null when complete
+SmartEnrollConnectors.getState()          // { source: 'erp'|'batch'|'api'|null, erp, api, banks[] }
+SmartEnrollConnectors.fxSlot()            // <div data-se-fx-slot hidden> under Bank Account — T9 (FX provider) fills it
+document.addEventListener('smart-enroll:connectors-rendered', function (e) { e.detail.slot; e.detail.root; }); // after every draw (slot re-created)
+document.addEventListener('smart-enroll:connectors-change', function (e) { e.detail.complete; e.detail.source; e.detail.bankConnected; });
+```
+- Progress: `setProgress('connectors', { required: 2, filled })` (1 data source + 1 Connected bank).
+- Section card: `rounded-lg border border-gray-200 bg-white p-4 shadow-xs sm:p-6` (dark `white/10` + `white/5`), `h2 type-title-section`, actions right (Invite someone to help = Link primary + userPlus; Connect = Primary **lg**; "+ Add" = **Soft md** `bg-blue-50 text-blue-600 hover:bg-blue-100`, dark `blue-400/10` → `/20`).
+- Source cards: `rounded-lg border p-4 sm:p-5`, 32px dark tile (`bg-gray-800 text-white`, dark `white/10`), Select = Secondary **sm** (`rounded px-2 py-1 text-sm`); current = `border-blue-600 ring-1 ring-blue-600` + "Current connection" Badge (blue, `rounded-md`) + "View Accounts →" / "Learn More" link. "This is your current selected preference. Switch to Another Connection →" strip = `rounded-md bg-gray-50 px-2 py-1.5 type-caption`.
+- Empty state: `rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 px-6 py-8` + 40px outline glyph + `type-label-large` + `type-body` with inline text links.
+- Tables: `relative -mx-4 overflow-x-auto sm:mx-0` (the `relative` keeps `sr-only` spans from widening the page), `th type-overline`, dashed header border, row options = Card details options button + `el-menu` (icon 20 + label). Status badges: Connected green, Action Required yellow, Pending Verification red (`rounded-md`, 12px icon).
+- Wide dialogs (OBModal `bare` + header bar): `border-b px-4 py-4 sm:px-6` icon · `h2 type-title-modal` · "Invite" link · `Step n of N` + dots (done = blue check-circle, current = dot in blue-100 halo, next = gray dot) · `OBModal.closeButton()`; footer `border-t`: Back (Secondary **xl** + chevron) / Next (Primary **xl** `sm:w-50`). Steps swap header/body/footer in place (no new enter motion). Widths `max-w-170` (680), `max-w-200` (800), `max-w-250` (1000).
+- Confirm / result dialogs: OBModal 512, 40px glyph (amber warning, red danger, green check), `type-title-modal`, stacked Primary/Danger **xl** + Secondary **xl**.
+- Password-style field with eye: OBField input `pr-11` + button `absolute inset-y-0 right-0 px-3 text-gray-400 hover:text-gray-600` with the SMART System eye / eye-slash paths (`aria-pressed`, sr-only Show/Hide). Read-only value field: OBField + `read-only:bg-gray-50` (dark `white/10`) + `OBModal.copyButton` beside it.
+- Provider tiles: `label` + full-size transparent `input[type=radio]`, `has-checked:border-blue-600 ring-1`, `has-focus-visible:outline-2`, check-circle top-right when checked.
+- OBModal's Tab trap counts a disabled last button: dialogs with a disabled footer button call the local `guardTrap(backdrop)` (filters disabled). Esc in an open `el-select` list closes the list only (`guardSelectEsc`).
+
+### SMART Enroll Cross-Border add-on — `smart-enroll/cross-border.js` + `src/data/smart-enroll-cross-border.json` (Figma Enroll `28603:49485`, `28603:106195`; spec `wiki/products/smart-enroll/flows/cross-border.md`)
+Transactional tab (`registerTab('transactional')`, 5 required → `setProgress`) + FX Provider in the Connectors `fxSlot()` (re-rendered on every `smart-enroll:connectors-rendered` and `addon-change`). QA seed `tools/ui-qa/init/smart-enroll-cross-border.js`; demo `?fx=existing|new|reset`.
+```js
+SmartEnrollCrossBorder.validate()  // shows every missing-field error, true when complete
+SmartEnrollCrossBorder.getValues() / getFx()   // { monex: { status: 'in-progress', path: 'existing'|'new' } }
+```
+- Fields: OBField `INPUT` / `TEXTAREA` + `HELPER` / `ERROR_TEXT`; amount = the Amount filter prefix `$` svg + `pl-10`. Two number fields side by side: each is `md:row-span-2 md:grid md:grid-rows-subgrid md:gap-y-1` (label `md:self-end` | field + error) so the inputs line up when one label wraps.
+- **Yes / No choice** (new): `div[role=radiogroup].group/yn` of `label`s with an `sr-only` radio, Secondary **sm** look (`rounded px-2 py-1 type-button uppercase min-w-12`), checked `has-checked:bg-blue-50 text-blue-700 inset-ring-blue-600` (hover `blue-100`; dark `blue-400/10` → `/20`, `text-blue-300`, `inset-ring-blue-400`), error `data-invalid` on the group → `group-data-invalid/yn:inset-ring-red-300` (dark `red-400/50`), `has-focus-visible:outline-2 outline-offset-2`, `has-disabled:opacity-50`. In a `rounded-md bg-gray-50 p-4` box with the question (`type-label`) and a `list-disc type-body` list.
+- Provider card: `rounded-lg border p-4 sm:p-5`, wordmark `text-brand uppercase font-bold` | `w-px` divider | name, action wraps below on narrow cards; Begin Setup = Secondary **md** + chevron + `el-menu`; In Progress = gray Badge (`rounded-md bg-gray-50 text-gray-600 inset-ring-gray-500/10`, dashed-ring 12px icon) + options button (`BTN_ICON`, horizontal dots) + `el-menu` (View details / red Cancel `text-red-600 hover:bg-red-50`, dark `red-400` / `red-400/10`).
+- Monex dialogs: OBModal `bare`, `max-w-186`, header = wordmark + `OBModal.closeButton()`, footer `border-t` right-aligned Cancel (Secondary **md**) + Confirm (Primary **md**); View details footer = one "Cancel request" (Secondary md with `text-red-600 hover:bg-red-50`). Disclaimer `rounded-md bg-gray-50 p-3 type-caption`.
+
 ## Adding a component
 1. Build every state (default, hover, focus-visible, active, disabled, error, loading; dark on dashboard).
 2. Add a row/snippet here, and a note to `wiki/design-system/` when it is a product pattern.

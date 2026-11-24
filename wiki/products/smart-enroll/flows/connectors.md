@@ -68,3 +68,7 @@ Only with Cross-Border Payments — see [cross-border.md](cross-border.md#fx-pro
 
 ## Prototype notes
 All connections are simulated: no real ERP or bank calls; Validate Connection succeeds after a short delay.
+Prototype: `src/scripts/smart-enroll/connectors.js` (TCDM-5246, T6), demo `?tab=connectors&connectors=demo|api|reset`.
+The FX Provider section (T9) goes into the empty `[data-se-fx-slot]` under Bank Account (`SmartEnrollConnectors.fxSlot()` /
+event `smart-enroll:connectors-rendered`); the Submit warning (T11) reads `SmartEnrollConnectors.isComplete()` /
+`incompleteMessage()` — API in the components skill.

@@ -130,3 +130,9 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   (`<owner>-<variant>-<key>`) and a `data-*-field` wrapper per field; find the visible one with `!el.closest("[hidden]")`.
 - 2026-11-24 [qa][smart-enroll] Audits only see the initial DOM: seed + auto-open with an `--init` file (`tools/ui-qa/init/se-ownership.js`). Long tabs show the
   shell's fixed `#se-demo-bar` covering the footer "Next" button (controls-overlap / covered) — a T1 shell finding, not the tab's.
+- 2026-11-24 [tables][smart-enroll] `sr-only` spans (absolute) inside an `overflow-x-auto` table wrapper escape it and widen the page on phones unless the wrapper is `relative`.
+- 2026-11-24 [dialogs][OBModal] OBModal's Tab trap takes the last `<button>` even when disabled (Continue/Save before a choice) → Tab leaves the dialog. Add a backdrop keydown guard that filters `:disabled` (connectors.js `guardTrap`); fixing OBModal itself would cover every product.
+- 2026-11-24 [qa][dialogs] code-audit / hover-audit only see the page's first state: add a `?<tab>=demo` seed for table states and sweep dialogs with a small Playwright script (hover in dark, 30×Tab trap, Esc). Fieldset-disabled buttons match `:disabled`, not `.disabled`.
+- 2026-11-24 [forms][smart-enroll] Two fields side by side whose labels wrap differently: make each field a `md:row-span-2 md:grid md:grid-rows-subgrid md:gap-y-1` (label `self-end` | field + error in one cell); a 3-row subgrid with the error as its own row left a double gap.
+- 2026-11-24 [qa][smart-enroll] An add-on that adds a tab pushes a status-icon tab past 390px: the shell tablist (`overflow-x-auto`, not `relative`) lets its `sr-only` "(complete)" escape → page overflow 424px. T1 fix, reproduce with a seed where Connectors is complete.
+- 2026-11-24 [worktree agents] Bash refuses `for`/`&&` chains that write into the scratchpad with heredocs + run node: write the test script with Write, then run `node <abs path>` alone.
