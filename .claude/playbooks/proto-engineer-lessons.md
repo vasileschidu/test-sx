@@ -117,3 +117,6 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 
 - 2026-11-24 [smart-enroll][qa] A page-wide horizontal overflow with no element past the viewport = an `sr-only` (absolute) child inside a scroll container that is not `relative` (tab status text in the tablist): add `relative` to the container. Audit a state-dependent tab with `--init tools/ui-qa/init/<seed>.js` and a `?tab=` page URL; run qa with `SX_BASE=http://localhost:<port>` on a non-default port.
 - 2026-11-24 [forms] A grid trigger with `truncate` content needs `grid-cols-[minmax(0,1fr)]` (not `grid-cols-1`) + `min-w-0`, else the selected text widens the column; give the button a `title` for the clipped text.
+- 2026-11-24 [layout][smart-enroll] A `<fieldset>` is min-width: min-content: a list of `truncate` cards inside it overflows a 375 phone. Give it `min-w-0`.
+- 2026-11-24 [qa][smart-enroll] QA a multi-step single page by passing `page.html?step=N` in `--pages` plus an `--init` seed that marks the steps
+  reached (`tools/ui-qa/init/smart-enroll-sign-up.js`). OBConsents outside SD: define a tiny `window.SDOnboardingContext` on the page state.
