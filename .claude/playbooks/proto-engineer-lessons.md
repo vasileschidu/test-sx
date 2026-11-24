@@ -112,3 +112,7 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   `hover:outline-gray-400` reads as no-hover (give the chevron a `group-hover` tone). Text colour set only on an inner span → dark-low-contrast 1.2: colour the button.
 - 2026-11-23 [tokens][smart-enroll] Progress bars stay class-only with Tailwind v4 fractions (`w-37/100`, browser build generates them); no inline width.
   A `sr-only` skip link at the start of `<body>` is flagged controls-overlap at 390 against a top-left menu button.
+- 2026-11-24 [smart-enroll][forms] Two hidden-toggled variants of one form (Individual / Legal) that share field keys (zip, city…) need scoped ids
+  (`<owner>-<variant>-<key>`) and a `data-*-field` wrapper per field; find the visible one with `!el.closest("[hidden]")`.
+- 2026-11-24 [qa][smart-enroll] Audits only see the initial DOM: seed + auto-open with an `--init` file (`tools/ui-qa/init/se-ownership.js`). Long tabs show the
+  shell's fixed `#se-demo-bar` covering the footer "Next" button (controls-overlap / covered) — a T1 shell finding, not the tab's.
