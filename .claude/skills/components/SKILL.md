@@ -463,6 +463,17 @@ document.addEventListener('smart-enroll:connectors-change', function (e) { e.det
 - Provider tiles: `label` + full-size transparent `input[type=radio]`, `has-checked:border-blue-600 ring-1`, `has-focus-visible:outline-2`, check-circle top-right when checked.
 - OBModal's Tab trap counts a disabled last button: dialogs with a disabled footer button call the local `guardTrap(backdrop)` (filters disabled). Esc in an open `el-select` list closes the list only (`guardSelectEsc`).
 
+### SMART Enroll Cross-Border add-on — `smart-enroll/cross-border.js` + `src/data/smart-enroll-cross-border.json` (Figma Enroll `28603:49485`, `28603:106195`; spec `wiki/products/smart-enroll/flows/cross-border.md`)
+Transactional tab (`registerTab('transactional')`, 5 required → `setProgress`) + FX Provider in the Connectors `fxSlot()` (re-rendered on every `smart-enroll:connectors-rendered` and `addon-change`). QA seed `tools/ui-qa/init/smart-enroll-cross-border.js`; demo `?fx=existing|new|reset`.
+```js
+SmartEnrollCrossBorder.validate()  // shows every missing-field error, true when complete
+SmartEnrollCrossBorder.getValues() / getFx()   // { monex: { status: 'in-progress', path: 'existing'|'new' } }
+```
+- Fields: OBField `INPUT` / `TEXTAREA` + `HELPER` / `ERROR_TEXT`; amount = the Amount filter prefix `$` svg + `pl-10`. Two number fields side by side: each is `md:row-span-2 md:grid md:grid-rows-subgrid md:gap-y-1` (label `md:self-end` | field + error) so the inputs line up when one label wraps.
+- **Yes / No choice** (new): `div[role=radiogroup].group/yn` of `label`s with an `sr-only` radio, Secondary **sm** look (`rounded px-2 py-1 type-button uppercase min-w-12`), checked `has-checked:bg-blue-50 text-blue-700 inset-ring-blue-600` (hover `blue-100`; dark `blue-400/10` → `/20`, `text-blue-300`, `inset-ring-blue-400`), error `data-invalid` on the group → `group-data-invalid/yn:inset-ring-red-300` (dark `red-400/50`), `has-focus-visible:outline-2 outline-offset-2`, `has-disabled:opacity-50`. In a `rounded-md bg-gray-50 p-4` box with the question (`type-label`) and a `list-disc type-body` list.
+- Provider card: `rounded-lg border p-4 sm:p-5`, wordmark `text-brand uppercase font-bold` | `w-px` divider | name, action wraps below on narrow cards; Begin Setup = Secondary **md** + chevron + `el-menu`; In Progress = gray Badge (`rounded-md bg-gray-50 text-gray-600 inset-ring-gray-500/10`, dashed-ring 12px icon) + options button (`BTN_ICON`, horizontal dots) + `el-menu` (View details / red Cancel `text-red-600 hover:bg-red-50`, dark `red-400` / `red-400/10`).
+- Monex dialogs: OBModal `bare`, `max-w-186`, header = wordmark + `OBModal.closeButton()`, footer `border-t` right-aligned Cancel (Secondary **md**) + Confirm (Primary **md**); View details footer = one "Cancel request" (Secondary md with `text-red-600 hover:bg-red-50`). Disclaimer `rounded-md bg-gray-50 p-3 type-caption`.
+
 ## Adding a component
 1. Build every state (default, hover, focus-visible, active, disabled, error, loading; dark on dashboard).
 2. Add a row/snippet here, and a note to `wiki/design-system/` when it is a product pattern.

@@ -160,9 +160,9 @@
     {
       "id": "transactional",
       "title": "Transactional",
-      "description": "How you expect to send and receive cross-border payments.",
+      "description": "Give us a few details on the nature of your cross-border transactions and expected volume split by foreign currencies.",
       "addon": "cross-border",
-      "required": 6,
+      "required": 5,
       "filled": 0
     },
     {
