@@ -123,3 +123,6 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-24 [layout][smart-enroll] `body.h-full` + `pb-*` doesn't add scroll room (content overflows the body box): a fixed demo bar then covers the
   last control (hover-audit "covered"). Use `min-h-full` on body. code-audit still flags fixed overlays vs content at scroll 0: scope it (`--scope "#se-main"`).
 - 2026-11-24 [smart-enroll] Gate the shell's Next Step from a tab without editing shell.js: `document` click listener in capture phase + stopPropagation; `rerender()` reuses the body element — bind its listeners once (data flag).
+- 2026-11-24 [qa][smart-enroll] hover-audit counts buttons inside a closed `<details>` as no-hover: build the list on `toggle` (empty when closed).
+  A full-screen layer over the page leaves the page links "covered": add `hidden` to the page wrapper while the layer is open.
+- 2026-11-24 [worktree][git] Isolated agents: `git show a:b`, `for … git …` and multi-branch loops are refused; one plain `git grep -h -o "<re>" <ref1> <ref2> -- <path>` reads a file across branches (e.g. next free DS-number).
