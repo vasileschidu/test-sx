@@ -112,3 +112,6 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   `hover:outline-gray-400` reads as no-hover (give the chevron a `group-hover` tone). Text colour set only on an inner span → dark-low-contrast 1.2: colour the button.
 - 2026-11-23 [tokens][smart-enroll] Progress bars stay class-only with Tailwind v4 fractions (`w-37/100`, browser build generates them); no inline width.
   A `sr-only` skip link at the start of `<body>` is flagged controls-overlap at 390 against a top-left menu button.
+- 2026-11-24 [smart-enroll][forms] Re-rendering a tab with `innerHTML` while a field has focus fires its `blur`/`change` mid-render ("node to be removed is no longer a child"): guard the render with a re-entrancy flag. OBModal has no close callback: watch `[data-leave]` / disconnect with a MutationObserver to sync the page (e.g. revert a radio on Cancel).
+- 2026-11-24 [qa][elements] `el-autocomplete` (Tailwind Plus Elements) works as a filtering combobox: `<input>` + `el-options` (`w-(--input-width)`), options `aria-selected:`; listen to the input's `change`. A fresh worktree needs a `node_modules` symlink to the main checkout for the QA tools (playwright-core).
+- 2026-11-24 [discrepancies] Parallel agents all take "next free" DS-number (seven DS-008s on 2026-11-24): grep the sibling worktrees' discrepancies.md first and take a free block.
