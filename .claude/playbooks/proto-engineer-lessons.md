@@ -112,3 +112,6 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   `hover:outline-gray-400` reads as no-hover (give the chevron a `group-hover` tone). Text colour set only on an inner span → dark-low-contrast 1.2: colour the button.
 - 2026-11-23 [tokens][smart-enroll] Progress bars stay class-only with Tailwind v4 fractions (`w-37/100`, browser build generates them); no inline width.
   A `sr-only` skip link at the start of `<body>` is flagged controls-overlap at 390 against a top-left menu button.
+- 2026-11-24 [layout][smart-enroll] `body.h-full` + `pb-*` doesn't add scroll room (content overflows the body box): a fixed demo bar then covers the
+  last control (hover-audit "covered"). Use `min-h-full` on body. code-audit still flags fixed overlays vs content at scroll 0: scope it (`--scope "#se-main"`).
+- 2026-11-24 [smart-enroll] Gate the shell's Next Step from a tab without editing shell.js: `document` click listener in capture phase + stopPropagation; `rerender()` reuses the body element — bind its listeners once (data flag).

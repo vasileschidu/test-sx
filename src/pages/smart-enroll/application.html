@@ -5,6 +5,7 @@
     Not the Hub shell (<app-nav>/<app-topbar>). Logic: smart-enroll/shell.js; File Upload:
     smart-enroll/file-upload.js; data: src/data/smart-enroll.json.
     Spec: wiki/products/smart-enroll/flows/application-shell.md.
+    Tabs: smart-enroll/business-information.js (TCDM-5244).
     Figma [R1] SMART Enroll jLooCmHwqJcYV5p5d8BHnO: 28107:8955 (menu anatomy), 28471:37074 (standard frame).
     Demo: ?status=not-submitted|pending-enrollment-data|pending-approval|approved|declined|suspended, ?tab=<id>.
 -->
@@ -27,12 +28,14 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
     <link rel="stylesheet" href="../../styles/cursor.css" />
     <script src="../../scripts/data-source.js"></script>
+    <script src="../../scripts/onboarding-field.js?v=20261106a" defer></script>
     <script src="../../scripts/onboarding-modal.js?v=20261123mrg" defer></script>
     <script src="../../scripts/shared.js?v=20261123mrg" defer></script>
     <script src="../../scripts/smart-enroll/file-upload.js?v=20261123t1" defer></script>
     <script src="../../scripts/smart-enroll/shell.js?v=20261123t1" defer></script>
+    <script src="../../scripts/smart-enroll/business-information.js?v=20261124t4" defer></script>
   </head>
-  <body class="h-full font-['Inter'] antialiased">
+  <body class="min-h-full font-['Inter'] antialiased">
 
     <!-- Top bar (Figma "Top Menu" 96px: logo · Invite people · avatars · business switcher · Next Step) -->
     <header class="sticky top-0 z-30 border-b border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900">
