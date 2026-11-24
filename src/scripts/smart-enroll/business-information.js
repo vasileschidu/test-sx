@@ -14,11 +14,11 @@
  * one after Next Step (blocked while something is missing) or Submit; errors clear as fields are filled.
  * Values: sessionStorage SmartEnroll.storageKey('business-information') = { <businessId>: model }.
  *
- * Pre-fill: sessionStorage `se_signup_v1` from Speedy Sign up (T3) when present, else the current business in
- * smart-enroll.json. Assumed shape (read defensively, every key optional):
- *   { businessId, business: { legalName|name, legalAddress|address, addressLine2, city, zip|postalCode, state,
- *     structure, phone, email, website, orgIdType, orgIdNumber }, contact: { firstName, lastName, role, email, phone } }
- * `business` applies to the business whose id is `businessId` (or to the current one when there is no id).
+ * Pre-fill: sessionStorage `se_signup_v1` from Speedy Sign up (T3) when present, else smart-enroll.json.
+ *   { version: 1, prefill: { legalName, legalAddress, country, city, state, zip, email, phone },
+ *     contact: { firstName, lastName, role, email, phone }, business, match, manualReview, … }
+ * `prefill` (else `business`) fills the company fields of the first business (the one Sign up created / matched);
+ * `contact` fills Applicant Information. Missing keys fall back to smart-enroll.json.
  */
 (function () {
   "use strict";
@@ -215,21 +215,37 @@
   function prefill() {
     var biz = currentBusiness();
     var s = signup();
-    var sb = s && s.business && (!s.businessId || s.businessId === biz.id) ? s.business : null;
-    var src = sb || biz;
-    var addr = splitAddress(src.legalAddress || src.address);
+    // Speedy Sign up (T3) `prefill` = the business it created / matched: the first business of the list.
+    var first = ((data && data.businesses) || [])[0] || {};
+    var sp = s && (s.prefill || s.business);
+    var sb = sp && typeof sp === "object" && biz.id === first.id ? sp : null;
+    var addr = splitAddress(biz.legalAddress);
     if (sb) {
-      // Speedy Sign up Step 1 keeps the address parts apart.
-      if (sb.address && (sb.city || sb.zip || sb.postalCode)) addr = { address: str(sb.address), address2: "", city: "", state: "", zip: "" };
-      addr.address2 = str(sb.addressLine2) || addr.address2;
-      addr.city = str(sb.city) || addr.city;
-      addr.zip = str(sb.zip || sb.zipCode || sb.postalCode) || addr.zip;
-      addr.state = stateName(sb.state) || addr.state;
+      // Step 1 keeps the address parts apart; legalAddress is the street (split it if it carries the rest).
+      var street = splitAddress(sb.legalAddress);
+      var whole = street.city !== "";
+      addr = {
+        address: whole ? street.address : str(sb.legalAddress),
+        address2: whole ? street.address2 : "",
+        city: str(sb.city) || street.city,
+        zip: str(sb.zip) || street.zip,
+        state: stateName(sb.state) || street.state,
+      };
     }
+    // Sign up doesn't ask structure, website or organization ID: those stay from smart-enroll.json.
+    var src = {
+      legalName: (sb && sb.legalName) || biz.legalName || biz.name,
+      phone: (sb && sb.phone) || biz.phone,
+      email: (sb && sb.email) || biz.email,
+      structure: biz.structure,
+      website: biz.website,
+      orgIdType: biz.orgIdType,
+      orgIdNumber: biz.orgIdNumber,
+    };
     return {
-      legalName: str(src.legalName || src.name || biz.legalName),
+      legalName: str(src.legalName),
       referenceId: "",
-      structure: pick(STRUCTURES, src.structure || (sb ? biz.structure : "")),
+      structure: pick(STRUCTURES, src.structure),
       stockSymbol: "",
       address: addr.address,
       address2: addr.address2,
@@ -241,8 +257,8 @@
       website: stripScheme(src.website),
       csEmail: "",
       csPhone: "",
-      orgIdType: pick(ORG_ID_TYPES, src.orgIdType || (sb ? biz.orgIdType : "")),
-      orgIdNumber: str(src.orgIdNumber || (sb ? biz.orgIdNumber : "")),
+      orgIdType: pick(ORG_ID_TYPES, src.orgIdType),
+      orgIdNumber: str(src.orgIdNumber),
       dba: "",
       dbaName: "",
       files: { icon: [], logo: [], dbaStatement: [] },
