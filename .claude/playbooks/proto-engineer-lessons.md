@@ -112,3 +112,5 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   `hover:outline-gray-400` reads as no-hover (give the chevron a `group-hover` tone). Text colour set only on an inner span → dark-low-contrast 1.2: colour the button.
 - 2026-11-23 [tokens][smart-enroll] Progress bars stay class-only with Tailwind v4 fractions (`w-37/100`, browser build generates them); no inline width.
   A `sr-only` skip link at the start of `<body>` is flagged controls-overlap at 390 against a top-left menu button.
+- 2026-11-24 [smart-enroll][qa] A page-wide horizontal overflow with no element past the viewport = an `sr-only` (absolute) child inside a scroll container that is not `relative` (tab status text in the tablist): add `relative` to the container. Audit a state-dependent tab with `--init tools/ui-qa/init/<seed>.js` and a `?tab=` page URL; run qa with `SX_BASE=http://localhost:<port>` on a non-default port.
+- 2026-11-24 [forms] A grid trigger with `truncate` content needs `grid-cols-[minmax(0,1fr)]` (not `grid-cols-1`) + `min-w-0`, else the selected text widens the column; give the button a `title` for the clipped text.
