@@ -11,7 +11,7 @@
  * Needs: data-source.js, onboarding-modal.js (OBModal, add-on remove confirm), shared.js (data-tooltip,
  * showGlobalTopToast), @tailwindplus/elements (business switcher, demo status select). The tabs load their own helpers
  * (e.g. file-upload.js for Business Information).
- * Demo status switcher: [data-se-demo] in the left panel under the status box (drawer below 1024); ?status=<id> too.
+ * Demo status switcher: floating bar bottom-right (#se-demo-bar, prototype only); ?status=<id> too.
  * Card heading: tab.cardTitle || tab.title (smart-enroll.json); the tab strip and prev/next always use tab.title.
  *
  * API (window.SmartEnroll) — for the tab tasks (T2+):
@@ -698,10 +698,13 @@ window.SmartEnroll = (function () {
 
   /* ---------- demo status switcher ---------- */
 
-  // In the left panel under the status box (T1 spec), so it never covers the card. Dashed box = demo-only control.
+  // Floating bottom-right demo control (prototype only).
   function renderDemo() {
-    var mount = refs.panel.querySelector("[data-se-demo]");
-    if (!mount) return;
+    var bar = document.createElement("div");
+    bar.id = "se-demo-bar";
+    bar.setAttribute("role", "region");
+    bar.setAttribute("aria-label", "Demo controls");
+    bar.className = "fixed right-4 bottom-4 z-20 flex items-center gap-2 rounded-lg bg-white py-1.5 pr-1.5 pl-3 shadow-lg ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-white/10";
     var opts = (state.data.statuses || []).map(function (s) {
       return '<el-option value="' + esc(s.id) + '" class="group/option relative block cursor-default py-2 pr-9 pl-3 text-gray-900 select-none focus:bg-blue-600 focus:text-white focus:outline-hidden dark:text-white dark:focus:bg-blue-500">' +
         '<span class="block truncate font-normal group-aria-selected/option:font-semibold">' + esc(s.label) + "</span>" +
@@ -709,16 +712,19 @@ window.SmartEnroll = (function () {
         '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" /></svg></span>' +
         "</el-option>";
     }).join("");
-    mount.innerHTML =
-      '<label for="se-demo-status-btn" class="type-label-small text-tertiary">Demo status</label>' +
-      '<el-select id="se-demo-status" name="se-demo-status" value="' + esc(state.status) + '" class="block w-full">' +
+    bar.innerHTML =
+      '<label for="se-demo-status-btn" class="type-label-small text-tertiary"><span class="sr-only sm:not-sr-only">Demo status</span><span aria-hidden="true" class="sm:hidden">Demo</span></label>' +
+      '<el-select id="se-demo-status" name="se-demo-status" value="' + esc(state.status) + '" class="block w-60">' +
       '<button type="button" id="se-demo-status-btn" class="' + SELECT_TRIGGER + '">' +
       '<el-selectedcontent class="col-start-1 row-start-1 flex items-center gap-2 pr-6 truncate text-gray-900 dark:text-white"></el-selectedcontent>' +
       '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 group-hover/select:text-gray-700 sm:size-4 dark:text-gray-400 dark:group-hover/select:text-gray-200"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
       "</button>" +
-      '<el-options anchor="bottom start" popover class="max-h-72 w-(--button-width) overflow-auto rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] transition transition-discrete data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-100 data-leave:ease-in motion-reduce:transition-none sm:text-sm dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
+      '<el-options anchor="top end" popover class="max-h-72 w-(--button-width) overflow-auto rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] transition transition-discrete data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-100 data-leave:ease-in motion-reduce:transition-none sm:text-sm dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
       opts + "</el-options></el-select>";
-    var select = mount.querySelector("el-select");
+    document.body.appendChild(bar);
+    // Room under the card so the fixed bar never covers the footer.
+    document.body.classList.add("pb-20");
+    var select = bar.querySelector("el-select");
     select.addEventListener("change", function () {
       if (select.value === state.status) return;
       setStatus(select.value);
