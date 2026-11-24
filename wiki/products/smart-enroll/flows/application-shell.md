@@ -41,7 +41,8 @@ SMART Hub logo · **Invite people** (+ info icon) · avatars of people on the ap
   (its tabs, its Ownership/Connectors extras) is deleted. Cancel keeps it.
 
 ## Main card and tabs
-Card header: tab title + description + Invite people + avatars. Footer: ‹ previous tab / next tab ›.
+Card header: card title (the Figma heading, longer than the tab label on some tabs: Beneficial Ownership,
+Connections for Integration, Business and Financial Information, Cross Border Transactions) + description + Invite people + avatars. Footer: ‹ previous tab / next tab ›.
 Each tab has a status icon: ✓ complete, spinner = in progress, empty = not started.
 
 | Tab | Shown when | Page |
@@ -59,7 +60,7 @@ Each tab has a status icon: ✓ complete, spinner = in progress, empty = not sta
 Optional fields don't count. A tab is ✓ when all its required fields are filled and valid.
 
 ## Statuses (D-12)
-Set by compliance in the back office. The prototype simulates them with a demo switcher.
+Set by compliance in the back office. The prototype simulates them with a demo switcher in the left panel, under the status box (also `?status=<id>`).
 The application is **editable only before submission and in Pending enrollment data**; every other status is read-only.
 
 | Status | Colour | Status box text | Figma |

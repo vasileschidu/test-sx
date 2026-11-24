@@ -606,31 +606,8 @@ window.SmartEnrollConnectors = (function () {
     return wide.dialog;
   }
 
-  /**
-   * OBModal's Tab trap takes the last <button> even when it is disabled (Continue / Save before a choice), so Tab
-   * from the last enabled control left the dialog. This keeps the loop on enabled controls; it runs before
-   * OBModal's document listener, which then finds nothing to do.
-   */
-  function guardTrap(backdrop) {
-    backdrop.addEventListener("keydown", function (event) {
-      if (event.key !== "Tab") return;
-      var dialog = backdrop.querySelector("[data-ob-modal-dialog]");
-      var list = Array.prototype.filter.call(
-        dialog.querySelectorAll('a[href], button, input, textarea, [tabindex="0"]'),
-        function (el) { return !el.disabled && el.offsetParent !== null && !(el.type === "radio" && !el.checked && dialog.querySelector('input[name="' + el.name + '"]:checked')); }
-      );
-      if (!list.length) return;
-      var first = list[0];
-      var last = list[list.length - 1];
-      var active = document.activeElement;
-      if (event.shiftKey && (active === first || active === dialog)) { event.preventDefault(); last.focus(); }
-      else if (!event.shiftKey && active === last) { event.preventDefault(); first.focus(); }
-    });
-  }
-
   // Esc inside an open el-select list closes the list only (OBModal listens for Esc on document; lessons 2026-11-18).
   function guardSelectEsc(backdrop) {
-    guardTrap(backdrop);
     var listOpen = false;
     backdrop.addEventListener("keydown", function (event) {
       if (event.key !== "Escape") return;

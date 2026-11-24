@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "_comment": "SMART Enroll fake data (TCDM-5241). Every name, number and address is invented. Shell: src/scripts/smart-enroll/shell.js. Spec: wiki/products/smart-enroll/flows/application-shell.md.",
+  "_comment": "SMART Enroll fake data (TCDM-5241). tabs[].cardTitle = card heading when Figma's is longer than the tab label. Every name, number and address is invented. Shell: src/scripts/smart-enroll/shell.js. Spec: wiki/products/smart-enroll/flows/application-shell.md.",
   "support": {
     "phone": "800-890-3128",
     "email": "support@smart-hub.com",
@@ -32,6 +32,45 @@
       "website": "www.northwind-garden.example",
       "orgIdType": "Business Number",
       "orgIdNumber": "5183920041"
+    },
+    {
+      "id": "biz_harbor",
+      "name": "Harbor Point Bakery",
+      "legalName": "Harbor Point Bakery LLC",
+      "structure": "Limited Liability Company (LLC)",
+      "country": "United States",
+      "legalAddress": "41 Wharf Street, Suite 2, Mystic, CT 06355",
+      "phone": "+1 (860) 555-0163",
+      "email": "admin@harbor-point.example",
+      "website": "www.harbor-point.example",
+      "orgIdType": "Business Number",
+      "orgIdNumber": "816037418"
+    },
+    {
+      "id": "biz_cedar",
+      "name": "Cedar Ridge Organic Foods",
+      "legalName": "Cedar Ridge Organic Foods Inc.",
+      "structure": "Corporation",
+      "country": "United States",
+      "legalAddress": "2300 Ridgeway Road, Boulder, CO 80301",
+      "phone": "+1 (303) 555-0124",
+      "email": "finance@cedar-ridge.example",
+      "website": "www.cedar-ridge.example",
+      "orgIdType": "Business Number",
+      "orgIdNumber": "692730137"
+    },
+    {
+      "id": "biz_lumen",
+      "name": "Lumen Flower Studio",
+      "legalName": "Lumen Flower Studio LLC",
+      "structure": "Limited Liability Company (LLC)",
+      "country": "United States",
+      "legalAddress": "715 Juniper Lane, Austin, TX 78704",
+      "phone": "+1 (512) 555-0186",
+      "email": "hello@lumen-flowers.example",
+      "website": "www.lumen-flowers.example",
+      "orgIdType": "Business Number",
+      "orgIdNumber": "502568093"
     }
   ],
   "applicant": {
@@ -145,6 +184,7 @@
     {
       "id": "ownership",
       "title": "Ownership",
+      "cardTitle": "Beneficial Ownership",
       "description": "Please provide information on all owners of the business.",
       "required": 6,
       "filled": 0
@@ -152,6 +192,7 @@
     {
       "id": "financial",
       "title": "Financial",
+      "cardTitle": "Business and Financial Information",
       "description": "Financial details for Merchant Services.",
       "addon": "merchant",
       "required": 8,
@@ -160,6 +201,7 @@
     {
       "id": "transactional",
       "title": "Transactional",
+      "cardTitle": "Cross Border Transactions",
       "description": "Give us a few details on the nature of your cross-border transactions and expected volume split by foreign currencies.",
       "addon": "cross-border",
       "required": 5,
@@ -176,6 +218,7 @@
     {
       "id": "connectors",
       "title": "Connectors",
+      "cardTitle": "Connections for Integration",
       "description": "Connect your AP/AR data source and your bank accounts.",
       "required": 0,
       "filled": 0
@@ -200,12 +243,5 @@
   "bankAccounts": [
     { "id": "ba_chk_4821", "name": "Pacific Coast Bank Checking", "last4": "4821" },
     { "id": "ba_sav_7390", "name": "Pacific Coast Bank Savings", "last4": "7390" }
-  ],
-  "uploadDemo": {
-    "label": "Business or Service License",
-    "description": "A current license for your business or the service you provide. You can add more than one file.",
-    "accept": ".pdf,.png,.jpg,.jpeg",
-    "acceptLabel": "PDF, PNG, JPG up to 8MB",
-    "maxSizeMb": 8
-  }
+  ]
 }
