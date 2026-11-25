@@ -2,7 +2,7 @@
 title: SMART Enroll — Submission and authorized signer
 type: flow
 status: draft
-last_reviewed: 2026-11-18
+last_reviewed: 2026-11-24
 product: smart-enroll
 area: submission
 version: "R1"
@@ -45,6 +45,28 @@ Submit disabled, the applicant can still edit. The signer **does not sign in** �
 3. E-Sign Consent → type First and Last Name → **Confirm Acceptance**.
 4. "Acknowledgement Complete" — Status Completed (Figma typo "Competed" fixed), Signed by, Confirmed at.
 
-After signing, the applicant's Step 3 shows "Signed by <name> on <date>" and they can submit. The same signer flow serves the
-Merchant Services BlueSnap terms ([merchant-services.md](merchant-services.md)).
-TODO(confirm): link expiry and resend; prototype: Resend from the status box, no expiry.
+**Signing completes the application** (TCDM-5251 brief, 2026-11-24): once the signer confirms, the application goes to
+**Pending Approval** on its own — the applicant does not submit again. (The earlier draft said the applicant's Step 3 shows
+"Signed by <name> on <date>" and they submit; changed with the T11 brief — TODO(confirm) with product.) The same signer flow
+serves the Merchant Services BlueSnap terms ([merchant-services.md](merchant-services.md)).
+TODO(confirm): link expiry and resend; prototype: Resend from the status box, no expiry; a new request voids the previous link.
+
+## Prototype (T11, TCDM-5251)
+- Code: `src/scripts/smart-enroll/submission.js` (application + signer page), `src/pages/smart-enroll/sign.html`; components skill
+  "SMART Enroll Submission". Discrepancies DS-032 … DS-036.
+- Blocker lists the incomplete tabs (link + "N required fields missing"; Connectors excluded, D-13) instead of Figma's illustration.
+- Step 1 is skipped when every add-on is added and Connectors is complete (the stepper still reads "Step 2 of 4"). ⊕ adds the add-on
+  and opens its first tab. Connectors actions (Validate Connection, Add bank account, Connect a data source) close the dialog and open
+  the Connectors tab.
+- Step 2 accordions are a read-only summary per tab (description list) + **Edit** — not the embedded form drawn in 28676:132706.
+- Step 3: "Provide additional details" and "Send to an authorized signatory" open **in place** inside the Submit dialog (one dialog
+  at a time); Cancel returns to Step 3 with the previous answer. Review opens the document in a new tab, then the row shows its
+  checkbox. **Confirm** needs details + DDA + both terms → Step 4 and status **Pending Approval**.
+- **No** → Send → "Request sent" (TODO(confirm) copy) with the demo link; the left panel shows the amber **Waiting for signature**
+  box (Resend, "Open the email (demo)") and Next Step on the last tab is `aria-disabled` with the reason as tooltip.
+- Signer page: `sign.html?token=<token>` (`&view=email` = the demo email). The review box shows a snapshot of the application
+  taken when the request was sent + the E-Sign Consent text (TODO(confirm) copy; Figma shows a Terms of Use document). A used or
+  unknown token shows "This link has expired".
+- State: localStorage `se_sign_v1` (shared by the applicant's tab and the signer's tab, so the applicant's tab turns Pending Approval
+  as soon as the signer confirms), sessionStorage `se_submission_v1` (Step 3 answers), status via the shell (`se_status_v1`).
+  Contributors (`?role=contributor`) still cannot submit (T10).

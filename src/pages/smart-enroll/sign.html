@@ -1,0 +1,117 @@
+<!--
+  @file smart-enroll/sign.html
+  @description SMART Enroll authorized signer page (TCDM-5251, T11; D-2). Secure single-use link, no sign-in.
+    The applicant answered "No, send to an authorized signer" in the Submit modal (Step 3); the signer opens
+    sign.html?token=<token> from the email "Action Required: Sign the Application".
+    Views (rendered by smart-enroll/submission.js):
+      ?view=email  demo of the email (Figma 29624:12852) with "Review and Acknowledge" → the review view
+      review       "Review & Sign Application": read-only summary + E-Sign Consent → Confirm (Figma 29624:11990 / 12117)
+      form         "Agreement was confirmed" + First / Last Name → Confirm Acceptance (29624:12245 / 12407 / 12569)
+      done         "Acknowledgement Complete": Status Completed, Signed by, Confirmed at (29624:12732; Figma typo "Competed" fixed)
+      expired      unknown, cancelled or already used link (pattern of sx-enroll/sign-agreement.html)
+    The request lives in localStorage `se_sign_v1` (shared with the applicant's tab, which turns the application into
+    Pending Approval when the signer completes). Spec: wiki/products/smart-enroll/flows/submission.md.
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Review &amp; Sign Application · SMART Enroll</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="../../scripts/theme-init.js?v=20261123mrg"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:where(.dark, .dark *));
+    </style>
+    <script src="../../scripts/tailwind-theme.js"></script>
+    <script src="../../scripts/design-tokens.js"></script>
+    <link rel="stylesheet" href="../../styles/cursor.css" />
+    <script src="../../scripts/onboarding-field.js?v=20261124t6" defer></script>
+    <script src="../../scripts/shared.js?v=20261123mrg" defer></script>
+    <script src="../../scripts/smart-enroll/submission.js?v=20261124t11" defer></script>
+  </head>
+  <body data-se-sign class="min-h-full bg-white font-['Inter'] antialiased lg:bg-gray-100 dark:bg-gray-900 dark:lg:bg-gray-950">
+    <!-- Demo only: the email the signer receives (Figma 29624:12852, without the mail client around it) -->
+    <div data-sign-email hidden class="flex min-h-screen w-full flex-col items-center gap-4 bg-gray-100 px-4 py-8 sm:py-12 dark:bg-gray-950">
+      <p class="w-full max-w-150 rounded-md border border-dashed border-gray-300 px-3 py-2 type-caption text-tertiary dark:border-white/15">Demo: the email the authorized signer receives. Its button opens the secure link.</p>
+      <article aria-labelledby="se-email-subject" class="w-full max-w-150 overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+        <header class="flex flex-col gap-1 border-b border-gray-200 px-6 py-4 dark:border-white/10">
+          <h1 id="se-email-subject" class="type-title-card text-default">Action Required: Sign the Application</h1>
+          <p class="type-caption text-tertiary">SMART Enroll &lt;notifications@smartenroll.com&gt; · To: <span data-sign-email-to></span></p>
+        </header>
+        <div class="flex flex-col gap-6 px-6 py-8 sm:px-18">
+          <img src="../../assets/smart-enroll/sign-email-hero.png" alt="" width="456" height="160" class="h-auto w-full rounded-md" />
+          <div class="flex flex-col gap-6">
+            <p class="type-body-large text-default">Hi <strong data-sign-email-signer class="font-semibold"></strong>,</p>
+            <p class="type-body-large text-secondary"><strong data-sign-email-from class="font-semibold text-default"></strong> has delegated you to review and acknowledge the application as part of our company's enrollment for SMART Hub.</p>
+            <div data-sign-email-note hidden class="flex flex-col gap-1 rounded-md bg-gray-50 px-5 py-4 dark:bg-white/5">
+              <p class="type-caption text-tertiary">Note</p>
+              <p data-sign-email-note-text class="type-body-large text-default"></p>
+            </div>
+            <div>
+              <a data-sign-email-cta href="#" class="inline-flex items-center rounded-full bg-blue-600 px-6 py-3.5 type-button-large text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-400">Review and Acknowledge</a>
+            </div>
+            <p class="type-body text-tertiary">If you have any questions or concerns, please reach out to <span data-sign-email-contact class="text-default"></span></p>
+          </div>
+        </div>
+        <footer class="flex flex-col items-center gap-4 bg-gray-100 px-6 py-8 text-center dark:bg-white/5">
+          <p class="type-caption text-tertiary">© 2026 Transcard Payments. All Rights Reserved.<br />1010 Market Street, Suite 400, Chattanooga, TN 37402, (423) 553-5200</p>
+          <div class="flex items-center gap-1">
+            <img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-4.5" />
+            <span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span>
+            <img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16 dark:invert" />
+          </div>
+        </footer>
+      </article>
+    </div>
+
+    <!-- Review & sign (valid link) -->
+    <div data-sign-page hidden class="mx-auto flex min-h-screen w-full max-w-5xl flex-col bg-white dark:bg-gray-900">
+      <main id="se-sign-main" class="mx-auto flex w-full max-w-148 flex-1 flex-col gap-6 px-4 pt-10 pb-10 lg:px-0 lg:pt-14">
+        <img src="../../assets/smart-enroll/sign-hero.png" alt="" width="592" height="148" class="h-auto w-full rounded-2xl" />
+        <div class="flex w-full flex-col gap-2">
+          <h1 class="type-title-page text-default">Review &amp; Sign Application</h1>
+          <p class="type-description text-tertiary">You've been designated as the authorized signer to acknowledge the Transcard and its agents to investigate and access the business and credit information, as well as records of the company, for purposes related to payment initiation and integrated banking services.</p>
+        </div>
+        <!-- Document / sign form / acknowledgement: rendered by submission.js -->
+        <div data-sign-panel aria-live="polite" class="flex flex-col"></div>
+        <!-- Document step only: Confirm (full-width CTA) -->
+        <div data-sign-actions hidden class="mt-auto flex pt-6">
+          <button type="button" data-sign-confirm class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-blue-600 px-3.5 py-2.5 type-button-large text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-400 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">Confirm</button>
+        </div>
+      </main>
+
+      <!-- Footer (application.html footer + E-Sign Consent, Figma 29624:11990) -->
+      <footer class="flex flex-col items-center justify-center gap-3 px-4 py-6 sm:flex-row sm:gap-4">
+        <div class="flex items-center gap-1">
+          <img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-4.5" />
+          <span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span>
+          <img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16 dark:invert" />
+        </div>
+        <span aria-hidden="true" class="hidden h-5 w-px bg-gray-200 sm:block dark:bg-white/10"></span>
+        <div class="flex flex-wrap items-center justify-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+          <a href="https://smart-enroll.com/terms-of-use/EN" target="_blank" rel="noopener noreferrer" class="rounded-sm transition-colors hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:text-white dark:focus-visible:outline-blue-400">Terms of Use<span class="sr-only"> (opens in a new tab)</span></a>
+          <span aria-hidden="true">•</span>
+          <a href="https://smart-enroll.com/privacy-policy/EN" target="_blank" rel="noopener noreferrer" class="rounded-sm transition-colors hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:text-white dark:focus-visible:outline-blue-400">Privacy Policy<span class="sr-only"> (opens in a new tab)</span></a>
+          <span aria-hidden="true">•</span>
+          <!-- TODO(confirm) E-Sign Consent URL: not in Figma; the consent text is also in the review box. -->
+          <a href="https://smart-enroll.com/e-sign-consent/EN" target="_blank" rel="noopener noreferrer" class="rounded-sm transition-colors hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:text-white dark:focus-visible:outline-blue-400">E-Sign Consent<span class="sr-only"> (opens in a new tab)</span></a>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Invalid / used link (same card as sx-enroll/sign-agreement.html) -->
+    <main data-sign-expired hidden class="flex min-h-screen w-full items-center justify-center bg-gray-100 px-4 py-12 dark:bg-gray-950">
+      <div role="status" class="flex w-full max-w-sm flex-col items-center gap-3 rounded-lg bg-white p-6 text-center shadow-xs dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+        <div class="flex size-12 items-center justify-center rounded-full bg-red-50 dark:bg-red-500/10">
+          <img src="../../assets/onboarding/icon-x-circle-red.svg" alt="" width="24" height="24" class="size-6" />
+        </div>
+        <h1 class="type-title-small text-default">This link has expired</h1>
+        <p class="type-description text-tertiary">This signing link is no longer valid. Ask the applicant to send you a new request to review and sign the application.</p>
+      </div>
+    </main>
+  </body>
+</html>
