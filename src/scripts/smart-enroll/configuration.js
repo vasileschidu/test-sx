@@ -96,7 +96,7 @@
       '<div class="flex min-w-0 gap-4">' +
       '<img src="' + LOGO + '" alt="" width="30" height="30" class="mt-0.5 size-8 shrink-0" />' +
       '<div class="flex min-w-0 flex-col gap-1">' +
-      '<h2 id="se-cfg-title" tabindex="-1" class="type-title-section text-default focus:outline-none">SMART Exchange Payment Preferences</h2>' +
+      '<h2 id="se-cfg-title" tabindex="-1" class="text-2xl/8 font-semibold text-default focus:outline-none">SMART Exchange Payment Preferences</h2>' +
       '<p class="type-description text-tertiary">SMART Exchange is an option you can enable for instant payments. <a href="https://www.transcard.com/support" target="_blank" rel="noopener noreferrer" class="rounded-sm font-medium text-blue-600 hover:text-blue-700 ' + FOCUS + ' dark:text-blue-400 dark:hover:text-blue-300">What is SMART Exchange?<span class="sr-only"> (opens in a new tab)</span></a></p>' +
       "</div></div>" +
       '<div class="flex shrink-0 items-center gap-4 sm:gap-6">' +

@@ -145,3 +145,8 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-24 [smart-enroll][storage] A demo link opened with `target=_blank rel=noopener` gets an empty sessionStorage: state the other tab must read (signer request) goes in localStorage, and the first tab follows with `window` `storage` events (fires only in the *other* tabs). Persist the outcome through the shell (setStatus → sessionStorage) so a reload keeps it.
 - 2026-11-24 [dialogs][OBModal] Figma "second dialog over the first" (Provide additional details over Submit): OBModal is one dialog at a time — swap header/body/footer in place (connectors `wideDialog` pattern), Cancel re-renders the step from saved state (reverts the radio). Log it as a DS row.
 - 2026-11-24 [qa][dialogs] Modal sweep script (`hover` each control, dark bg luminance, 30×Tab, Esc, radius 8px): run with `reducedMotion: "reduce"` so OBModal closes instantly; the blue primary `dark:hover:bg-blue-400` trips a naive "light hover" luminance check — that's the accepted Tailwind dark primary.
+- 2026-11-25 [figma][smart-enroll] Master component sets in a second file ("SE (In Progress)") can be older than the R1 frame the PO points at
+  (blue vs amber status box, Added=On border): follow the given frame, log the drift (DS-037). Without use_figma, `get_design_context` on a
+  component SET returns every variant's classes in one call — cheapest way to read Default/Hover/Focus fills.
+- 2026-11-25 [assets][figma] Off-palette Figma gradients (Gradient/Add-on/*) → build a small SVG asset (gradient circle + downloaded white logomark),
+  never arbitrary hex classes. A Figma "24/32 title" check: `get_metadata` text box height (36 = 30/36, 40 = 36/40) before changing classes.

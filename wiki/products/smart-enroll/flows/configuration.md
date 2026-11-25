@@ -34,4 +34,4 @@ Exchange. If no values are entered, all invoices will be eligible." **Save**.
 
 ## Rules
 - The tab counts as complete when it was saved once (toggle off is a valid answer).
-- TODO(confirm): error text for max < min (not drawn); prototype: "Max. invoice amount must be greater than Min. invoice amount."
+- Error text for max < min (not drawn; agent-written copy accepted by the product owner 2026-11-25): "Max. invoice amount must be greater than Min. invoice amount."

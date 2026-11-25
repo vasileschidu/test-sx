@@ -144,7 +144,7 @@
       '<div class="flex flex-col items-center gap-6 border-b border-gray-200 p-8 dark:border-white/10">' +
       (opts.logo || LOGO_SUITE) +
       '<div class="flex flex-col items-center gap-1 text-center">' +
-      '<h1 id="si-title" tabindex="-1" class="type-title-section text-default focus:outline-hidden">' + titleHtml + "</h1>" +
+      '<h1 id="si-title" tabindex="-1" class="text-2xl/8 font-semibold text-default focus:outline-hidden">' + titleHtml + "</h1>" +
       (opts.subtitle ? '<p class="type-description text-tertiary">' + esc(opts.subtitle) + "</p>" : "") +
       "</div></div>"
     );
@@ -492,7 +492,7 @@
     return (
       '<a href="' + opts.href + '" class="group flex flex-col gap-8 rounded-3xl bg-white p-8 text-default shadow-lg ring-1 ring-black/5 transition hover:shadow-xl hover:ring-blue-600/30 active:ring-blue-600/50 ' + FOCUS + ' motion-reduce:transition-none dark:bg-gray-900 dark:shadow-none dark:ring-white/10 dark:hover:bg-gray-800 dark:hover:ring-blue-400/40 dark:active:ring-blue-400/60">' +
       '<div class="flex justify-center">' + LOGO_PALE + "</div>" +
-      '<div class="flex flex-col gap-2"><h2 class="type-title-section text-default">SMART <span class="font-normal">' + opts.product + "</span></h2>" +
+      '<div class="flex flex-col gap-2"><h2 class="text-2xl/8 font-semibold text-default">SMART <span class="font-normal">' + opts.product + "</span></h2>" +
       '<p class="type-description text-tertiary">' + opts.text + "</p></div>" +
       '<span class="flex items-center justify-between gap-2 type-link text-blue-600 group-hover:text-blue-500 dark:text-blue-400 dark:group-hover:text-blue-300">' + opts.action + ICON.arrowUpRight + "</span></a>"
     );
