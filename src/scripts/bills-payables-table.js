@@ -1520,6 +1520,43 @@
     return panel === "source" ? "Source" : "";
   }
 
+  // ── Column header filters (column-filter.js) ──
+  // Only the columns that had a header filter icon before TCDM-5238 (Payee, Source). Same filter set as the
+  // global filter: Apply writes the applied values, then copies them into the global panel's draft.
+  var COLUMN_FILTER_PANELS = { payeeName: "payee", source: "source" }; // column key → filter category
+  var COLUMN_FILTER_LISTS = {
+    payee: { set: "appliedSelectedPayees", wrap: "filterPayeesWrap", search: "Search payee" },
+    source: { set: "appliedSelectedSources", wrap: "filterSourcesWrap" },
+  };
+
+  function isColumnFilterActive(panel) {
+    var list = COLUMN_FILTER_LISTS[panel];
+    return !!(list && state[list.set] && state[list.set].size);
+  }
+
+  function bindColumnFilters() {
+    if (!window.ColumnFilter || !refs.table) return;
+    window.ColumnFilter.bind(refs.table, {
+      isActive: isColumnFilterActive,
+      describe: function (panel) {
+        copyAppliedFiltersToDraft();
+        syncFilterUi();
+        var list = COLUMN_FILTER_LISTS[panel];
+        return {
+          title: getFilterCategoryLabel(panel),
+          search: list.search,
+          options: window.ColumnFilter.optionsFrom(refs[list.wrap]),
+        };
+      },
+      apply: function (panel, values) {
+        state[COLUMN_FILTER_LISTS[panel].set] = new Set(values);
+        copyAppliedFiltersToDraft();
+        state.currentPage = 1;
+        renderAll();
+      },
+    });
+  }
+
   function getVisibleFilterCategories() {
     var visible = {};
     Object.keys(FILTER_CATEGORY_COLUMNS).forEach(function (panel) {
@@ -2876,10 +2913,9 @@
         includeHeader: true,
         columnClass: columnWidthClass,
         headerAddon: function (col) {
-          if (col.key === "payeeName") return tableIcon("filter.svg", 14, 14);
-          if (col.key === "source")
-            return tableIcon("filter-funnel.svg", 14, 14);
-          return "";
+          return COLUMN_FILTER_PANELS[col.key] && window.ColumnFilter
+            ? window.ColumnFilter.icon(false)
+            : "";
         },
       });
     } else {
@@ -3146,6 +3182,7 @@
       refs.filterMenu.style.maxWidth = "";
       refs.filterMenu.style.width = "";
       refs.filterMenu.style.maxHeight = "";
+      if (window.ColumnFilter) window.ColumnFilter.pinPanel(refs.filterMenu, refs.filterBtn);
     }
   }
 
@@ -3315,8 +3352,8 @@
       if (refs.filterPaymentToInput)
         refs.filterPaymentToInput.value =
           state.paymentDateToDraft || formatIsoAsUsInput(state.paymentDateTo);
-      if (refs.filterAmountMinInput) refs.filterAmountMinInput.value = state.amountMin;
-      if (refs.filterAmountMaxInput) refs.filterAmountMaxInput.value = state.amountMax;
+      if (refs.filterAmountMinInput) refs.filterAmountMinInput.value = window.ColumnFilter ? window.ColumnFilter.formatAmount(state.amountMin, true) : state.amountMin;
+      if (refs.filterAmountMaxInput) refs.filterAmountMaxInput.value = window.ColumnFilter ? window.ColumnFilter.formatAmount(state.amountMax, true) : state.amountMax;
       syncFilterCategoryVisibility();
       renderFilterNavBadges();
       applyOpenFilterSearches();
@@ -3455,9 +3492,12 @@
 
     function bindAmountInput(inputEl, field) {
       if (!inputEl) return;
+      // US money display ("1,234.50"); the state keeps the plain number string.
+      var CF = window.ColumnFilter;
+      if (CF) CF.attachAmount(inputEl);
       inputEl.addEventListener("input", function () {
-        inputEl.value = cleanAmountInput(inputEl.value);
-        state[field] = inputEl.value;
+        if (!CF) inputEl.value = cleanAmountInput(inputEl.value);
+        state[field] = CF ? CF.cleanAmount(inputEl.value) : inputEl.value;
         syncFilterApplyButtonState();
       });
     }
@@ -3827,16 +3867,11 @@
     }
 
     function buildHeaderFilterButton(panel, label) {
-      var iconFile = panel === "source" ? "filter-funnel.svg" : "filter.svg";
-      return (
-        '<button type="button" data-column-filter="' +
-        panel +
-        '" aria-label="Filter ' +
-        escapeHtml(label) +
-        '" class="inline-flex size-5 items-center justify-center rounded-sm hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">' +
-        tableIcon(iconFile, 14, 14) +
-        "</button>"
-      );
+      return window.ColumnFilter
+        ? window.ColumnFilter.button(panel, label, isColumnFilterActive(panel), {
+            style: "bills",
+          })
+        : "";
     }
 
     var headerHtml =
@@ -3880,12 +3915,8 @@
           var headerTextClass =
             "text-xs font-medium uppercase tracking-[0.6px] text-gray-500 dark:text-gray-400";
           var alignEnd = col.key === "amount";
-          var filterPanel =
-            col.key === "payeeName"
-              ? "payee"
-              : col.key === "source"
-                ? "source"
-                : "";
+          // Header filter icons: only Payee and Source (TCDM-5238).
+          var filterPanel = COLUMN_FILTER_PANELS[col.key] || "";
           var sortButton = col.sortable
             ? '<button type="button" data-sort-key="' +
               col.key +
@@ -4671,23 +4702,8 @@
           return;
         }
 
-        var columnFilter = e.target.closest("[data-column-filter]");
-        if (columnFilter) {
-          e.stopPropagation();
-          var filterPanel = columnFilter.getAttribute("data-column-filter");
-          if (
-            filterPanel === "payee" ||
-            filterPanel === "source" ||
-            filterPanel === "status" ||
-            filterPanel === "method" ||
-            filterPanel === "failure_reason" ||
-            filterPanel === "initiated_date"
-          ) {
-            if (!state.filterMenuOpen) setFilterMenuOpen(true);
-            setFilterPanel(filterPanel);
-          } else if (!state.filterMenuOpen) setFilterMenuOpen(true);
-          return;
-        }
+        // Header filter icons open their own dropdown (column-filter.js, bound in bindColumnFilters).
+        if (e.target.closest("[data-column-filter]")) return;
 
         var sortBtn = e.target.closest("[data-sort-key]");
         if (sortBtn) {
@@ -4895,6 +4911,7 @@
         initRerunConfirmDialog();
         initScheduledCancelDialog();
         initTableFilterDropdown();
+        bindColumnFilters();
         initManageColumnsModal();
         refreshStickyAction = initStickyAction(refs.table);
         if (initialLoadingTimer) {

@@ -2,7 +2,7 @@
 title: SMART Enroll — overview
 type: product-overview
 status: draft
-last_reviewed: 2026-11-11
+last_reviewed: 2026-11-18
 product: smart-enroll
 layout_family: Enroll
 current_version: "R1"
@@ -25,7 +25,7 @@ The **applicant** of a business that wants SMART Hub (e.g. its CFO). From the R1
 Full details: [suite/integrations.md](../../suite/integrations.md).
 
 ## Pages in this folder
-- [standard.md](standard.md): what the current standard version does
+- [standard.md](standard.md): what the current standard version does (index of the area pages in `flows/`)
 - [changelog.md](changelog.md): history of standard versions
 - [variants/](variants/README.md): client-specific deltas
 
@@ -40,7 +40,7 @@ Source: [R1] SMART Enroll `jLooCmHwqJcYV5p5d8BHnO`. Desktop frames only (1728 wi
   - Sign in / up (email → 6-digit code → Microsoft account → Select Platform: SMART Enroll vs SMART Hub → business switcher).
   - Application tabs: Business Information → Ownership → Connectors → Configuration
     (+ Financial / Business Plan with Merchant Services, + Transactional with Cross-Border).
-  - Submission: a 4-step Submit modal (add-on offer, review, attestation, submit).
+  - Submission: a 4-step Submit modal (add-on offer, review, attestation, submit) + authorized signer flow.
   - Errors: required-field states per tab.
 - **Shell:** top bar (SMART Hub logo, "Invite people" link, avatars, business switcher, "Next Step");
   left panel "Application Progress" (% + bar), status box (Pending enrollment data, Pending Approval, Approved,
@@ -51,11 +51,12 @@ Source: [R1] SMART Enroll `jLooCmHwqJcYV5p5d8BHnO`. Desktop frames only (1728 wi
   screen. TODO(confirm): is that screen the Business Information tab?
 - The status pages (In Development, For Review) are empty; Drafts holds older work.
 
-Open questions: where "Onboarding Information" lives, whether Enroll reuses the User Management invite modal and which
-roles an invitee gets, mobile/tablet plans, Supply Chain Financing scope.
+The open questions from the 2026-11-17 audit are answered as decisions D-1…D-14 in [standard.md](standard.md#decisions-r1)
+(Invite reuses the User Management modal, invitee = Contributor; Supply Chain Financing = "Coming soon"; tablet/mobile derived by us).
 
 ## Code
-- Path in repo:
-  - TODO(confirm): is `src/pages/onboarding/` Enroll, or Exchange supplier onboarding?
-- Figma: [REVIEW] Concept Enroll in Hub [Figma](https://www.figma.com/design/NrJlWBQph0rLI4yKzgktK2) (TODO(confirm) which Enroll file is current; see [figma-files.md](../../design-system/figma-files.md))
+- Path in repo: `src/pages/smart-enroll/` (new, own shell). Not `src/pages/sx-enroll/` (SMART Exchange supplier enrollment)
+  and not `src/pages/onboarding/` (SMART Disburse).
+- Figma (current): [R1] SMART Enroll [Figma](https://www.figma.com/design/jLooCmHwqJcYV5p5d8BHnO/-R1--SMART-Enroll).
+  Older concept: [REVIEW] Concept Enroll in Hub [Figma](https://www.figma.com/design/NrJlWBQph0rLI4yKzgktK2).
 - Module-level source-of-truth files: [design-system/figma-files.md](../../design-system/figma-files.md)

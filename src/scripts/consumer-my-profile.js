@@ -242,17 +242,35 @@
     '</div>';
   }
 
+  // Same motion as the el-dialog pattern (Decline Payment): backdrop fades 300ms ease-out, panel fades +
+  // slides up / scales from 95%; leaving 200ms ease-in. data-closed / data-enter / data-leave are toggled below.
+  var MODAL_SCRIM = 'fixed inset-0 bg-gray-900/75 transition-opacity motion-reduce:transition-none data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in';
+  var MODAL_PANEL_MOTION = ' relative transform transition-all motion-reduce:transition-none data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:data-closed:translate-y-0 sm:data-closed:scale-95';
+  var leavingOverlay = null;
+
+  function motionSteps(overlay, state) {
+    var parts = [overlay.querySelector('[data-mp-modal-scrim]'), overlay.querySelector('form')];
+    parts.forEach(function (el) {
+      if (state === 'enter') { el.setAttribute('data-closed', ''); el.setAttribute('data-enter', ''); }
+      else if (state === 'open') { el.removeAttribute('data-closed'); }
+      else if (state === 'settled') { el.removeAttribute('data-enter'); }
+      else { el.removeAttribute('data-enter'); el.setAttribute('data-leave', ''); el.setAttribute('data-closed', ''); }
+    });
+  }
+
   function openModal(cfg) {
     closeModal(true);
+    if (leavingOverlay) { leavingOverlay.remove(); leavingOverlay = null; }
     var overlay = document.createElement('div');
-    overlay.className = 'fixed inset-0 z-[90] flex items-center justify-center overflow-y-auto bg-gray-900/75 p-4';
+    overlay.className = 'fixed inset-0 z-[90] flex items-center justify-center overflow-y-auto p-4';
     overlay.setAttribute('data-mp-modal-overlay', '');
     overlay.innerHTML =
-      '<form role="dialog" aria-modal="true" aria-labelledby="mp-modal-title" novalidate class="w-full max-w-lg overflow-hidden rounded-[10px] bg-white shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] dark:bg-gray-900">' +
+      '<div data-mp-modal-scrim class="' + MODAL_SCRIM + '"></div>' +
+      '<form role="dialog" aria-modal="true" aria-labelledby="mp-modal-title" novalidate class="w-full max-w-lg overflow-hidden rounded-[10px] bg-white shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] dark:bg-gray-900' + MODAL_PANEL_MOTION + '">' +
         '<div class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">' +
           '<h2 id="mp-modal-title" class="flex-1 text-lg leading-6 font-medium text-gray-900 dark:text-white">' + escapeHtml(cfg.title) + '</h2>' +
-          '<button type="button" data-mp-modal-close aria-label="Close" class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>' +
+          '<button type="button" data-mp-modal-close aria-label="Close" class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>' +
         '</div>' +
         '<div class="flex flex-col gap-4 px-6 pt-4 pb-6">' + cfg.fields.map(modalField).join('') + '</div>' +
         '<div class="flex items-start justify-end gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">' +
@@ -260,7 +278,10 @@
           '<button type="submit" class="' + MODAL_PRIMARY_BTN + '">' + escapeHtml(cfg.submitLabel) + '</button>' +
         '</div>' +
       '</form>';
+    motionSteps(overlay, 'enter');
     document.body.appendChild(overlay);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { motionSteps(overlay, 'open'); }); });
+    setTimeout(function () { motionSteps(overlay, 'settled'); }, 300);
     document.documentElement.style.overflow = 'hidden';
     modalState = { overlay: overlay, cfg: cfg, opener: document.activeElement };
     var first = overlay.querySelector('input');
@@ -272,7 +293,16 @@
 
   function closeModal(silent) {
     if (!modalState) return;
-    modalState.overlay.remove();
+    var gone = modalState.overlay;
+    if (silent || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) gone.remove();
+    else {
+      // Leave 200ms ease-in; state, scroll lock and focus are released at once.
+      leavingOverlay = gone;
+      gone.classList.add('pointer-events-none');
+      gone.setAttribute('aria-hidden', 'true');
+      motionSteps(gone, 'leave');
+      setTimeout(function () { gone.remove(); if (leavingOverlay === gone) leavingOverlay = null; }, 200);
+    }
     document.documentElement.style.overflow = '';
     var opener = modalState.opener;
     modalState = null;
@@ -370,7 +400,7 @@
       if (t.closest('[data-mp-reset]')) { openResetPassword(); return; }
       var contact = t.closest('[data-mp-modal]');
       if (contact) { var parts = contact.getAttribute('data-mp-modal').split(':'); openAlertContactModal(parts[0], parts[1]); return; }
-      if (modalState && (t.closest('[data-mp-modal-close]') || t === modalState.overlay)) closeModal();
+      if (modalState && (t.closest('[data-mp-modal-close]') || t === modalState.overlay || t.hasAttribute('data-mp-modal-scrim'))) closeModal();
     });
     document.addEventListener('submit', function (event) {
       var modalForm = modalState && event.target.closest('[data-mp-modal-overlay] form');

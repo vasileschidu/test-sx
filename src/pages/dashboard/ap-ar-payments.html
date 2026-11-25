@@ -18,7 +18,7 @@
       rel="stylesheet"
     />
 
-    <script src="../../../src/scripts/theme-init.js?v=20261112ic"></script>
+    <script src="../../../src/scripts/theme-init.js?v=20261123mrg"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="../../scripts/tailwind-theme.js"></script>
     <script src="../../../src/scripts/design-tokens.js"></script>
@@ -33,16 +33,16 @@
 
     <script src="../../../src/scripts/sidebar-boot.js?v=20261112cmp"></script>
     <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
-    <script src="../../../src/scripts/app-plans.js?v=20261120ins"></script>
-    <script src="../../../src/scripts/nav-component.js?v=20261120ins"></script>
-    <script src="../../../src/scripts/stp-state.js?v=20261116inp"></script>
-    <script src="../../../src/scripts/app-switch.js?v=20261111sk3"></script>
-    <script src="../../../src/scripts/topbar-component.js?v=20261120ins"></script>
+    <script src="../../../src/scripts/app-plans.js?v=20261123mrg"></script>
+    <script src="../../../src/scripts/nav-component.js?v=20261123mrg"></script>
+    <script src="../../../src/scripts/stp-state.js?v=20261123mrg"></script>
+    <script src="../../../src/scripts/app-switch.js?v=20261123mrg"></script>
+    <script src="../../../src/scripts/topbar-component.js?v=20261123mrg"></script>
     <script src="../../scripts/checkbox-component.js"></script>
     <script src="../../../src/scripts/sidebar.js?v=20261116m2" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
-    <script src="../../../src/scripts/shared.js?v=20261116ae" defer></script>
-    <script src="../../../src/scripts/shell-navigation.js?v=20261120np" defer></script>
+    <script src="../../../src/scripts/shared.js?v=20261123mrg" defer></script>
+    <script src="../../../src/scripts/shell-navigation.js?v=20261123mrg" defer></script>
     <script src="../../../src/scripts/ap-ar-upgrade.js" defer></script>
       <link rel="stylesheet" href="../../styles/checkbox.css" />
   </head>
@@ -198,32 +198,23 @@
         class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent"
       >
         <el-dialog-backdrop
-          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
         ></el-dialog-backdrop>
         <div
           tabindex="0"
           class="flex min-h-full items-center justify-center p-4 focus:outline-none"
         >
           <el-dialog-panel
-            class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-xl transition-all data-closed:translate-y-2 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800"
+            class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:data-closed:translate-y-0 sm:data-closed:scale-95 dark:bg-gray-800"
           >
             <button
               command="close"
               commandfor="ap-ar-trial-dialog"
               type="button"
-              class="absolute right-4 top-4 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-white/10"
+              class="absolute right-4 top-4 rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400"
             >
               <span class="sr-only">Close</span>
-              <svg
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-                class="size-5"
-              >
-                <path
-                  d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"
-                />
-              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
 
             <h3

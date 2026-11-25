@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "_comment": "SMART Enroll Cross-Border Payments add-on copy and FX provider data (TCDM-5249, T9). Text from Figma jLooCmHwqJcYV5p5d8BHnO (Transactional 28603:49485, FX Provider 28603:106195). Provider phone / email are the Figma placeholders. Script: src/scripts/smart-enroll/cross-border.js. Spec: wiki/products/smart-enroll/flows/cross-border.md.",
+  "transactional": {
+    "fields": [
+      { "id": "estimated-count", "label": "Estimated number of transactions for the next 12 months", "kind": "count", "placeholder": "0" },
+      { "id": "average-value", "label": "Average transaction value", "kind": "money", "placeholder": "0.00" },
+      { "id": "highest-value", "label": "Highest transaction value", "kind": "money", "placeholder": "0.00" },
+      { "id": "purpose", "label": "Purpose of Transactions", "kind": "text", "help": "Provide a short description, preferably 1 or 2 sentences." }
+    ],
+    "activities": {
+      "question": "Are you involved in any of the following activities?",
+      "items": ["Dealer of precious stones", "Dealer in weapons", "Dealer in virtual currency", "Controlled substances related", "Are you a financial institution"],
+      "error": "Select Yes or No."
+    }
+  },
+  "fx": {
+    "title": "Cross-Border FX Provider",
+    "text": "Choose one or more preferred FX providers to optimize your cross-border payment experience.",
+    "info": [
+      "Transcard provides the opportunity to connect with multiple cross-border payment providers who will enable you to make payments abroad and in other currencies.",
+      "You'll need to establish a contractual agreement with the selected FX provider.",
+      "You'll need to supply additional information to the FX provider."
+    ],
+    "providers": [
+      {
+        "id": "monex",
+        "name": "Monex",
+        "logo": "Monex",
+        "phone": "+1-888-555-1234",
+        "email": "support@monexusa.com",
+        "website": "https://www.monexusa.com",
+        "linkUrl": "https://www.monexusa.com",
+        "existing": {
+          "title": "Link your existing Monex account with your Transcard account",
+          "text": "If you already have an account please follow these steps:",
+          "steps": [
+            "Please click {here} to link your Monex account to SMART Hub",
+            "Monex will update your entity ID to be able to process payments via SMART Hub",
+            "Once your account is added to SMART Hub, you'll get an email confirmation from Transcard, and we'll let you know when you can start processing cross-border transactions."
+          ]
+        },
+        "new": {
+          "title": "Begin exploring and setting up an account with Monex",
+          "text": "If you don't have an account, kindly proceed by following these steps:",
+          "paragraphs": [
+            "Visit Monex website for more information on their Cross- border capabilities and ways to sign up.",
+            "Once your account has been established with Monex, Transcard will receive confirmation and will complete your cross-border connection.",
+            "You will receive an email confirmation from Transcard confirming when you are able to start processing Cross-border payments."
+          ],
+          "cta": "Get started now",
+          "ctaLink": "Set up with Monex"
+        }
+      }
+    ],
+    "contactTitle": "Contact Details",
+    "disclaimer": "Transcard connects you with [{provider}] for your cross-border needs. We are not a licensed money transmitter and do not provide these services ourselves. By using our platform to connect to these services you acknowledge that these cross-border services are solely provided by [{provider}].",
+    "toast": {
+      "requested": "{provider} request sent. It is now In Progress.",
+      "cancelled": "{provider} request cancelled."
+    }
+  }
+}

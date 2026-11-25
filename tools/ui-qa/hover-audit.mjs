@@ -48,7 +48,7 @@ for (const p of PAGES) {
   const n = await page.evaluate(({ scope, max }) => {
     const vis = (el) => { const cs = getComputedStyle(el); const r = el.getBoundingClientRect(); return cs.visibility !== "hidden" && cs.display !== "none" && +cs.opacity > 0 && r.width > 4 && r.height > 4; };
     const root = (scope && [...document.querySelectorAll(scope)].find(vis)) || document.body;
-    window.__hoverEls = [...root.querySelectorAll("button:not(:disabled), a[href], [role=button], [role=tab], [role=menuitem], el-select > button, label:has(input[type=checkbox]), label:has(input[type=radio])")]
+    window.__hoverEls = [...root.querySelectorAll("button:not(:disabled), a[href], [role=button], [role=tab], [role=menuitem], el-select > button:not(:disabled), label:has(input[type=checkbox]), label:has(input[type=radio])")]
       .filter(vis).filter((el) => !el.closest("[aria-hidden=true]")).slice(0, max);
     return window.__hoverEls.length;
   }, { scope: SCOPE, max: MAX });

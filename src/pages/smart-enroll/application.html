@@ -1,0 +1,153 @@
+<!--
+  @file smart-enroll/application.html
+  @description SMART Enroll application (TCDM-5241, T1 foundation): own shell — top bar, left panel
+    (Application Progress, status box, products, Help from Transcard), main card with tabs.
+    Not the Hub shell (<app-nav>/<app-topbar>). Logic: smart-enroll/shell.js; File Upload:
+    smart-enroll/file-upload.js; data: src/data/smart-enroll.json.
+    Spec: wiki/products/smart-enroll/flows/application-shell.md.
+    Tabs: smart-enroll/business-information.js (TCDM-5244).
+    Figma [R1] SMART Enroll jLooCmHwqJcYV5p5d8BHnO: 28107:8955 (menu anatomy), 28471:37074 (standard frame).
+    Demo: ?status=not-submitted|pending-enrollment-data|pending-approval|approved|declined|suspended, ?tab=<id>.
+-->
+<!doctype html>
+<html lang="en" class="h-full bg-gray-100 dark:bg-gray-950">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Application · SMART Enroll</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="../../scripts/theme-init.js?v=20261123mrg"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:where(.dark, .dark *));
+    </style>
+    <script src="../../scripts/tailwind-theme.js"></script>
+    <script src="../../scripts/design-tokens.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+    <link rel="stylesheet" href="../../styles/cursor.css" />
+    <link rel="stylesheet" href="../../styles/checkbox.css" />
+    <script src="../../scripts/data-source.js"></script>
+    <script src="../../scripts/checkbox-component.js"></script>
+    <script src="../../scripts/onboarding-field.js?v=20261124t6" defer></script>
+    <script src="../../scripts/onboarding-modal.js?v=20261124fix" defer></script>
+    <script src="../../scripts/shared.js?v=20261123mrg" defer></script>
+    <script src="../../scripts/um-store.js?v=20261124t10" defer></script>
+    <script src="../../scripts/um-ui.js?v=20261113sq" defer></script>
+    <script src="../../scripts/um-email.js?v=20261113fg" defer></script>
+    <script src="../../scripts/um-invite.js?v=20261124t10" defer></script>
+    <script src="../../scripts/smart-enroll/file-upload.js?v=20261123t1" defer></script>
+    <script src="../../scripts/smart-enroll/shell.js?v=20261124dmo" defer></script>
+    <!-- Tab scripts: each registers its tab with SmartEnroll.registerTab -->
+    <script src="../../scripts/smart-enroll/invite.js?v=20261124t10" defer></script>
+    <script src="../../scripts/smart-enroll/business-information.js?v=20261124t4" defer></script>
+    <script src="../../scripts/smart-enroll/ownership.js?v=20261124t5" defer></script>
+    <script src="../../scripts/smart-enroll/connectors.js?v=20261124fix" defer></script>
+    <script src="../../scripts/smart-enroll/configuration.js?v=20261124t7" defer></script>
+    <script src="../../scripts/smart-enroll/merchant-services.js?v=20261124t8" defer></script>
+    <script src="../../scripts/smart-enroll/cross-border.js?v=20261124t9" defer></script>
+    <!-- Submission (T11): blockers, Submit modal, authorized signer -->
+    <script src="../../scripts/smart-enroll/submission.js?v=20261124t11" defer></script>
+  </head>
+  <body class="min-h-full font-['Inter'] antialiased">
+
+    <!-- Top bar (Figma "Top Menu" 96px: logo · Invite people · avatars · business switcher · Next Step) -->
+    <header class="sticky top-0 z-30 border-b border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900">
+      <div class="mx-auto flex h-16 max-w-360 items-center gap-3 px-4 sm:gap-4 lg:h-24 lg:px-10">
+        <button type="button" data-se-drawer-open aria-controls="se-panel" aria-expanded="false" class="-ml-1 inline-flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:hidden dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:outline-blue-400">
+          <span class="sr-only">Open application menu</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+        </button>
+        <a href="application.html" class="shrink-0 rounded-md transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">
+          <img src="../../assets/illustrations/SMART%20Hub.svg" width="140" height="35" alt="SMART Hub" class="h-8 w-auto lg:h-12 dark:hidden" />
+          <img src="../../assets/illustrations/SMART%20Hub%20Dark.svg" width="140" height="35" alt="SMART Hub" class="hidden h-8 w-auto lg:h-12 dark:block" />
+        </a>
+        <div class="ml-auto flex min-w-0 items-center gap-4 lg:gap-6">
+          <div data-se-people="top" class="hidden items-center gap-4 xl:flex"></div>
+          <div data-se-business="top" class="hidden min-w-0 sm:block"></div>
+          <button type="button" data-se-next class="inline-flex shrink-0 cursor-pointer items-center rounded-md bg-blue-600 px-3 py-2 text-base font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 aria-disabled:cursor-not-allowed aria-disabled:bg-blue-300 aria-disabled:hover:bg-blue-300 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-400 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 dark:aria-disabled:bg-blue-500/40 dark:aria-disabled:text-white/60 dark:aria-disabled:hover:bg-blue-500/40">Next Step</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="mx-auto flex max-w-360 gap-6 px-2 py-4 sm:px-4 lg:px-10 lg:py-6">
+      <!-- Drawer backdrop (below 1024 only) -->
+      <div data-se-drawer-backdrop aria-hidden="true" class="pointer-events-none fixed inset-0 z-40 bg-gray-900/75 opacity-0 transition-opacity duration-300 ease-out motion-reduce:transition-none data-open:pointer-events-auto data-open:opacity-100 lg:hidden"></div>
+
+      <!-- Left panel: static from 1024, a drawer below -->
+      <aside
+        id="se-panel"
+        aria-label="Application menu"
+        class="invisible fixed inset-y-0 left-0 z-50 flex w-full max-w-sm -translate-x-full flex-col gap-6 overflow-y-auto bg-gray-100 p-4 transition-[translate,visibility] duration-300 ease-out motion-reduce:transition-none data-open:visible data-open:translate-x-0 lg:visible lg:static lg:z-auto lg:w-91 lg:max-w-none lg:shrink-0 lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:transition-none dark:bg-gray-950 lg:dark:bg-transparent"
+      >
+        <div class="flex items-center justify-between lg:hidden">
+          <span class="type-title-modal text-default">Application</span>
+          <button type="button" data-se-drawer-close class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400"><span class="sr-only">Close menu</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
+        </div>
+        <div data-se-business="drawer" class="sm:hidden"></div>
+
+        <div class="flex flex-col gap-6 rounded-lg bg-white p-4 shadow-sm dark:bg-gray-900 dark:shadow-none dark:ring-1 dark:ring-white/10">
+          <!-- Application Progress -->
+          <section aria-labelledby="se-progress-title" class="flex flex-col gap-3">
+            <div class="flex items-center justify-between gap-2">
+              <h2 id="se-progress-title" class="type-title-card text-default">Application Progress</h2>
+              <span data-se-progress-badge class="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-100 px-2 py-0.5 text-xs/4 font-medium text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400">0%</span>
+            </div>
+            <div data-se-progress-bar role="progressbar" aria-labelledby="se-progress-title" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" class="h-2 w-full overflow-hidden rounded-full bg-blue-100 dark:bg-blue-400/15">
+              <div data-se-progress-fill class="h-full w-0 rounded-full bg-blue-600 transition-[width] duration-300 ease-out motion-reduce:transition-none dark:bg-blue-500"></div>
+            </div>
+          </section>
+
+          <!-- Status box (only after the first submission) -->
+          <div data-se-status-box role="status" class="hidden"></div>
+
+
+          <!-- What are you looking to do? -->
+          <section aria-labelledby="se-products-title" class="flex flex-col gap-3 rounded-lg bg-gray-50 p-3 dark:bg-white/5">
+            <h2 id="se-products-title" class="type-label-large text-default">What are you looking to do?</h2>
+            <ul data-se-products role="list" class="flex flex-col gap-3"></ul>
+          </section>
+
+          <!-- Help from Transcard (collapsible) -->
+          <div data-se-help class="flex flex-col gap-2"></div>
+        </div>
+
+        <!-- Footer (same markup as invite/accept.html) -->
+        <div class="flex flex-col items-center gap-2 py-4">
+          <div class="flex items-center gap-1">
+            <img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-4.5" />
+            <span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span>
+            <img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16 dark:invert" />
+          </div>
+          <div class="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+            <a href="https://smart-enroll.com/terms-of-use/EN" target="_blank" rel="noopener noreferrer" class="rounded-sm transition-colors hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:text-white">Terms of Use<span class="sr-only"> (opens in a new tab)</span></a>
+            <span aria-hidden="true">•</span>
+            <a href="https://smart-enroll.com/privacy-policy/EN" target="_blank" rel="noopener noreferrer" class="rounded-sm transition-colors hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:text-white">Privacy Policy<span class="sr-only"> (opens in a new tab)</span></a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main card -->
+      <main id="se-main" tabindex="-1" class="min-w-0 flex-1 focus:outline-none lg:max-w-256">
+        <div class="overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-900 dark:shadow-none dark:ring-1 dark:ring-white/10">
+          <div class="border-b border-gray-200 px-4 sm:px-6 dark:border-white/10">
+            <div data-se-tabs role="tablist" aria-label="Application sections" class="relative -mb-px flex gap-6 overflow-x-auto pt-2 sm:pt-4"></div>
+          </div>
+          <div class="flex flex-col gap-4 border-b border-gray-200 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 dark:border-white/10">
+            <div class="flex min-w-0 flex-col gap-2">
+              <h1 data-se-title class="type-title-section text-default">&nbsp;</h1>
+              <p data-se-description class="type-description text-tertiary"></p>
+            </div>
+            <div data-se-people="card" class="flex shrink-0 items-center gap-4"></div>
+          </div>
+          <div data-se-panels></div>
+          <div class="flex items-center justify-between gap-4 border-t border-gray-200 px-4 py-3 sm:px-6 dark:border-white/10">
+            <div data-se-prev-slot></div>
+            <div data-se-next-slot></div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

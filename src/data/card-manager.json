@@ -1,0 +1,563 @@
+{
+  "smartCards": [
+    {
+      "id": "sc_3204",
+      "last4": "3204",
+      "network": "mastercard",
+      "name": "Corporate Card LTD",
+      "holder": {
+        "name": "ABC Corporation",
+        "address": "1 Chapel Hill Rd\nHeswall, Short Hills\nNJ 07078, US"
+      },
+      "status": "active",
+      "availableBalance": 2950.0,
+      "currentBalance": 23050.0,
+      "currency": "USD",
+      "expires": "2028-05",
+      "createdAt": "2023-04-12T12:28:00",
+      "adminNumber": "12874972394853",
+      "number": "5555 5555 5555 3204",
+      "cvc": "482",
+      "bills": [
+        {
+          "id": "scb_3204_1",
+          "amount": 1250.0,
+          "currency": "USD",
+          "billNumber": "BP-01011",
+          "payeeName": "Red Maple Construction",
+          "paymentType": "Virtual Card",
+          "source": "Sage (ERP)",
+          "dueDate": "2026-10-28",
+          "status": "paid",
+          "statusLabel": "Paid",
+          "details": {
+            "notes": "Paid with the Corporate Card LTD SMART card.",
+            "attachments": [
+              {
+                "name": "invoice_BP-01011.pdf"
+              }
+            ],
+            "activityLog": [
+              {
+                "timestamp": "2026-10-28T09:12:00",
+                "title": "Paid",
+                "description": "Payment for payable id #BP01011 has been paid"
+              },
+              {
+                "timestamp": "2026-10-27T16:40:00",
+                "title": "Initiated",
+                "description": "Payment for payable id #BP01011 has been initiated"
+              }
+            ]
+          }
+        },
+        {
+          "id": "scb_3204_2",
+          "amount": 3480.25,
+          "currency": "USD",
+          "billNumber": "BP-01024",
+          "payeeName": "Northwind Logistics",
+          "paymentType": "Virtual Card",
+          "source": "QuickBooks",
+          "dueDate": "2026-11-05",
+          "status": "paid",
+          "statusLabel": "Paid",
+          "details": {
+            "notes": "Paid with the Corporate Card LTD SMART card.",
+            "attachments": [],
+            "activityLog": []
+          }
+        },
+        {
+          "id": "scb_3204_3",
+          "amount": 760.0,
+          "currency": "USD",
+          "billNumber": "BP-01039",
+          "payeeName": "Bluebird Office Supply",
+          "paymentType": "Virtual Card",
+          "source": "Manual",
+          "dueDate": "2026-11-21",
+          "status": "in_progress",
+          "statusLabel": "In Progress",
+          "details": {
+            "notes": "Payment submitted. Waiting for the supplier to confirm.",
+            "attachments": [
+              {
+                "name": "file01.xml"
+              }
+            ],
+            "activityLog": [
+              {
+                "timestamp": "2026-11-18T10:40:00",
+                "title": "Processing",
+                "description": "Payment for payable id #2345REQ3 is processing"
+              },
+              {
+                "timestamp": "2026-11-18T10:12:00",
+                "title": "Initiated",
+                "description": "Payment for payable id #2345REQ3 has been initiated"
+              }
+            ],
+            "paymentMethodDetails": {
+              "method": "ACH",
+              "fields": [
+                {
+                  "label": "Bank Name",
+                  "value": "Bank AG"
+                },
+                {
+                  "label": "Account Holder Name",
+                  "value": "Bluebird Office Supply LLC"
+                },
+                {
+                  "label": "Routing Number",
+                  "value": "••••8282"
+                },
+                {
+                  "label": "Account Number",
+                  "value": "••••1102"
+                },
+                {
+                  "label": "Address",
+                  "value": "3476 Orphan Road Hayward\nWisconsin 54843, US"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "transactions": [
+        {
+          "id": "TX-90412",
+          "dateTime": "2026-11-05T10:14:00",
+          "merchant": "Northwind Logistics",
+          "amount": 3480.25,
+          "currency": "USD",
+          "status": "Settled",
+          "description": "Freight invoice BP-01024",
+          "externallyAdded": false,
+          "details": {
+            "transactionCode": "00",
+            "responseCode": "00",
+            "responseDescription": "Approved or completed successfully",
+            "merchantCategoryCode": "4214",
+            "transactionType": "Purchase",
+            "merchantLocation": "Newark, NJ, US",
+            "fee": 0.0
+          }
+        },
+        {
+          "id": "TX-90377",
+          "dateTime": "2026-10-28T15:42:00",
+          "merchant": "Red Maple Construction",
+          "amount": 1250.0,
+          "currency": "USD",
+          "status": "Settled",
+          "description": "Invoice BP-01011",
+          "externallyAdded": false,
+          "details": {
+            "transactionCode": "00",
+            "responseCode": "00",
+            "responseDescription": "Approved or completed successfully",
+            "merchantCategoryCode": "1520",
+            "transactionType": "Purchase",
+            "merchantLocation": "Hoboken, NJ, US",
+            "fee": 0.0
+          }
+        },
+        {
+          "id": "TX-90351",
+          "dateTime": "2026-10-20T09:03:00",
+          "merchant": "Card funding",
+          "amount": 5000.0,
+          "currency": "USD",
+          "status": "Settled",
+          "description": "Funds added to the card",
+          "externallyAdded": true,
+          "details": {
+            "transactionCode": "20",
+            "responseCode": "00",
+            "responseDescription": "Approved or completed successfully",
+            "merchantCategoryCode": "6012",
+            "transactionType": "Load",
+            "merchantLocation": "Online",
+            "fee": 0.0
+          }
+        },
+        {
+          "id": "TX-90298",
+          "dateTime": "2026-10-14T18:27:00",
+          "merchant": "Bluebird Office Supply",
+          "amount": 215.4,
+          "currency": "USD",
+          "status": "Declined",
+          "description": "Insufficient funds",
+          "externallyAdded": false,
+          "details": {
+            "transactionCode": "00",
+            "responseCode": "51",
+            "responseDescription": "Insufficient funds",
+            "merchantCategoryCode": "5943",
+            "transactionType": "Purchase",
+            "merchantLocation": "Paramus, NJ, US",
+            "fee": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "sc_5512",
+      "last4": "5512",
+      "network": "visa",
+      "name": "Travel & Expenses",
+      "holder": {
+        "name": "ABC Corporation",
+        "address": "1 Chapel Hill Rd\nHeswall, Short Hills\nNJ 07078, US"
+      },
+      "status": "active",
+      "availableBalance": 0.0,
+      "currentBalance": 0.0,
+      "currency": "USD",
+      "expires": "2027-09",
+      "createdAt": "2024-02-06T09:10:00",
+      "adminNumber": "12874972394861",
+      "number": "4111 1111 1111 5512",
+      "cvc": "317",
+      "bills": [],
+      "transactions": []
+    },
+    {
+      "id": "sc_7781",
+      "last4": "7781",
+      "network": "mastercard",
+      "name": "Marketing Spend",
+      "holder": {
+        "name": "ABC Corporation",
+        "address": "1 Chapel Hill Rd\nHeswall, Short Hills\nNJ 07078, US"
+      },
+      "status": "active",
+      "availableBalance": 12480.5,
+      "currentBalance": 12480.5,
+      "currency": "USD",
+      "expires": "2028-01",
+      "createdAt": "2024-06-19T14:45:00",
+      "adminNumber": "12874972394877",
+      "number": "5555 5555 5555 7781",
+      "cvc": "905",
+      "bills": [
+        {
+          "id": "scb_7781_1",
+          "amount": 4200.0,
+          "currency": "USD",
+          "billNumber": "BP-01052",
+          "payeeName": "Pixel & Press Agency",
+          "paymentType": "Virtual Card",
+          "source": "Sage (ERP)",
+          "dueDate": "2026-11-12",
+          "status": "paid",
+          "statusLabel": "Paid",
+          "details": {
+            "notes": "Paid with the Marketing Spend SMART card.",
+            "attachments": [],
+            "activityLog": []
+          }
+        }
+      ],
+      "transactions": [
+        {
+          "id": "TX-91120",
+          "dateTime": "2026-11-12T11:30:00",
+          "merchant": "Pixel & Press Agency",
+          "amount": 4200.0,
+          "currency": "USD",
+          "status": "Settled",
+          "description": "Invoice BP-01052",
+          "externallyAdded": false,
+          "details": {
+            "transactionCode": "00",
+            "responseCode": "00",
+            "responseDescription": "Approved or completed successfully",
+            "merchantCategoryCode": "7311",
+            "transactionType": "Purchase",
+            "merchantLocation": "New York, NY, US",
+            "fee": 0.0
+          }
+        },
+        {
+          "id": "TX-91088",
+          "dateTime": "2026-11-09T08:55:00",
+          "merchant": "Card funding",
+          "amount": 16680.5,
+          "currency": "USD",
+          "status": "Settled",
+          "description": "Funds added to the card",
+          "externallyAdded": true,
+          "details": {
+            "transactionCode": "20",
+            "responseCode": "00",
+            "responseDescription": "Approved or completed successfully",
+            "merchantCategoryCode": "6012",
+            "transactionType": "Load",
+            "merchantLocation": "Online",
+            "fee": 0.0
+          }
+        },
+        {
+          "id": "TX-91064",
+          "dateTime": "2026-11-03T16:12:00",
+          "merchant": "Event Hall Rentals",
+          "amount": 410.0,
+          "currency": "USD",
+          "status": "Pending",
+          "description": "Deposit",
+          "externallyAdded": false,
+          "details": {
+            "transactionCode": "00",
+            "responseCode": "00",
+            "responseDescription": "Approved or completed successfully",
+            "merchantCategoryCode": "7922",
+            "transactionType": "Purchase",
+            "merchantLocation": "Jersey City, NJ, US",
+            "fee": 2.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "sc_9034",
+      "last4": "9034",
+      "network": "visa",
+      "name": "Vendor Payments Q3",
+      "holder": {
+        "name": "ABC Corporation",
+        "address": "1 Chapel Hill Rd\nHeswall, Short Hills\nNJ 07078, US"
+      },
+      "status": "blocked",
+      "availableBalance": 640.0,
+      "currentBalance": 640.0,
+      "currency": "USD",
+      "expires": "2027-03",
+      "createdAt": "2023-09-01T10:00:00",
+      "adminNumber": "12874972394885",
+      "number": "4111 1111 1111 9034",
+      "cvc": "224",
+      "bills": [
+        {
+          "id": "scb_9034_1",
+          "amount": 640.0,
+          "currency": "USD",
+          "billNumber": "BP-00987",
+          "payeeName": "Harbor Freight Services",
+          "paymentType": "Virtual Card",
+          "source": "Manual",
+          "dueDate": "2026-09-30",
+          "status": "exception",
+          "statusLabel": "Exception",
+          "details": {
+            "notes": "Payment returned by the supplier.",
+            "attachments": [],
+            "activityLog": []
+          }
+        }
+      ],
+      "transactions": [
+        {
+          "id": "TX-88231",
+          "dateTime": "2026-09-30T13:05:00",
+          "merchant": "Harbor Freight Services",
+          "amount": 640.0,
+          "currency": "USD",
+          "status": "Reversed",
+          "description": "Invoice BP-00987",
+          "externallyAdded": false,
+          "details": {
+            "transactionCode": "00",
+            "responseCode": "00",
+            "responseDescription": "Approved or completed successfully",
+            "merchantCategoryCode": "4731",
+            "transactionType": "Purchase",
+            "merchantLocation": "Elizabeth, NJ, US",
+            "fee": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "sc_1127",
+      "last4": "1127",
+      "network": "mastercard",
+      "name": "Office Supplies 2024",
+      "holder": {
+        "name": "ABC Corporation",
+        "address": "1 Chapel Hill Rd\nHeswall, Short Hills\nNJ 07078, US"
+      },
+      "status": "expired",
+      "availableBalance": 0.0,
+      "currentBalance": 0.0,
+      "currency": "USD",
+      "expires": "2026-03",
+      "createdAt": "2024-03-14T08:20:00",
+      "adminNumber": "12874972394893",
+      "number": "5555 5555 5555 1127",
+      "cvc": "671",
+      "bills": [],
+      "transactions": []
+    },
+    {
+      "id": "sc_6620",
+      "last4": "6620",
+      "network": "visa",
+      "name": "Legacy Procurement",
+      "holder": {
+        "name": "ABC Corporation",
+        "address": "1 Chapel Hill Rd\nHeswall, Short Hills\nNJ 07078, US"
+      },
+      "status": "closed",
+      "availableBalance": 0.0,
+      "currentBalance": 0.0,
+      "currency": "USD",
+      "expires": "2027-08",
+      "createdAt": "2022-08-22T11:15:00",
+      "adminNumber": "12874972394901",
+      "number": "4111 1111 1111 6620",
+      "cvc": "538",
+      "bills": [
+        {
+          "id": "scb_6620_1",
+          "amount": 980.0,
+          "currency": "USD",
+          "billNumber": "BP-00412",
+          "payeeName": "Greenfield Maintenance",
+          "paymentType": "Virtual Card",
+          "source": "Sage (ERP)",
+          "dueDate": "2025-12-18",
+          "status": "paid",
+          "statusLabel": "Paid",
+          "details": {
+            "notes": "Paid with the Legacy Procurement SMART card.",
+            "attachments": [],
+            "activityLog": []
+          }
+        }
+      ],
+      "transactions": [
+        {
+          "id": "TX-61002",
+          "dateTime": "2025-12-18T10:40:00",
+          "merchant": "Greenfield Maintenance",
+          "amount": 980.0,
+          "currency": "USD",
+          "status": "Settled",
+          "description": "Invoice BP-00412",
+          "externallyAdded": false,
+          "details": {
+            "transactionCode": "00",
+            "responseCode": "00",
+            "responseDescription": "Approved or completed successfully",
+            "merchantCategoryCode": "7349",
+            "transactionType": "Purchase",
+            "merchantLocation": "Newark, NJ, US",
+            "fee": 0.0
+          }
+        },
+        {
+          "id": "TX-61077",
+          "dateTime": "2026-02-10T09:00:00",
+          "merchant": "Card closed - balance moved",
+          "amount": 1450.0,
+          "currency": "USD",
+          "status": "Settled",
+          "description": "Balance transferred to Secondary Bank Account",
+          "externallyAdded": true,
+          "details": {
+            "transactionCode": "21",
+            "responseCode": "00",
+            "responseDescription": "Approved or completed successfully",
+            "merchantCategoryCode": "6012",
+            "transactionType": "Transfer",
+            "merchantLocation": "Online",
+            "fee": 0.0
+          }
+        }
+      ]
+    }
+  ],
+  "linkedCards": [
+    {
+      "id": "lc_4708",
+      "last4": "4708",
+      "network": "mastercard",
+      "name": "Johnny Anderson",
+      "holder": {
+        "name": "ABC Corporation",
+        "address": "1 Chapel Hill Rd\nHeswall, Short Hills\nNJ 07078, US"
+      },
+      "status": "active",
+      "expires": "2028-01",
+      "createdAt": "2023-12-01T12:28:00",
+      "number": "5555 5555 5555 4708",
+      "cvc": "613",
+      "bills": [
+        {
+          "id": "lcb_4708_1",
+          "amount": 1890.0,
+          "currency": "USD",
+          "billNumber": "BP-01003",
+          "payeeName": "Red Maple Construction",
+          "paymentType": "Credit Card",
+          "source": "Sage (ERP)",
+          "dueDate": "2026-11-02",
+          "status": "paid",
+          "statusLabel": "Paid",
+          "details": {
+            "notes": "Paid from a linked credit card.",
+            "attachments": [],
+            "activityLog": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "lc_2291",
+      "last4": "2291",
+      "network": "visa",
+      "name": "Maria Lopez",
+      "holder": {
+        "name": "ABC Corporation",
+        "address": "1 Chapel Hill Rd\nHeswall, Short Hills\nNJ 07078, US"
+      },
+      "status": "inactive",
+      "expires": "2026-12",
+      "createdAt": "2024-05-20T09:41:00",
+      "number": "4111 1111 1111 2291",
+      "cvc": "840",
+      "bills": []
+    }
+  ],
+  "fundingSources": [
+    {
+      "id": "ba_1010",
+      "type": "bank",
+      "name": "Secondary Bank Account",
+      "bank": "Bank AG",
+      "last4": "1010",
+      "balance": 111921.02
+    },
+    {
+      "id": "ba_2044",
+      "type": "bank",
+      "name": "Operating Account",
+      "bank": "Northwind Bank",
+      "last4": "2044",
+      "balance": 48210.75
+    }
+  ],
+  "statementMonths": [
+    "2026-10",
+    "2026-09",
+    "2026-08",
+    "2026-07",
+    "2026-06",
+    "2026-05"
+  ]
+}

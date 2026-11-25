@@ -6,7 +6,13 @@
  *
  *   UMInvite.open({ email, onDone })        email: prefilled + read-only (6.13, from a
  *                                           "Send Invitation →" row)
- *   UMInvite.showResult(invitation, result, { resent })
+ *   UMInvite.open({ roleIds, title, members, tab, added, onDone })   SMART Enroll "Invite people" (D-14):
+ *                                           roleIds = only these roles are offered, all ticked, no "+ Create Role";
+ *                                           title = header text; members = fn → [{ name, role, status, initials,
+ *                                           color, photo }] adds the Invite / Members tabs; tab = "invite"|"members";
+ *                                           added = sentence on the "Invitation Sent" result instead of "added to
+ *                                           your business user list". Without these the Hub modal is unchanged.
+ *   UMInvite.showResult(invitation, result, { resent, added })
  *                                           result = UMEmail.sendInvite(); when the email was
  *                                           not sent, shows the link (copy / mailto) instead
  *
@@ -22,9 +28,9 @@ window.UMInvite = (function () {
   };
 
   var CLOSE_BUTTON =
-    "inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:focus-visible:outline-blue-400";
+    "rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400";
   var X_ICON =
-    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg>';
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
   var SECONDARY =
     "inline-flex cursor-pointer items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 active:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white/5 dark:text-white dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/10";
   var PRIMARY =
@@ -41,6 +47,15 @@ window.UMInvite = (function () {
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5"><path fill-rule="evenodd" clip-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" /></svg>';
   var ICON_CHEVRON =
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 transition-transform group-aria-expanded:rotate-90 dark:text-gray-500"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+
+  // Underline tabs (same as the Card details page / SMART Enroll tabs).
+  var TAB_BASE =
+    "inline-flex h-10.5 shrink-0 cursor-pointer items-center gap-2 border-b-2 py-2.5 type-label whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400";
+  var TAB_ON = "border-blue-500 text-blue-600 hover:text-blue-700 dark:border-blue-400 dark:text-blue-300 dark:hover:text-blue-200";
+  var TAB_OFF = "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-white/20 dark:hover:text-gray-200";
+  var BADGE = "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs/4 font-medium ";
+  var BADGE_GRAY = BADGE + "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300";
+  var BADGE_AMBER = BADGE + "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400";
 
   var expanded = {}; // permission category id → open
   var opts = {};
@@ -164,6 +179,11 @@ window.UMInvite = (function () {
           '"><span class="sr-only">Close</span>' +
           X_ICON +
           "</button></div>" +
+          '<div id="umi-tabs" hidden class="shrink-0 border-b border-gray-200 px-4 sm:px-6 dark:border-white/10"><div role="tablist" aria-label="Invite people" class="-mb-px flex gap-6">' +
+          '<button type="button" role="tab" id="umi-tab-invite" data-umi-tab="invite" aria-controls="umi-form" class="' + TAB_BASE + '">Invite</button>' +
+          '<button type="button" role="tab" id="umi-tab-members" data-umi-tab="members" aria-controls="umi-members" class="' + TAB_BASE + '">Members</button>' +
+          "</div></div>" +
+          '<div id="umi-members" role="tabpanel" aria-labelledby="umi-tab-members" hidden class="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:min-h-160"></div>' +
           '<form id="umi-form" novalidate class="flex min-h-0 flex-1 flex-col">' +
           '<div class="grid min-h-0 flex-1 grid-cols-1 overflow-y-auto lg:min-h-160 lg:grid-cols-2">' +
           left +
@@ -242,7 +262,11 @@ window.UMInvite = (function () {
   // Roles offered when inviting: every role the business has, so roles created later in the
   // Roles tab show up here too. Today: Full Access, View Only.
   function roleCards() {
-    return window.UMStore.getRoles()
+    var only = opts.roleIds;
+    return window.UMStore.getRoles(!!only)
+      .filter(function (role) {
+        return !only || only.indexOf(role.id) !== -1;
+      })
       .map(function (role) {
         return (
           '<label class="flex cursor-pointer items-start gap-3 rounded-lg border text-default border-gray-200 bg-white p-4 hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 dark:has-checked:border-blue-400 dark:has-checked:ring-blue-400">' +
@@ -399,7 +423,7 @@ window.UMInvite = (function () {
   // ── Open / send ──
 
   function setMode(edit, name) {
-    document.getElementById("umi-title").textContent = edit ? name || "Edit Business Member" : "Invite Business Member";
+    document.getElementById("umi-title").textContent = edit ? name || "Edit Business Member" : opts.title || "Invite Business Member";
     document.querySelector('[data-umi-icon="invite"]').classList.toggle("hidden", edit);
     // Edit: the title is just the person's name, no icon.
     document.querySelector('[data-umi-icon="edit"]').classList.add("hidden");
@@ -419,12 +443,59 @@ window.UMInvite = (function () {
     var emailInput = document.getElementById("umi-email");
     emailInput.value = email || "";
     emailInput.readOnly = !!email;
+    if (opts.roleIds) opts.roleIds.forEach(checkRole);
+    document.querySelector("[data-umi-create-role]").parentElement.hidden = !!opts.roleIds;
     renderPermissions();
     var send = document.getElementById("umi-send");
     send.disabled = false;
     send.innerHTML = editId ? "Save Changes" : "Send Invite";
     var editing = editId && window.UMStore.getUser(editId);
     setMode(!!editId, editing && [editing.firstName, editing.lastName].filter(Boolean).join(" "));
+    document.getElementById("umi-tabs").hidden = !(opts.members && !editId);
+    setTab(opts.members && !editId && opts.tab === "members" ? "members" : "invite");
+  }
+
+  // ── Invite / Members tabs (SMART Enroll only: opts.members) ──
+
+  function memberAvatar(person) {
+    if (person.photo) return '<img src="' + esc(person.photo) + '" alt="" class="size-8 shrink-0 rounded-full object-cover" />';
+    return (
+      '<span aria-hidden="true" class="inline-flex size-8 shrink-0 items-center justify-center rounded-full type-label-small text-white ' +
+      esc(person.color || "bg-gray-500") + '">' + esc(person.initials || "") + "</span>"
+    );
+  }
+
+  function renderMembers() {
+    var list = typeof opts.members === "function" ? opts.members() || [] : [];
+    document.getElementById("umi-members").innerHTML = list.length
+      ? '<ul role="list" class="divide-y divide-gray-200 dark:divide-white/10">' +
+        list
+          .map(function (person) {
+            return (
+              '<li class="flex items-center gap-3 py-3 first:pt-0 last:pb-0">' +
+              memberAvatar(person) +
+              '<span class="min-w-0 flex-1"><span class="block truncate type-label text-default">' + esc(person.name) + "</span>" +
+              (person.email ? '<span class="block truncate type-caption text-tertiary">' + esc(person.email) + "</span>" : "") + "</span>" +
+              (person.status ? '<span class="' + BADGE_AMBER + '">' + esc(person.status) + "</span>" : "") +
+              '<span class="' + BADGE_GRAY + '">' + esc(person.role) + "</span></li>"
+            );
+          })
+          .join("") +
+        "</ul>"
+      : '<p class="type-description text-tertiary">No one else is on this application yet.</p>';
+  }
+
+  function setTab(id) {
+    var members = id === "members";
+    document.getElementById("umi-form").hidden = members;
+    document.getElementById("umi-members").hidden = !members;
+    ["invite", "members"].forEach(function (name) {
+      var tab = document.getElementById("umi-tab-" + name);
+      tab.className = TAB_BASE + " " + (name === id ? TAB_ON : TAB_OFF);
+      tab.setAttribute("aria-selected", String(name === id));
+      tab.tabIndex = name === id ? 0 : -1;
+    });
+    if (members) renderMembers();
   }
 
   // Edit a business member in the same dialog as Invite (Andrian, 2026-11-11): names, phone and
@@ -539,7 +610,7 @@ window.UMInvite = (function () {
     Promise.all([window.UMEmail.sendInvite(created.invitation), pause]).then(function (out) {
       send.removeAttribute("aria-busy");
       document.getElementById("um-invite-dialog").close();
-      showResult(created.invitation, out[0]);
+      showResult(created.invitation, out[0], { added: opts.added });
       if (typeof opts.onDone === "function") opts.onDone(created);
     });
   }
@@ -553,11 +624,12 @@ window.UMInvite = (function () {
   function fillResult(invitation, result, flags) {
     var resent = flags && flags.resent;
     var sent = result && result.sent;
+    var added = (flags && flags.added) || "The user was added to your business user list.";
     document.getElementById("ums-title").textContent = resent ? "Invitation Resent" : "Invitation Sent";
     var email = '<span class="font-medium text-gray-900 dark:text-white">' + esc(invitation.email) + "</span>";
     document.getElementById("ums-text").innerHTML = sent
-      ? "Invitation to " + email + " was successfully sent." + (resent ? "" : " The user was added to your business user list.")
-      : "Invitation to " + email + " was created." + (resent ? " The new link is valid for 7 days." : " The user was added to your business user list.");
+      ? "Invitation to " + email + " was successfully sent." + (resent ? "" : " " + added)
+      : "Invitation to " + email + " was created." + (resent ? " The new link is valid for 7 days." : " " + added);
     var box = document.getElementById("ums-link");
     box.hidden = !!sent;
     if (!sent) {
@@ -580,6 +652,17 @@ window.UMInvite = (function () {
 
   function bind() {
     document.getElementById("umi-form").addEventListener("submit", submit);
+    var tabs = document.getElementById("umi-tabs");
+    tabs.addEventListener("click", function (event) {
+      var tab = event.target.closest("[data-umi-tab]");
+      if (tab) setTab(tab.getAttribute("data-umi-tab"));
+    });
+    tabs.addEventListener("keydown", function (event) {
+      if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+      var next = document.getElementById("umi-tab-" + (event.key === "ArrowRight" ? "members" : "invite"));
+      setTab(next.getAttribute("data-umi-tab"));
+      next.focus();
+    });
     FIELD_IDS.forEach(function (id) {
       var el = document.getElementById(id);
       el.addEventListener("blur", function () {

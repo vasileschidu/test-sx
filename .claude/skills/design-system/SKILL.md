@@ -59,7 +59,10 @@ rewrite; use semantic classes in new or touched UI.
 
 - Rhythm 8 / 16 / 24: `gap-2`, `gap-4`, `gap-6`; card padding `p-4` (dense) or `p-6`; page gutter `px-4 lg:px-10`.
 - Inputs and buttons `rounded-md`; cards `rounded-lg`; pills `rounded-full`.
+- **Modals and dialogs are always `rounded-lg` (8px)**, every state (create, confirm, success, errors). Even where Figma draws a modal at 10 or 12px, use 8px (rule from Alina, 2026-11-18).
 - Shadows: `shadow-xs` on buttons/inputs, `shadow-sm` cards, `shadow-lg` menus/modals.
+- **Modal backdrop and motion (rule from Alina, 2026-11-18):** flat `bg-gray-900/75`, never `backdrop-blur`; opens smoothly like the Supplier Portal Decline / Opt in dialogs: backdrop `transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in`, panel `transition-all data-closed:translate-y-4 data-closed:opacity-0 sm:data-closed:translate-y-0 sm:data-closed:scale-95` with the same durations, `motion-reduce:transition-none`. Exception: SMART Disburse onboarding (Figma: black 75 % + blur 5 px).
+- **Modal close (X) button (rule from Alina, 2026-11-18):** identical in every modal, copied from the Supplier Portal Decline Payment dialog: `<button type="button" class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400"><span class="sr-only">Close</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>` (row: `flex self-stretch flex-col items-end justify-end px-4 pt-4`). Never 40 px circles / `p-1.5` / `rounded-full` / other icons, even if Figma draws them. Exception: SMART Disburse onboarding.
 - Field heights: copy the inventory snippets (select trigger `py-1.5 sm:text-sm/6`, table search `h-10`); SD consumer steps use 56px primary buttons.
 
 ## Dark mode — required on every change
