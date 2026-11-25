@@ -60,7 +60,7 @@ Each tab has a status icon: ✓ complete, spinner = in progress, empty = not sta
 Optional fields don't count. A tab is ✓ when all its required fields are filled and valid.
 
 ## Statuses (D-12)
-Set by compliance in the back office. The prototype simulates them with a demo switcher in the left panel, under the status box (also `?status=<id>`).
+Set by compliance in the back office. The prototype simulates them with a floating "Demo status" switcher at the bottom right (also `?status=<id>`).
 The application is **editable only before submission and in Pending enrollment data**; every other status is read-only.
 
 | Status | Colour | Status box text | Figma |
