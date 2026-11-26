@@ -68,6 +68,20 @@ Only with Cross-Border Payments — see [cross-border.md](cross-border.md#fx-pro
 
 ## Prototype notes
 All connections are simulated: no real ERP or bank calls; Validate Connection succeeds after a short delay.
+
+**States and dialogs from SE (In Progress) Figma, TCDM-5246** (flow stays R1):
+- ERP step 2 **Connect** opens "Please wait — This may take a few moments." (SE 120:45846), then step 3 (Pending Verification).
+- **Demo trigger for a failed connection: enter the password `fail`** (any case) in the ERP sign-in. After "Please wait" the
+  "Failed Connection" dialog opens (SE 120:45848): "Call our support team at [TranscardNumber] for further assistance."
+  Primary **Try again** returns to the sign-in step with the entered values; Cancel / X close the wizard.
+  TODO(confirm): the support number (SE shows the placeholder) and the button label (SE shows "Button text").
+- ERP row menu: Refresh connection, View Details, **Disconnect** → red confirm "Disconnect ERP — Are you sure you want to
+  disconnect the ERP?" (SE 2099:425572) → back to the empty ERP state (the ERP card stays the selected source).
+- Status badges follow SE Connector Status (4515:353665): h20, radius 4, 1px border; Connected green-100/200/800;
+  Pending Verification uses the "In progress" blue family; Action Required yellow.
+- Field errors: red outline + red (!) icon + "<Field> is required" (SE 5360:343203). Info-box dismiss X is blue.
+- The Connectors tab shows the error icon (shell tab status) while a bank account is Action Required.
+
 Prototype: `src/scripts/smart-enroll/connectors.js` (TCDM-5246, T6), demo `?tab=connectors&connectors=demo|api|reset`.
 The FX Provider section (T9) goes into the empty `[data-se-fx-slot]` under Bank Account (`SmartEnrollConnectors.fxSlot()` /
 event `smart-enroll:connectors-rendered`); the Submit warning (T11) reads `SmartEnrollConnectors.isComplete()` /
