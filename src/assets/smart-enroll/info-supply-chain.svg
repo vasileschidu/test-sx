@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+<!-- Figma SE (In Progress) Info Bubbles Card 4511:349551, Logomark/72px icon at 36px. -->
+<g id="Icon24/Duotone/Git3">
+<g id="Rectangle 5">
+</g>
+<path id="Combined Shape" opacity="0.3" d="M10.5 16.5H22.5C24.1569 16.5 25.5 15.1569 25.5 13.5V12H28.5V13.5C28.5 16.8137 25.8137 19.5 22.5 19.5H10.5V22.5C10.5 23.3284 9.82843 24 9 24C8.17157 24 7.5 23.3284 7.5 22.5V13.5C7.5 12.6716 8.17157 12 9 12C9.82843 12 10.5 12.6716 10.5 13.5V16.5Z" fill-rule="evenodd" clip-rule="evenodd" fill="url(#paint0_linear_scf_80)"/>
+<path id="Oval 7 Copy" d="M9 31.5C10.6569 31.5 12 30.1569 12 28.5C12 26.8431 10.6569 25.5 9 25.5C7.34315 25.5 6 26.8431 6 28.5C6 30.1569 7.34315 31.5 9 31.5ZM9 34.5C5.68629 34.5 3 31.8137 3 28.5C3 25.1863 5.68629 22.5 9 22.5C12.3137 22.5 15 25.1863 15 28.5C15 31.8137 12.3137 34.5 9 34.5Z" fill="url(#paint1_linear_scf_80)"/>
+<path id="Oval 7 Copy 3" d="M27 10.5C28.6569 10.5 30 9.15685 30 7.5C30 5.84315 28.6569 4.5 27 4.5C25.3431 4.5 24 5.84315 24 7.5C24 9.15685 25.3431 10.5 27 10.5ZM27 13.5C23.6863 13.5 21 10.8137 21 7.5C21 4.18629 23.6863 1.5 27 1.5C30.3137 1.5 33 4.18629 33 7.5C33 10.8137 30.3137 13.5 27 13.5Z" fill="url(#paint2_linear_scf_80)"/>
+<path id="Oval 7" d="M9 10.5C10.6569 10.5 12 9.15685 12 7.5C12 5.84315 10.6569 4.5 9 4.5C7.34315 4.5 6 5.84315 6 7.5C6 9.15685 7.34315 10.5 9 10.5ZM9 13.5C5.68629 13.5 3 10.8137 3 7.5C3 4.18629 5.68629 1.5 9 1.5C12.3137 1.5 15 4.18629 15 7.5C15 10.8137 12.3137 13.5 9 13.5Z" fill="url(#paint3_linear_scf_80)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_scf_80" x1="18" y1="12" x2="18" y2="24" gradientUnits="userSpaceOnUse">
+<stop stop-color="#10B981"/>
+<stop offset="1" stop-color="#42936C"/>
+</linearGradient>
+<linearGradient id="paint1_linear_scf_80" x1="9" y1="22.5" x2="9" y2="34.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#10B981"/>
+<stop offset="1" stop-color="#42936C"/>
+</linearGradient>
+<linearGradient id="paint2_linear_scf_80" x1="27" y1="1.5" x2="27" y2="13.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#10B981"/>
+<stop offset="1" stop-color="#42936C"/>
+</linearGradient>
+<linearGradient id="paint3_linear_scf_80" x1="9" y1="1.5" x2="9" y2="13.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#10B981"/>
+<stop offset="1" stop-color="#42936C"/>
+</linearGradient>
+</defs>
+</svg>

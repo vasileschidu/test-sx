@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+<!-- Figma SE (In Progress) Main Menu/Add-ons 4511:377691, "Master ADDS-ON" (SCF): Gradient/Add-on green + white SMART-Suite-Logos/Supply-Chain-Financing (two mirrored strokes). -->
+<defs><linearGradient id="g-scf" x1="16" y1="0" x2="16" y2="32" gradientUnits="userSpaceOnUse"><stop stop-color="#55E687"/><stop offset="1" stop-color="#2DB665"/></linearGradient></defs>
+<circle cx="16" cy="16" r="16" fill="url(#g-scf)"/>
+<g transform="translate(6 6)">
+<g id="scf-a" transform="translate(0.722 1.84)">
+<path d="M5.64397 2.56055L1.22871 6.88043C0.673493 7.43659 0.409106 8.21262 0.52808 8.98864L0.52808 15.0412L7.13132 8.43794" stroke-linejoin="round" stroke="white"/>
+<path d="M2.36632 5.76806C1.61707 6.50112 4.47916 3.69199 6.46964 1.73858C7.45064 0.775854 9.02351 0.787015 9.99242 1.7619L11.8287 3.60949" stroke="white"/>
+</g>
+<g transform="rotate(180 13.113 10.64) translate(6.948 3.12)">
+<path d="M5.64397 2.56055L1.22871 6.88043C0.673493 7.43659 0.409106 8.21262 0.52808 8.98864L0.52808 15.0412L7.13132 8.43794" stroke-linejoin="round" stroke="white"/>
+<path d="M2.36632 5.76806C1.61707 6.50112 4.47916 3.69199 6.46964 1.73858C7.45064 0.775854 9.02351 0.787015 9.99242 1.7619L11.8287 3.60949" stroke="white"/>
+</g>
+</g>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+<!-- Figma SE (In Progress) Info Bubbles Card 4511:349551, Logomark/72px icon at 36px. -->
+<g id="Icon24/Duotone/Credit-card">
+<path id="Combined Shape" opacity="0.3" d="M30 7.5H6C4.34315 7.5 3 8.84315 3 10.5V25.5C3 27.1569 4.34315 28.5 6 28.5H30C31.6569 28.5 33 27.1569 33 25.5V10.5C33 8.84315 31.6569 7.5 30 7.5Z" fill="url(#paint0_linear_ms_110)"/>
+<path id="Rectangle 59" d="M33 12H3V16.5H33V12Z" fill="url(#paint1_linear_ms_110)"/>
+<path id="Rectangle 59 Copy" opacity="0.3" d="M28.5 21H25.5C24.6716 21 24 21.6716 24 22.5C24 23.3284 24.6716 24 25.5 24H28.5C29.3284 24 30 23.3284 30 22.5C30 21.6716 29.3284 21 28.5 21Z" fill="url(#paint2_linear_ms_110)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_ms_110" x1="18" y1="7.5" x2="18" y2="28.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#F2C04B"/>
+<stop offset="1" stop-color="#E9A03B"/>
+</linearGradient>
+<linearGradient id="paint1_linear_ms_110" x1="18" y1="12" x2="18" y2="16.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#F2C04B"/>
+<stop offset="1" stop-color="#E9A03B"/>
+</linearGradient>
+<linearGradient id="paint2_linear_ms_110" x1="27" y1="21" x2="27" y2="24" gradientUnits="userSpaceOnUse">
+<stop stop-color="#F2C04B"/>
+<stop offset="1" stop-color="#E9A03B"/>
+</linearGradient>
+</defs>
+</svg>
