@@ -298,11 +298,11 @@
 
   /* ---------- markup ---------- */
 
-  /** SMART System Information circle + Tooltip (components skill; same as shell.js infoTip). */
+  /** SMART System Info Bubble + Tooltip (SE 4929:492616: hover gray-100 r6, focus white + 2px blue-600; components skill). */
   function infoTip(id, label, text) {
     return (
-      '<span class="group/info relative inline-flex size-5 shrink-0 items-center justify-center">' +
-      '<span tabindex="0" role="button" aria-describedby="' + esc(id) + '" class="inline-flex cursor-help rounded-full text-gray-400 hover:text-gray-900 focus-visible:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:text-white dark:focus-visible:text-white dark:focus-visible:outline-blue-400">' +
+      '<span class="group/info relative inline-flex size-6 shrink-0 items-center justify-center">' +
+      '<span tabindex="0" role="button" aria-describedby="' + esc(id) + '" class="inline-flex size-full cursor-help items-center justify-center rounded-md text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:bg-white focus-visible:text-gray-500 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:focus-visible:bg-transparent dark:focus-visible:text-gray-300 dark:focus-visible:outline-blue-400">' +
       '<span class="sr-only">' + esc(label) + "</span>" + ICON.info + "</span>" +
       '<span id="' + esc(id) + '" role="tooltip" class="pointer-events-none invisible absolute top-full left-1/2 z-30 mt-3 w-max max-w-64 -translate-x-2/5 rounded-lg bg-gray-900 p-3 text-left text-sm/5 font-normal text-gray-100 opacity-0 shadow-xs transition-opacity duration-150 group-hover/info:visible group-hover/info:opacity-100 group-has-focus-visible/info:visible group-has-focus-visible/info:opacity-100 before:absolute before:-top-1 before:left-2/5 before:size-3 before:-translate-x-1/2 before:rotate-45 before:rounded-[2px] before:bg-inherit sm:max-w-[343px] dark:bg-gray-950 dark:ring-1 dark:ring-white/10">' +
       esc(text) + "</span></span>"
