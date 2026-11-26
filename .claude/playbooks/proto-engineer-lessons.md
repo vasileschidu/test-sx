@@ -153,3 +153,8 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-26 [smart-enroll][popover] A click/keyboard info card in a narrow or scrolling panel: `button[popovertarget]` + Elements `el-popover popover anchor="right start"` (top layer, light-dismiss/Esc free); sync `aria-expanded` from the capture `toggle` event, open on `focusin` only when `:focus-visible`, close on `focusout`. Never put `flex` on the popover element itself (overrides the closed `display:none`): lay out an inner div.
 - 2026-11-26 [smart-enroll][shared ui] Pills copied into 3 tab scripts drifted (md / sm / opacity). Shared builders for tabs go on `window.SmartEnroll.ui` (shell loads first, tabs call it at render time); verify states with computed styles (checked hover vs hover vs disabled variant order).
 - 2026-11-26 [qa][serve] `tools/serve.py <port>` silently fails if another agent's server owns the port, and you then test their branch. `lsof -iTCP:<port>` (cwd) before trusting a render; pick an unused port.
+
+## 2026-11-26 TCDM-5247 / 5251 (SMART Enroll)
+- `tools/serve.py <port>` silently fails to bind if another worktree already serves that port: check `lsof -p <pid> | grep cwd` before trusting a preview.
+- Demo-state seeding: tab scripts read sessionStorage `se_tab_<id>` on `SE.ready`/first render, so seed inside shell `init()` before `renderActive`; a status switch seeds then reloads.
+- A tab-level hook can live in shell.js by listening to another tab's document event (`smart-enroll:connectors-change`) instead of editing that tab's script.
