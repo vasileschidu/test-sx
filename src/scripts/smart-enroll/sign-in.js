@@ -50,7 +50,7 @@
     "shrink-0 rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer " + FOCUS;
   var CARD = "w-full max-w-107 overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-black/5 dark:bg-gray-900 dark:shadow-none dark:ring-white/10";
   var DIGIT =
-    "h-10 min-w-0 flex-1 rounded-md border-0 bg-white text-center text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-300 dark:bg-white/5 dark:text-white dark:outline-white/15 dark:hover:outline-white/20 dark:focus:outline-blue-500 dark:aria-invalid:outline-red-500/50";
+    "h-10 min-w-0 flex-1 rounded-md border-0 bg-white text-center text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:text-red-800 aria-invalid:outline-red-300 focus:aria-invalid:outline-red-600 dark:bg-white/5 dark:text-white dark:outline-white/15 dark:hover:outline-white/20 dark:focus:outline-blue-500 dark:aria-invalid:text-red-400 dark:aria-invalid:outline-red-500/50 dark:focus:aria-invalid:outline-red-500";
   var AVATAR_TONES = ["bg-gray-500", "bg-orange-600", "bg-indigo-500", "bg-teal-600", "bg-pink-500"];
 
   /* ---------- icons ---------- */
