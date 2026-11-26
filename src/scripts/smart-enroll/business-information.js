@@ -105,15 +105,6 @@
     "dark:has-[input:disabled]:bg-white/10 dark:has-[input:disabled]:hover:outline-white/10";
   var ADDON_INPUT =
     "block h-full min-w-0 grow bg-transparent pr-3 pl-1 text-base/6 font-medium text-gray-900 placeholder:font-normal placeholder:text-gray-400 focus:outline-none aria-invalid:pr-10 aria-invalid:text-red-900 disabled:cursor-not-allowed disabled:text-gray-500 dark:text-white dark:placeholder:text-gray-500 dark:aria-invalid:text-red-300 dark:disabled:text-gray-400";
-  // YES / NO (Figma "SE/Info Tabs/Business Information/Questions"): Secondary md as a radio, checked = blue tint.
-  var CHOICE =
-    "relative inline-flex min-w-12 cursor-pointer items-center justify-center rounded-md bg-white px-2.5 py-1.5 type-button text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 " +
-    "has-checked:bg-blue-50 has-checked:text-blue-700 has-checked:inset-ring-blue-300 has-checked:hover:bg-blue-100 " +
-    "group-data-invalid/yn:inset-ring-red-300 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-blue-600 " +
-    "has-disabled:cursor-not-allowed has-disabled:opacity-60 has-disabled:hover:bg-white has-disabled:has-checked:hover:bg-blue-50 " +
-    "dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20 " +
-    "dark:has-checked:bg-blue-500/15 dark:has-checked:text-blue-300 dark:has-checked:inset-ring-blue-400/40 dark:has-checked:hover:bg-blue-500/25 " +
-    "dark:group-data-invalid/yn:inset-ring-red-400/50 dark:has-focus-visible:outline-blue-400 dark:has-disabled:hover:bg-white/10 dark:has-disabled:has-checked:hover:bg-blue-500/15";
   var BTN_SECONDARY_XL =
     "inline-flex w-full cursor-pointer items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-base font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 " + FOCUS +
     " dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20";
@@ -428,15 +419,13 @@
   }
 
   function dbaChoice(m) {
-    function opt(value, text) {
-      return '<label class="' + CHOICE + '"><input type="radio" name="se-bi-dba" value="' + value + '" data-se-bi-dba' + (m.dba === value ? " checked" : "") + ' class="sr-only" />' + text + "</label>";
-    }
     return (
       '<div class="flex flex-col gap-1">' +
       '<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">' +
       '<p id="se-bi-dba-label" class="' + window.OBField.LABEL + ' text-default">Do you operate under a fictitious name / Doing Business As (DBA)?</p>' +
       '<div role="radiogroup" aria-labelledby="se-bi-dba-label" aria-describedby="se-bi-dba-error" data-se-bi-dba-group class="group/yn flex shrink-0 gap-3">' +
-      opt("yes", "YES") + opt("no", "NO") +
+      // Shared YES / NO pill (shell.js SmartEnroll.ui, Figma SE Buttons-Toggle 4929:491507).
+      window.SmartEnroll.ui.yesNo({ name: "se-bi-dba", value: m.dba, attrs: " data-se-bi-dba" }) +
       "</div></div>" +
       errorLine("se-bi-dba") +
       "</div>"

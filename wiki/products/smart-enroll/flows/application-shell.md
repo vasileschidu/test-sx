@@ -29,21 +29,28 @@ SMART Hub logo · **Invite people** (+ info icon) · avatars of people on the ap
 2. **Status box** — only after the first submission (statuses below).
 3. **What are you looking to do?** — product list, each with ⊕ to add and an info icon:
    - AP/AR Payments — base, always selected, cannot be removed.
-   - Supply Chain Financing — shown **disabled with a "Coming soon" badge** (D-10).
+   - Supply Chain Financing — listed but **not addable** (disabled row, no click action, no badge; D-10, badge removed 2026-11-26).
    - Merchant Services — add-on, see [merchant-services.md](merchant-services.md).
    - Cross-Border Payments — add-on, see [cross-border.md](cross-border.md).
-4. **Help from Transcard** (collapsible) — opens the "Onboarding Support Team" card (support@transcard.com · support phone, Email / Call), as Figma `Main Menu/Transcard Support Team` State=On (2026-11-25). The earlier "SMART Suite Knowledge Base" link is not in Figma and was dropped (DS-039).
+   Row states follow SE `Main Menu/Add-ons` (DS-050): not added = dashed ⊕ + blue name (hover gray row, blue ring);
+   added while editable = 2px blue border + shadow + logo + in-progress spinner (+ × for add-ons); after submission
+   (Pending Approval / Approved…) the base and added products show as "Sticked" rows with a clock, no ×.
+   The info icon opens a dark card popover per product (click or keyboard focus; Esc / outside click closes; DS-053).
+4. **Help from Transcard** (collapsible) — opens the R1 content: "SMART Suite Knowledge Base" link (new tab) + info icon (DS-051).
 5. Footer: Powered by Transcard · Terms of Use • Privacy Policy.
 
 ### Adding and removing add-ons (D-11)
-- ⊕ adds the product: its tabs appear and the progress % is recomputed.
+- ⊕ adds the product at once (no dialog, SE prototype 10130:351897): its tabs appear, the progress % is recomputed, its
+  first tab opens and focus moves to the card heading.
 - An added add-on can be removed. Confirm dialog "Information will be discarded" — everything entered for it
   (its tabs, its Ownership/Connectors extras) is deleted. Cancel keeps it.
 
 ## Main card and tabs
 Card header: card title (the Figma heading, longer than the tab label on some tabs: Beneficial Ownership,
 Connections for Integration, Business and Financial Information, Cross Border Transactions) + description + Invite people + avatars. Footer: ‹ previous tab / next tab ›.
-Each tab has a status icon: ✓ complete, spinner = in progress, empty = not started.
+Each tab has an 18px status icon (SE Step Tabs Status Icons): gray dot = not started, blue spinner = in progress,
+amber ! = error, green ✓ = complete; after submission all tabs show the blue clock (Pending Approval) or green ✓ (Approved).
+Hovering the icon shows a dark tooltip with the status and "filled / required" (DS-054).
 
 | Tab | Shown when | Page |
 |---|---|---|

@@ -55,15 +55,6 @@
   var LINK =
     "inline-flex cursor-pointer items-center gap-1.5 rounded-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors " + FOCUS +
     " disabled:cursor-not-allowed disabled:text-gray-400 dark:text-blue-400 dark:hover:text-blue-300 dark:disabled:text-gray-500";
-  // Choice pill (Figma "Master Info Logic Group" YES / NO, Year 1 year picker): Secondary md + checked = blue-50.
-  var PILL =
-    "relative inline-flex min-w-12 cursor-pointer items-center justify-center rounded-md bg-white px-2.5 py-1.5 text-sm font-normal text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 " +
-    "has-checked:bg-blue-50 has-checked:text-blue-700 has-checked:inset-ring-blue-300 has-checked:hover:bg-blue-100 " +
-    "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-blue-600 " +
-    "has-disabled:cursor-not-allowed has-disabled:opacity-50 has-disabled:hover:bg-white " +
-    "dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20 " +
-    "dark:has-checked:bg-blue-400/10 dark:has-checked:text-blue-300 dark:has-checked:inset-ring-blue-400/30 dark:has-checked:hover:bg-blue-400/20 " +
-    "dark:has-focus-visible:outline-blue-400 dark:has-disabled:hover:bg-white/10";
   // Select trigger at Text Field height (card-manager-account-picker.js TRIGGER_CLS) + chevron hover tone.
   var SELECT_TRIGGER =
     "group/select grid h-10 w-full cursor-default grid-cols-1 items-center rounded-md bg-white py-0 pr-2 pl-3 text-left text-base/6 text-gray-900 shadow-xs " +
@@ -361,14 +352,10 @@
   function yesNo(name, question) {
     var qid = "ms-" + name + "-q";
     var current = val(name);
-    function pill(value, text) {
-      return '<label class="' + PILL + '"><input type="radio" class="sr-only" name="ms-' + esc(name) + '" value="' + value + '" data-ms-field="' + esc(name) + '"' +
-        (current === value ? " checked" : "") + ">" + text + "</label>";
-    }
     return (
       '<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">' +
       '<p id="' + qid + '" class="type-label text-default">' + esc(question) + "</p>" +
-      '<div role="radiogroup" aria-labelledby="' + qid + '" class="flex shrink-0 gap-4">' + pill("yes", "YES") + pill("no", "NO") + "</div>" +
+      '<div role="radiogroup" aria-labelledby="' + qid + '" class="flex shrink-0 gap-4">' + window.SmartEnroll.ui.yesNo({ name: "ms-" + name, value: current, attrs: ' data-ms-field="' + esc(name) + '"' }) + "</div>" +
       "</div>"
     );
   }
@@ -564,7 +551,7 @@
       var thisYear = new Date().getFullYear();
       picker = '<div role="radiogroup" aria-label="First year" class="flex gap-2">' + [thisYear, thisYear + 1].map(function (yr) {
         var current = start;
-        return '<label class="' + PILL + '"><input type="radio" class="sr-only" name="ms-yearStart" value="' + yr + '" data-ms-field="yearStart"' + (current === yr ? " checked" : "") + ">" + yr + "</label>";
+        return window.SmartEnroll.ui.choicePill({ name: "ms-yearStart", value: yr, text: yr, checked: current === yr, attrs: ' data-ms-field="yearStart"' });
       }).join("") + "</div>";
     } else {
       head += '<span class="type-caption text-tertiary">' + (start + y - 1) + "</span>";
