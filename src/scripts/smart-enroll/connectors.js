@@ -78,7 +78,7 @@ window.SmartEnrollConnectors = (function () {
   var LINK_INLINE = "cursor-pointer rounded-sm font-medium text-blue-600 hover:text-blue-700 hover:underline " + FOCUS + " dark:text-blue-400 dark:hover:text-blue-300";
   // Row options (Card details options button).
   var BTN_ICON =
-    "inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-hidden aria-expanded:ring-2 aria-expanded:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200 dark:focus-visible:ring-blue-400 dark:aria-expanded:ring-blue-400";
+    "inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-hidden aria-expanded:ring-2 aria-expanded:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200 dark:focus-visible:ring-blue-400 dark:aria-expanded:ring-blue-400";
   var MENU =
     "w-56 rounded-md bg-white py-1 shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(2)] dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10 transition transition-discrete data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-100 data-leave:ease-in motion-reduce:transition-none";
   var MENU_ITEM =
@@ -86,6 +86,9 @@ window.SmartEnrollConnectors = (function () {
   // Dismiss X (CLAUDE.md rule 8 classes).
   var CLOSE_X =
     "shrink-0 rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400";
+  // Info-box dismiss (SE 5360:343203): blue X on the blue box.
+  var CLOSE_X_INFO =
+    "shrink-0 rounded-md p-1 text-blue-400 hover:bg-blue-100 hover:text-blue-600 dark:text-blue-300 dark:hover:bg-blue-400/20 dark:hover:text-blue-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400";
   // Select field trigger, 40px like OBField (card-manager-linked-add.js) + chevron hover tone (lessons 2026-11-23).
   var SELECT_TRIGGER =
     "group/select grid h-10 w-full cursor-default grid-cols-1 items-center rounded-md bg-white py-0 pr-2 pl-3 text-left text-base/6 text-gray-900 shadow-xs " +
@@ -141,6 +144,7 @@ window.SmartEnrollConnectors = (function () {
     dots: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" /></svg>',
     refresh: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z" clip-rule="evenodd" /></svg>',
     sliders: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-400 dark:text-gray-500"><path d="M17 2.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5ZM17 15.75a.75.75 0 0 0-1.5 0v1.5a.75.75 0 0 0 1.5 0v-1.5ZM3.75 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5a.75.75 0 0 1 .75-.75ZM4.5 2.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5ZM10 11a.75.75 0 0 1 .75.75v5.5a.75.75 0 0 1-1.5 0v-5.5A.75.75 0 0 1 10 11ZM10.75 2.75a.75.75 0 0 0-1.5 0v1.5a.75.75 0 0 0 1.5 0v-1.5ZM10 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM3.75 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM16.25 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" /></svg>',
+    progress: function (cls) { return '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="' + cls + '"><circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-opacity=".3" stroke-width="1.5" /><path d="M10 2.75A7.25 7.25 0 0 1 17.25 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>'; },
     unlink: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-400 dark:text-gray-500"><path d="M12.232 4.232a2.5 2.5 0 0 1 3.536 3.536l-1.225 1.224a.75.75 0 0 0 1.061 1.06l1.224-1.224a4 4 0 0 0-5.656-5.656l-3 3a4 4 0 0 0 .225 5.865.75.75 0 0 0 .977-1.138 2.5 2.5 0 0 1-.142-3.667l3-3Z" /><path d="M11.603 7.963a.75.75 0 0 0-.977 1.138 2.5 2.5 0 0 1 .142 3.667l-3 3a2.5 2.5 0 0 1-3.536-3.536l1.225-1.224a.75.75 0 0 0-1.061-1.06l-1.224 1.224a4 4 0 1 0 5.656 5.656l3-3a4 4 0 0 0-.225-5.865Z" /><path d="M2.22 2.22a.75.75 0 0 1 1.06 0l14.5 14.5a.75.75 0 1 1-1.06 1.06L2.22 3.28a.75.75 0 0 1 0-1.06Z" /></svg>',
     pencil: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4"><path d="M13.488 2.513a1.75 1.75 0 0 0-2.475 0L6.75 6.774a2.75 2.75 0 0 0-.596.892l-.848 2.047a.75.75 0 0 0 .98.98l2.047-.848a2.75 2.75 0 0 0 .892-.596l4.261-4.262a1.75 1.75 0 0 0 0-2.474Z" /><path d="M4.75 3.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h6.5c.69 0 1.25-.56 1.25-1.25V9A.75.75 0 0 1 14 9v2.25A2.75 2.75 0 0 1 11.25 14h-6.5A2.75 2.75 0 0 1 2 11.25v-6.5A2.75 2.75 0 0 1 4.75 2H7a.75.75 0 0 1 0 1.5H4.75Z" /></svg>',
     search: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 shrink-0 text-blue-600 dark:text-blue-400"><path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" /></svg>',
@@ -205,10 +209,19 @@ window.SmartEnrollConnectors = (function () {
     return '<span class="' + BADGE + BADGE_TONE[tone] + '">' + (icon || "") + esc(label) + "</span>";
   }
 
+  // SE Connector Status (4515:353665): h20, radius 4, 1px border, 100/200/800 colour family.
+  var STATUS_BADGE = "inline-flex h-5 shrink-0 items-center gap-1 rounded-sm border px-1.5 text-xs/4 font-medium whitespace-nowrap ";
+  var STATUS_TONE = {
+    green: "border-green-200 bg-green-100 text-green-800 dark:border-green-500/20 dark:bg-green-400/10 dark:text-green-400",
+    blue: "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-300",
+    yellow: "border-yellow-200 bg-yellow-100 text-yellow-800 dark:border-yellow-400/20 dark:bg-yellow-400/10 dark:text-yellow-500",
+  };
   function statusBadge(status) {
-    if (status === "connected") return badge("green", "Connected", ICON.checkCircle("size-3"));
-    if (status === "action") return badge("amber", "Action Required", ICON.warnMini("size-3"));
-    return badge("red", "Pending Verification", ICON.warnMini("size-3"));
+    var t = status === "connected" ? ["green", "Connected", ICON.checkCircle("size-4 text-green-500 dark:text-green-400")]
+      : status === "action" ? ["yellow", "Action Required", ICON.warnMini("size-4 text-amber-500 dark:text-yellow-400")]
+      // SE has no "Pending Verification" badge; nearest = "In progress" (blue). Logged as a DS row.
+      : ["blue", "Pending Verification", ICON.progress("size-4 text-blue-400 dark:text-blue-400")];
+    return '<span class="' + STATUS_BADGE + STATUS_TONE[t[0]] + '">' + t[2] + esc(t[1]) + "</span>";
   }
 
   function inviteLink(where, label) {
@@ -256,7 +269,7 @@ window.SmartEnrollConnectors = (function () {
 
   function commit(opts) {
     save();
-    SE.setProgress(TAB, { required: 2, filled: (state.source ? 1 : 0) + (bankConnected() ? 1 : 0) });
+    SE.setProgress(TAB, { required: 2, filled: (state.source ? 1 : 0) + (bankConnected() ? 1 : 0), error: state.banks.some(function (b) { return b.status === "action"; }) });
     document.dispatchEvent(new CustomEvent("smart-enroll:connectors-change", {
       detail: { complete: isComplete(), source: state.source, bankConnected: bankConnected() },
     }));
@@ -374,7 +387,7 @@ window.SmartEnrollConnectors = (function () {
       return (
         '<section aria-labelledby="sec-ds-title" class="' + CARD + '">' +
         sectionHead("sec-ds-title", s.name, inviteLink("connectors-erp") +
-          '<button type="button" data-sec="erp-connect" class="' + BTN.primaryLg + '">' + ICON.plus + "Connect</button>") +
+          '<button type="button" data-sec="erp-connect" class="' + BTN.primaryMd + '">' + ICON.plus + "Connect</button>") +
         '<p class="type-description text-tertiary">' + esc(s.sectionText) + "</p>" +
         currentStrip() +
         '<div class="' + DIVIDER + '"></div>' +
@@ -397,6 +410,7 @@ window.SmartEnrollConnectors = (function () {
       '<td class="px-3 py-2 text-right">' + rowMenu("Open options for " + state.erp.email, [
         { action: "erp-refresh", label: "Refresh connection", icon: ICON.refresh },
         { action: "erp-details", label: "View Details", icon: ICON.sliders },
+        { action: "erp-disconnect", label: "Disconnect", icon: ICON.unlink },
       ]) + "</td></tr>" +
       "</tbody></table></div>" +
       "</section>"
@@ -427,7 +441,7 @@ window.SmartEnrollConnectors = (function () {
       return (
         '<section aria-labelledby="sec-bank-title" class="' + CARD + '">' +
         sectionHead("sec-bank-title", c.title, inviteLink("connectors-bank") +
-          '<button type="button" data-sec="bank-connect" class="' + BTN.primaryLg + '">' + ICON.plus + "Connect</button>") +
+          '<button type="button" data-sec="bank-connect" class="' + BTN.primaryMd + '">' + ICON.plus + "Connect</button>") +
         '<p class="type-description text-tertiary">' + esc(c.text) + "</p>" +
         '<div class="' + DIVIDER + '"></div>' +
         emptyState("bank", c.emptyTitle, "bank-connect", "Connect") +
@@ -503,6 +517,7 @@ window.SmartEnrollConnectors = (function () {
       case "erp-connect": erpWizard(1, { provider: null }); break;
       case "erp-refresh": toast("Connection refreshed."); break;
       case "erp-details": erpDetails(); break;
+      case "erp-disconnect": erpDisconnect(); break;
       case "api-details": apiDetails(); break;
       case "api-disconnect": apiDisconnect(); break;
       case "bank-connect": bankWizard({}); break;
@@ -532,7 +547,7 @@ window.SmartEnrollConnectors = (function () {
       {
         footer:
           '<div class="flex flex-col gap-3 px-6 pb-6">' +
-          '<button type="button" data-sec-ok class="' + (o.tone === "danger" ? BTN.dangerXl : BTN.primaryXl) + ' w-full">' + esc(o.ok) + "</button>" +
+          '<button type="button" data-sec-ok class="' + (o.tone === "danger" && !o.okPrimary ? BTN.dangerXl : BTN.primaryXl) + ' w-full">' + esc(o.ok) + "</button>" +
           (o.cancel === false ? "" : '<button type="button" data-ob-modal-close class="' + BTN.secondaryXl + ' w-full">Cancel</button>') +
           "</div>",
       }
@@ -631,7 +646,7 @@ window.SmartEnrollConnectors = (function () {
       (o.inputmode ? ' inputmode="' + o.inputmode + '"' : "") +
       (o.maxlength ? ' maxlength="' + o.maxlength + '"' : "") +
       (o.readonly ? " readonly" : "") +
-      ' aria-describedby="' + o.id + '-error" class="' + f.INPUT + (reveal ? " pr-11" : "") + (o.readonly ? READONLY_EXTRA : "") + '" />';
+      ' aria-describedby="' + o.id + '-error" class="' + f.INPUT + (reveal ? " pr-20" : " pr-10") + (o.readonly ? READONLY_EXTRA : "") + '" />';
     var eye = reveal
       ? '<button type="button" data-sec-reveal="' + o.id + '" aria-pressed="false" class="absolute inset-y-0 right-0 flex cursor-pointer items-center rounded-r-md px-3 text-gray-400 hover:text-gray-600 ' + FOCUS + ' dark:text-gray-500 dark:hover:text-gray-300">' +
         '<span class="sr-only">Show ' + esc(o.label) + "</span>" + ICON.eye + ICON.eyeSlash + "</button>"
@@ -640,7 +655,7 @@ window.SmartEnrollConnectors = (function () {
       '<div class="flex flex-col gap-1">' +
       '<div class="flex items-center justify-between gap-2"><label for="' + o.id + '" class="' + f.LABEL + '">' + esc(o.label) + "</label>" +
       (o.optional ? '<span class="type-label text-tertiary">Optional</span>' : "") + (o.after || "") + "</div>" +
-      '<div class="relative">' + input + eye + "</div>" +
+      '<div class="relative">' + input + f.errorIcon(reveal ? "right-11!" : "") + eye + "</div>" +
       '<p id="' + o.id + '-error" role="alert" class="hidden ' + f.ERROR_TEXT + '"></p>' +
       "</div>"
     );
@@ -795,7 +810,6 @@ window.SmartEnrollConnectors = (function () {
             '<label class="group/tile relative flex h-20 cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white px-4 text-center hover:border-gray-400 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:hover:border-white/25 dark:has-checked:border-blue-400 dark:has-checked:ring-blue-400 dark:has-focus-visible:outline-blue-400">' +
             '<input type="radio" name="sec-erp-provider" value="' + esc(p.id) + '"' + (d.provider === p.id ? " checked" : "") + ' class="absolute inset-0 size-full cursor-pointer appearance-none focus:outline-none" />' +
             '<span class="type-title-card text-default">' + esc(p.tile) + "</span>" +
-            ICON.checkCircle("absolute top-2 right-2 hidden size-5 text-blue-600 group-has-checked/tile:block dark:text-blue-400") +
             "</label>"
           );
         }).join("") +
@@ -810,7 +824,7 @@ window.SmartEnrollConnectors = (function () {
         (d.hideTip ? "" :
           '<div data-sec-tip class="flex gap-3 rounded-md bg-blue-50 p-4 dark:bg-blue-400/10">' + ICON.infoMini("size-5 shrink-0 text-blue-400") +
           '<p class="flex-1 type-body text-blue-700 dark:text-blue-300">To connect to your ERP, an ERP web services user from your organization must enter their credentials. If you do not have these credentials, use the ‘Invite someone to help’ button in this application to send a message to someone from within your business to assist.</p>' +
-          '<button type="button" data-sec-tip-close class="' + CLOSE_X + ' -m-1 self-start"><span class="sr-only">Dismiss</span>' + ICON.x + "</button></div>") +
+          '<button type="button" data-sec-tip-close class="' + CLOSE_X_INFO + ' -m-1 self-start"><span class="sr-only">Dismiss</span>' + ICON.x + "</button></div>") +
         '<div class="mx-auto flex w-full max-w-md flex-col items-center gap-3 text-center">' +
         '<p class="type-title-card text-brand">' + esc(p.name) + "</p>" +
         '<h3 class="type-title-section text-default">Sign in to your account</h3>' +
@@ -884,6 +898,19 @@ window.SmartEnrollConnectors = (function () {
     }, 900);
   }
 
+  var DEMO_FAIL = "fail";
+
+  // SE 120:45848. Second button is the "Button text" placeholder in SE.
+  // TODO(confirm): support number ([TranscardNumber]) and the button label ("Try again").
+  function erpFailed() {
+    centered({
+      id: "sec-erp-failed-title", tone: "danger", title: "Failed Connection",
+      text: "Call our support team at [TranscardNumber] for further assistance.", ok: "Try again",
+      okPrimary: true,
+      onOk: function () { erpWizard(2); },
+    });
+  }
+
   function wireErpStep(dialog, step) {
     var next = dialog.querySelector("[data-sec-next]");
     var back = dialog.querySelector("[data-sec-back]");
@@ -902,7 +929,7 @@ window.SmartEnrollConnectors = (function () {
         dialog.querySelector("[data-sec-tip]").remove();
         dialog.querySelector("#sec-erp-user").focus();
       });
-      var fields = [["sec-erp-user", "user", "Enter your User ID."], ["sec-erp-pass", "pass", "Enter your password."], ["sec-erp-company", "company", "Enter your company."]];
+      var fields = [["sec-erp-user", "user", "User ID is required"], ["sec-erp-pass", "pass", "Password is required"], ["sec-erp-company", "company", "Company is required"]];
       fields.forEach(function (f) {
         dialog.querySelector("#" + f[0]).addEventListener("input", function (e) {
           erpDraft[f[1]] = e.target.value;
@@ -917,13 +944,15 @@ window.SmartEnrollConnectors = (function () {
           if (!v && !first) first = dialog.querySelector("#" + f[0]);
         });
         if (first) { M().revealField(first, dialog.querySelector("#" + first.id + "-error")); return; }
-        var restore = busy(next, "Connecting…");
-        setTimeout(function () {
-          restore();
+        // Demo trigger: password "fail" -> Failed Connection (SE 120:45848).
+        var fails = (erpDraft.pass || "").trim().toLowerCase() === DEMO_FAIL;
+        wide = null;
+        waitDialog("sec-erp-wait-title", 1500, function () {
+          if (fails) { erpFailed(); return; }
           erpDraft.status = erpDraft.status === "connected" ? "connected" : "pending";
           erpDraft.email = applicant().email;
           erpWizard(3);
-        }, 700);
+        });
       }
       next.addEventListener("click", submit);
       dialog.querySelector("[data-sec-form]").addEventListener("submit", function (e) { e.preventDefault(); submit(); });
@@ -943,6 +972,18 @@ window.SmartEnrollConnectors = (function () {
       wide = null;
       commit({ focus: "#sec-ds-title" });
       toast(providerById(erpDraft.provider).name + " connected" + (erpDraft.status === "connected" ? "." : ". Validate the connection to start using it."));
+    });
+  }
+
+  // SE 2099:425572: red confirm; back to the not-connected ERP state (source stays "erp").
+  function erpDisconnect() {
+    centered({
+      id: "sec-erp-disconnect-title", tone: "danger", title: "Disconnect ERP", text: "Are you sure you want to disconnect the ERP?", ok: "Disconnect",
+      onOk: function () {
+        state.erp = null;
+        commit({ focus: "#sec-ds-title" });
+        toast("ERP disconnected.");
+      },
     });
   }
 
@@ -1271,21 +1312,27 @@ window.SmartEnrollConnectors = (function () {
     backdrop.querySelector("[data-sec-form]").addEventListener("submit", function (e) { e.preventDefault(); done(); });
   }
 
-  // "Please wait" (Figma 28555:65404): busy, no X, then the table.
-  function bankWait() {
-    var d = bankDraft;
+  // "Please wait" (SE 120:45846 / R1 28555:65404): busy, no X, runs `done` after `ms`.
+  function waitDialog(id, ms, done) {
     var backdrop = M().open(
       '<div class="flex flex-col items-center gap-2 px-6 py-8 text-center" aria-live="polite">' +
       '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" class="mb-2 size-10 animate-spin text-blue-600 motion-reduce:animate-none dark:text-blue-400"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity=".15" stroke-width="2.5" /><path d="M22 12A10 10 0 0 0 12 2" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" /></svg>' +
-      '<h2 id="sec-bank-wait-title" class="type-title-modal text-default">Please wait</h2>' +
+      '<h2 id="' + id + '" class="type-title-modal text-default">Please wait</h2>' +
       '<p class="type-description text-tertiary">This may take a few moments.</p></div>',
-      "sec-bank-wait-title",
+      id,
       { bare: true }
     );
     backdrop.setAttribute("data-busy", "");
     setTimeout(function () {
       backdrop.removeAttribute("data-busy");
       M().close();
+      done();
+    }, ms);
+  }
+
+  function bankWait() {
+    var d = bankDraft;
+    waitDialog("sec-bank-wait-title", 1500, function () {
       var entry = {
         id: d.id || "ba_" + Date.now().toString(36),
         bankId: d.bankId, name: d.name || "", holder: d.holder, address: d.address, country: d.country || "United States",
@@ -1296,7 +1343,7 @@ window.SmartEnrollConnectors = (function () {
       if (i > -1) state.banks[i] = entry; else state.banks.push(entry);
       commit({ focus: "#sec-bank-title" });
       toast(entry.status === "connected" ? "Bank account connected." : "Bank account added. Add a name to finish the connection.");
-    }, 1500);
+    });
   }
 
   // Bank "View Details" (Figma 28623:40898): name (fixes Action Required), Edit, Disconnect, masked numbers.

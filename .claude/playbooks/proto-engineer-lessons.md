@@ -150,3 +150,4 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   component SET returns every variant's classes in one call — cheapest way to read Default/Hover/Focus fills.
 - 2026-11-25 [assets][figma] Off-palette Figma gradients (Gradient/Add-on/*) → build a small SVG asset (gradient circle + downloaded white logomark),
   never arbitrary hex classes. A Figma "24/32 title" check: `get_metadata` text box height (36 = 30/36, 40 = 36/40) before changing classes.
+- 2026-11-26 [qa][serve] `tools/serve.py <port>` silently fails if another agent's server owns the port, and you then test their branch. `lsof -iTCP:<port>` (cwd) before trusting a render; pick an unused port.
