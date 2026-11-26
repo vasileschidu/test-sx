@@ -2,7 +2,7 @@
 title: SMART Enroll — overview
 type: product-overview
 status: draft
-last_reviewed: 2026-11-18
+last_reviewed: 2026-11-26
 product: smart-enroll
 layout_family: Enroll
 current_version: "R1"
@@ -28,6 +28,17 @@ Full details: [suite/integrations.md](../../suite/integrations.md).
 - [standard.md](standard.md): what the current standard version does (index of the area pages in `flows/`)
 - [changelog.md](changelog.md): history of standard versions
 - [variants/](variants/README.md): client-specific deltas
+
+## Figma sources: which file wins (agreed 2026-11-26)
+- **Content and function → R1** [SMART Enroll R1](https://www.figma.com/design/jLooCmHwqJcYV5p5d8BHnO/-R1--SMART-Enroll):
+  fields, labels, copy, sections, flows, statuses, which buttons exist.
+- **States and interactions → SE (In Progress)** [SE file](https://www.figma.com/design/JXlBv04yGfuOpi0BnNtq7H/):
+  default / hover / pressed / focus / disabled / selected / error / loading, and what an action triggers
+  (e.g. "Add" opens a modal). Element states: Master Components `4349:433623`. Inventory: [se-states.md](se-states.md).
+- On conflict: content follows R1, behaviour follows SE; log a DS row in
+  [discrepancies.md](../../design-system/discrepancies.md).
+- Scope: what exists only in SE (Compliance, Goldman Sachs, QuickBooks/Acumatica token and profile states,
+  QB ERP Connector page) is **not** in R1.
 
 ## What the R1 Figma file shows (read 2026-11-11, not yet built in code)
 Source: [R1] SMART Enroll `jLooCmHwqJcYV5p5d8BHnO`. Desktop frames only (1728 wide); no mobile/tablet.
