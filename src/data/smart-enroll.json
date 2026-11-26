@@ -243,7 +243,7 @@
       "id": "financial",
       "title": "Financial",
       "cardTitle": "Business and Financial Information",
-      "description": "Financial details for Merchant Services.",
+      "description": "Please provide additional details about your business structure and activity.",
       "addon": "merchant",
       "required": 8,
       "filled": 0
@@ -260,7 +260,7 @@
     {
       "id": "business-plan",
       "title": "Business Plan",
-      "description": "How you plan to use Merchant Services.",
+      "description": "Please attach your business plan to explain how your business operates, including its structure, objectives, and financial performance.",
       "addon": "merchant",
       "required": 5,
       "filled": 0
