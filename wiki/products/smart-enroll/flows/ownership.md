@@ -55,4 +55,4 @@ Remove → confirm ([30219:79063](https://www.figma.com/design/jLooCmHwqJcYV5p5d
 - Errors: "First Name is required.", "Last Name is required.", "Please select an option.",
   "Ownership Share or Voting Rights is required.", "Enter an ownership share of 20% or more." (answered Yes, share < 20),
   "Enter an ownership share below 20%" (answered No, share ≥ 20), "<Field> is required." for each additional detail.
-- TODO(confirm): error text for total > 100 (not drawn); prototype: "The total ownership can't exceed 100%."
+- Error text for total > 100 (not drawn; agent-written copy accepted by the product owner 2026-11-25): "The total ownership can't exceed 100%."

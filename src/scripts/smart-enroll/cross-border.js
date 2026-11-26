@@ -75,16 +75,6 @@ window.SmartEnrollCrossBorder = (function () {
   // Gray badge (Tailwind Plus small badge, rounded-md, like connectors.js statusBadge).
   var BADGE_GRAY =
     "inline-flex shrink-0 items-center gap-1 rounded-md bg-gray-50 px-1.5 py-0.5 text-xs/4 font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20";
-  // Yes / No choice: Secondary sm look on a radio label; checked = blue tint; error = red ring (new, components skill).
-  var CHOICE =
-    "relative inline-flex min-w-12 cursor-pointer items-center justify-center rounded px-2 py-1 type-button uppercase text-gray-900 bg-white shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 " +
-    "has-checked:bg-blue-50 has-checked:text-blue-700 has-checked:inset-ring-blue-600 has-checked:hover:bg-blue-100 " +
-    "group-data-invalid/yn:inset-ring-red-300 " +
-    "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-blue-600 " +
-    "has-disabled:cursor-not-allowed has-disabled:opacity-50 has-disabled:hover:bg-white " +
-    "dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20 " +
-    "dark:has-checked:bg-blue-400/10 dark:has-checked:text-blue-300 dark:has-checked:inset-ring-blue-400 dark:has-checked:hover:bg-blue-400/20 " +
-    "dark:group-data-invalid/yn:inset-ring-red-400/50 dark:has-focus-visible:outline-blue-400 dark:has-disabled:hover:bg-white/10";
   // Section card (connectors.js CARD).
   var CARD = "flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-xs sm:p-6 dark:border-white/10 dark:bg-white/5 dark:shadow-none";
 
@@ -193,10 +183,6 @@ window.SmartEnrollCrossBorder = (function () {
 
   function activitiesHtml() {
     var a = data.transactional.activities;
-    var choice = function (value, label) {
-      return '<label class="' + CHOICE + '"><input type="radio" name="sxb-activities" value="' + value + '"' + (values.activities === value ? " checked" : "") +
-        ' class="sr-only" />' + label + "</label>";
-    };
     return (
       '<div class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 sm:flex-row sm:items-start sm:justify-between md:col-span-2 dark:bg-white/5">' +
       '<div class="flex min-w-0 flex-col gap-3">' +
@@ -206,7 +192,8 @@ window.SmartEnrollCrossBorder = (function () {
       '<p id="sxb-activities-error" role="alert" class="hidden ' + F().ERROR_TEXT + '"></p>' +
       "</div>" +
       '<div role="radiogroup" data-sxb-yn aria-labelledby="sxb-activities-q" aria-describedby="sxb-activities-list sxb-activities-error" class="group/yn flex shrink-0 gap-3">' +
-      choice("yes", "Yes") + choice("no", "No") +
+      // Shared YES / NO pill (shell.js SmartEnroll.ui, Figma SE Buttons-Toggle 4929:491507); text uppercased by the pill.
+      window.SmartEnroll.ui.yesNo({ name: "sxb-activities", value: values.activities, labels: ["Yes", "No"] }) +
       "</div></div>"
     );
   }

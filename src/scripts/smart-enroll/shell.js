@@ -20,7 +20,8 @@
  *                              data, addons }. Called once when the tab is first shown (and again via rerender(id)).
  *                              The body is wrapped in a <fieldset> that is `disabled` while read-only.
  *   rerender(id)
- *   setProgress(id, { required, filled })   per-tab counts → progress % + tab icon (✓ / in progress / empty)
+ *   setProgress(id, { required, filled, error })   per-tab counts → progress % + tab icon (✓ / in progress / empty;
+ *                              error: true → Figma Tab "Error" amber exclamation, e.g. after a blocked submit)
  *   getProgress()              { percent, required, filled, tabs: { id: { required, filled, state } } }
  *   getStatus() / setStatus(id) / isReadOnly()
  *   getAddons() / hasAddon(id) / addAddon(id) / removeAddon(id, { confirm: false })
@@ -35,6 +36,8 @@
  *                              A contributor fills and edits tabs but cannot submit: Next Step on the last tab is
  *                              aria-disabled with the tooltip "Only the applicant can submit this application" and next() does nothing.
  *   storageKey(tabId)          sessionStorage key a tab should keep its values in; dropped on add-on discard.
+ *   ui.yesNo({ name, value, attrs, labels }) / ui.choicePill({ name, value, text, checked, attrs }) / ui.CHOICE
+ *                              shared YES / NO pill (Figma SE Buttons-Toggle 4929:491507), used by every tab.
  */
 window.SmartEnroll = (function () {
   "use strict";
@@ -75,12 +78,12 @@ window.SmartEnroll = (function () {
     "inline-flex w-full cursor-pointer items-center justify-center rounded-md bg-red-600 px-3.5 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 dark:bg-red-500 dark:shadow-none dark:hover:bg-red-400 dark:focus-visible:outline-red-400";
   // Link primary (Add / Invite actions).
   var LINK = "inline-flex cursor-pointer items-center gap-1.5 rounded-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors " + FOCUS + " dark:text-blue-400 dark:hover:text-blue-300";
-  // Previous / next tab in the card footer (text button, no fill at rest).
+  // Previous / next tab in the card footer: Figma Footer "Move between tabs" = Button/Link Secondary (no fill at rest).
   var BTN_NAV =
-    "-mx-2 inline-flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 type-button text-gray-700 hover:bg-gray-100 hover:text-gray-900 " + FOCUS + " dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white";
+    "-mx-2.5 inline-flex cursor-pointer items-center gap-1 rounded-md px-2.5 py-1.5 type-button text-gray-700 hover:bg-gray-100 hover:text-gray-900 " + FOCUS + " dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white";
   // Underline tabs (Card details page, card-manager-details.js).
   var TAB_BASE =
-    "inline-flex h-10.5 shrink-0 cursor-pointer items-center gap-2 border-b-2 py-2.5 text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400";
+    "inline-flex h-10.5 shrink-0 cursor-pointer items-center gap-2 border-b-2 px-1 py-2.5 text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400";
   var TAB_ON = "border-blue-500 text-blue-600 hover:text-blue-700 dark:border-blue-400 dark:text-blue-300 dark:hover:text-blue-200";
   var TAB_OFF = "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-white/20 dark:hover:text-gray-200";
   // Menu items (el-menu, card-manager-details.js).
@@ -90,25 +93,29 @@ window.SmartEnroll = (function () {
   var SELECT_TRIGGER =
     "group/select grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 hover:outline-gray-400 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20 dark:focus-visible:outline-blue-500";
 
-  var BADGE = "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs/4 font-medium";
+  // Figma SE Badge 5385:385066: h20, radius 4 (rounded-sm), 1px border; Approved = green-100 / green-200 (not emerald).
+  var BADGE = "inline-flex items-center gap-1 rounded-sm border px-2 py-0.5 text-xs/4 font-medium";
   var BADGE_TONE = {
     blue: "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400",
-    emerald: "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400",
+    green: "border-green-200 bg-green-100 text-green-800 dark:border-green-500/20 dark:bg-green-400/10 dark:text-green-400",
     gray: "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300",
   };
 
-  // Status box (Figma Main Menu/Application Progress): tinted box, icon + title + text.
+  // Status box (Figma SE Main Menu 4511:349454 / Application Progress): Info Box, 20px icon + title (800) + text (700).
+  // Pending enrollment data + Pending Approval = blue (icon blue-400), Approved = green (icon green-500).
   var STATUS_TONE = {
-    amber: { box: "bg-amber-50 dark:bg-amber-400/10", text: "text-amber-700 dark:text-amber-300", icon: "text-amber-500 dark:text-amber-400" },
-    blue: { box: "bg-blue-50 dark:bg-blue-400/10", text: "text-blue-700 dark:text-blue-300", icon: "text-blue-500 dark:text-blue-400" },
-    green: { box: "bg-green-50 dark:bg-green-400/10", text: "text-green-700 dark:text-green-300", icon: "text-green-500 dark:text-green-400" },
-    red: { box: "bg-red-50 dark:bg-red-400/10", text: "text-red-700 dark:text-red-300", icon: "text-red-500 dark:text-red-400" },
+    amber: { box: "bg-amber-50 dark:bg-amber-400/10", title: "text-amber-800 dark:text-amber-200", text: "text-amber-700 dark:text-amber-300", icon: "text-amber-500 dark:text-amber-400" },
+    blue: { box: "bg-blue-50 dark:bg-blue-400/10", title: "text-blue-800 dark:text-blue-200", text: "text-blue-700 dark:text-blue-300", icon: "text-blue-400 dark:text-blue-300" },
+    green: { box: "bg-green-50 dark:bg-green-400/10", title: "text-green-800 dark:text-green-200", text: "text-green-700 dark:text-green-300", icon: "text-green-500 dark:text-green-400" },
+    red: { box: "bg-red-50 dark:bg-red-400/10", title: "text-red-800 dark:text-red-200", text: "text-red-700 dark:text-red-300", icon: "text-red-500 dark:text-red-400" },
   };
 
   /* ---------- icons ---------- */
 
   var ICON = {
-    info: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5"><path fill-rule="evenodd" clip-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" /></svg>',
+    // Figma "Actions" Small: 18px icon in a p-0.5 rounded-md box (info bubbles, remove add-on).
+    // Figma SE "Icon24/Duotone/Info-circle" 18px (Info Bubbles): 30% disc + solid i, currentColor.
+    info: '<svg viewBox="0 0 18 18" fill="currentColor" aria-hidden="true" class="size-4.5"><path opacity="0.3" d="M9 16.5a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15Z" /><path d="M9.75 8.25a.75.75 0 0 0-1.5 0V12a.75.75 0 0 0 1.5 0V8.25ZM9.75 6a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z" /></svg>',
     userPlus: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M10 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 0 1 7 18a9.953 9.953 0 0 1-5.385-1.572ZM16.25 5.75a.75.75 0 0 0-1.5 0v2h-2a.75.75 0 0 0 0 1.5h2v2a.75.75 0 0 0 1.5 0v-2h2a.75.75 0 0 0 0-1.5h-2v-2Z" /></svg>',
     briefcase: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-blue-600 dark:text-blue-400"><path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 0 1 8.75 1h2.5A2.75 2.75 0 0 1 14 3.75v.443c.572.055 1.14.122 1.706.2C17.053 4.582 18 5.75 18 7.07v3.469c0 1.126-.694 2.191-1.83 2.54-1.952.599-4.024.921-6.17.921s-4.219-.322-6.17-.921C2.694 12.73 2 11.665 2 10.539V7.07c0-1.321.947-2.489 2.294-2.676A41.047 41.047 0 0 1 6 4.193V3.75Zm6.5 0v.325a41.622 41.622 0 0 0-5 0V3.75c0-.69.56-1.25 1.25-1.25h2.5c.69 0 1.25.56 1.25 1.25ZM10 10a1 1 0 0 0-1 1v.01a1 1 0 0 0 1 1h.01a1 1 0 0 0 1-1V11a1 1 0 0 0-1-1H10Z" clip-rule="evenodd" /><path d="M3 15.055v-.684c.126.053.255.1.39.142 2.092.642 4.313.987 6.61.987 2.297 0 4.518-.345 6.61-.987.135-.041.264-.089.39-.142v.684c0 1.347-.985 2.53-2.363 2.686a41.454 41.454 0 0 1-9.274 0C3.985 17.585 3 16.402 3 15.055Z" /></svg>',
     selector: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" /></svg>',
@@ -116,14 +123,22 @@ window.SmartEnroll = (function () {
     checkCircle: function (cls) { return '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' + cls + '"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" /></svg>'; },
     exclamationCircle: function (cls) { return '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' + cls + '"><path fill-rule="evenodd" clip-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" /></svg>'; },
     xCircle: function (cls) { return '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' + cls + '"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" /></svg>'; },
+    // Figma SE "Icon20/Solid/Clock" (Sticked add-on rows, Pending Approval status box + tab icon), currentColor.
+    clock: function (cls) { return '<svg viewBox="0 0 18 18" fill="currentColor" aria-hidden="true" class="' + cls + '"><path fill-rule="evenodd" clip-rule="evenodd" d="M9 16.2C12.9764 16.2 16.2 12.9764 16.2 9C16.2 5.02355 12.9764 1.8 9 1.8C5.02355 1.8 1.8 5.02355 1.8 9C1.8 12.9764 5.02355 16.2 9 16.2ZM9.9 5.4C9.9 4.90294 9.49706 4.5 9 4.5C8.50294 4.5 8.1 4.90294 8.1 5.4V9C8.1 9.23869 8.19482 9.46761 8.3636 9.6364L10.9092 12.182C11.2607 12.5335 11.8305 12.5335 12.182 12.182C12.5335 11.8305 12.5335 11.2607 12.182 10.9092L9.9 8.62721V5.4Z" /></svg>'; },
+    // Figma SE "Icon20/Lined/In Progress" (added add-on rows, tab In progress), static, currentColor.
+    spinner: function (cls) { return '<svg viewBox="0 0 18 18" fill="currentColor" aria-hidden="true" class="' + cls + '"><path d="M9.45008 16.1862C9.20202 16.2015 9 15.9985 9 15.75V14.85C9 14.6015 9.20218 14.4019 9.44986 14.3815C12.2217 14.1529 14.4 11.8308 14.4 8.99999C14.4 6.16915 12.2217 3.84707 9.44986 3.61846C9.20218 3.59804 9 3.39852 9 3.14999V2.24999C9 2.00146 9.20202 1.79853 9.45008 1.81383C13.2169 2.04616 16.2 5.1747 16.2 8.99999C16.2 12.8253 13.2169 15.9538 9.45008 16.1862Z" /><path d="M7.12712 14.0664C7.38843 14.163 7.53089 14.4579 7.41656 14.7119L7.05129 15.5236C6.95824 15.7304 6.72532 15.8371 6.51255 15.7588C6.19424 15.6416 5.88648 15.5025 5.59111 15.3435C5.39158 15.236 5.31709 14.9911 5.41009 14.7844L5.77536 13.9727C5.88971 13.7186 6.20491 13.6297 6.45045 13.7614C6.66755 13.8779 6.89353 13.98 7.12712 14.0664Z" /><path d="M5.59112 2.65652C5.3916 2.76397 5.3171 3.00895 5.4101 3.21561L5.77537 4.02732C5.88972 4.28143 6.20492 4.37032 6.45046 4.23857C6.66755 4.12208 6.89353 4.02001 7.12712 3.93363C7.38844 3.83699 7.5309 3.54216 7.41657 3.28809L7.0513 2.47638C6.95826 2.26962 6.72533 2.16291 6.51256 2.24124C6.19425 2.35843 5.88649 2.49746 5.59112 2.65652Z" /><path d="M1.81739 8.49549C1.80617 8.65762 1.80031 8.82122 1.8 8.98613V9.01389C1.80031 9.1788 1.80617 9.34242 1.81739 9.50455C1.83307 9.73101 2.02607 9.90002 2.25306 9.90002H3.14287C3.42113 9.90002 3.6315 9.64971 3.6126 9.37208C3.60424 9.24914 3.59999 9.12507 3.59999 9.00001C3.59999 8.87495 3.60424 8.75089 3.6126 8.62796C3.63149 8.35033 3.42113 8.10002 3.14286 8.10002H2.25306C2.02606 8.10002 1.83306 8.26904 1.81739 8.49549Z" /><path d="M3.25312 13.3381C3.38983 13.519 3.64341 13.5552 3.83348 13.4316L4.57964 12.9466C4.81318 12.7948 4.85291 12.4699 4.68524 12.2475C4.53639 12.0501 4.40078 11.8421 4.27972 11.6248C4.14421 11.3816 3.8313 11.2862 3.59788 11.438L2.85166 11.923C2.66141 12.0467 2.59165 12.2934 2.70185 12.4918C2.86604 12.7873 3.05041 13.07 3.25312 13.3381Z" /><path d="M3.59789 6.56204C3.8313 6.71376 4.14422 6.61835 4.27974 6.37517C4.40079 6.15794 4.5364 5.94994 4.68526 5.75248C4.85293 5.53006 4.81319 5.20515 4.57965 5.05335L3.8335 4.56834C3.64343 4.4448 3.38985 4.48103 3.25314 4.66186C3.05043 4.92997 2.86606 5.2127 2.70187 5.50821C2.59167 5.70656 2.66142 5.95333 2.85167 6.07699L3.59789 6.56204Z" /></svg>'; },
+    // Heroicons v2 mini clipboard-document-list (Figma SE "Clipboard copy", Pending enrollment data status box). Status mark, not a copy action.
+    clipboard: function (cls) { return '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' + cls + '"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.988 3.012A2.25 2.25 0 0 1 18 5.25v6.5A2.25 2.25 0 0 1 15.75 14H13.5V7A2.5 2.5 0 0 0 11 4.5H8.128a2.252 2.252 0 0 1 1.884-1.488A2.25 2.25 0 0 1 12.25 1h1.5a2.25 2.25 0 0 1 2.238 2.012ZM11.5 3.25a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 .75.75v.25h-3v-.25Z" /><path fill-rule="evenodd" clip-rule="evenodd" d="M2 7a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7Zm2 3.25a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75Z" /></svg>'; },
+    // Figma SE Step Tabs Status "Dot" (None): small solid dot.
+    dot: function (cls) { return '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' + cls + '"><circle cx="10" cy="10" r="3" /></svg>'; },
     // Figma "in progress" mark: a dashed ring (static; motion-safe spin would distract on a tab).
     dashed: function (cls) { return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="2.6 2.6" aria-hidden="true" class="' + cls + '"><circle cx="10" cy="10" r="7.25" /></svg>'; },
-    plusDashed: '<span aria-hidden="true" class="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-dashed border-gray-300 text-gray-400 group-hover/add:border-blue-400 group-hover/add:text-blue-600 group-disabled/add:border-gray-200 group-disabled/add:text-gray-300 dark:border-white/20 dark:text-gray-500 dark:group-hover/add:border-blue-400 dark:group-hover/add:text-blue-400 dark:group-disabled/add:border-white/10 dark:group-disabled/add:text-gray-600"><svg viewBox="0 0 20 20" fill="currentColor" class="size-4"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg></span>',
-    trash: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd" /></svg>',
+    plusDashed: '<span aria-hidden="true" class="inline-flex size-8 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-gray-300 text-gray-400 group-hover/add:border-blue-500 group-hover/add:text-blue-500 group-disabled/add:border-gray-200 group-disabled/add:text-gray-300 dark:border-white/20 dark:text-gray-500 dark:group-hover/add:border-blue-400 dark:group-hover/add:text-blue-400 dark:group-disabled/add:border-white/10 dark:group-disabled/add:text-gray-600"><svg viewBox="0 0 20 20" fill="currentColor" class="size-5"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg></span>',
+    x: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg>',
     question: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM8.94 6.94a.75.75 0 1 1-1.061-1.061 3 3 0 1 1 2.871 5.026v.345a.75.75 0 0 1-1.5 0v-.5c0-.72.57-1.172 1.081-1.287A1.5 1.5 0 1 0 8.94 6.94ZM10 15a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" /></svg>',
     chevronDown: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 transition-transform group-aria-expanded/help:rotate-180 motion-reduce:transition-none dark:text-gray-500"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>',
-    chevronLeft: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" /></svg>',
-    chevronRight: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>',
+    chevronLeft: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" /></svg>',
+    chevronRight: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>',
     external: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4"><path d="M6.22 8.72a.75.75 0 0 0 1.06 1.06l5.22-5.22v1.69a.75.75 0 0 0 1.5 0v-3.5a.75.75 0 0 0-.75-.75h-3.5a.75.75 0 0 0 0 1.5h1.69L6.22 8.72Z" /><path d="M3.5 6.75c0-.69.56-1.25 1.25-1.25H7A.75.75 0 0 0 7 4H4.75A2.75 2.75 0 0 0 2 6.75v4.5A2.75 2.75 0 0 0 4.75 14h4.5A2.75 2.75 0 0 0 12 11.25V9a.75.75 0 0 0-1.5 0v2.25c0 .69-.56 1.25-1.25 1.25h-4.5c-.69 0-1.25-.56-1.25-1.25v-4.5Z" /></svg>',
     warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6 text-red-600 dark:text-red-400"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" /></svg>',
   };
@@ -182,7 +197,8 @@ window.SmartEnroll = (function () {
   }
 
   /**
-   * SMART System "Information circle + Tooltip" (components skill). `align: 'end'` anchors the bubble to
+   * SMART System "Information circle + Tooltip" (components skill); trigger = Figma SE "Info Bubbles" (Actions Small:
+   * p-0.5 rounded-md, hover gray-100 box). Figma Focus draws a 2px blue border; code keeps the shared outline (DS-038). `align: 'end'` anchors the bubble to
    * the icon's right edge so icons at the right of a narrow panel never push it off-screen.
    */
   function infoTip(id, label, text, align) {
@@ -190,11 +206,52 @@ window.SmartEnroll = (function () {
       ? "right-0 -mr-1 before:right-1.5"
       : "left-1/2 -translate-x-2/5 before:left-2/5 before:-translate-x-1/2";
     return (
-      '<span class="group/info relative inline-flex size-5 shrink-0 items-center justify-center">' +
-      '<span tabindex="0" role="button" aria-describedby="' + esc(id) + '" class="inline-flex cursor-help rounded-full text-gray-400 hover:text-gray-900 focus-visible:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:text-white dark:focus-visible:text-white dark:focus-visible:outline-blue-400">' +
+      '<span class="group/info relative inline-flex shrink-0 items-center justify-center">' +
+      '<span tabindex="0" role="button" aria-describedby="' + esc(id) + '" class="inline-flex cursor-help rounded-md p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:focus-visible:text-gray-300 dark:focus-visible:outline-blue-400">' +
       '<span class="sr-only">' + esc(label) + "</span>" + ICON.info + "</span>" +
       '<span id="' + esc(id) + '" role="tooltip" class="pointer-events-none invisible absolute top-full z-30 mt-3 w-max max-w-64 sm:max-w-[343px] rounded-lg bg-gray-900 p-3 text-left text-sm/5 font-normal text-gray-100 opacity-0 shadow-xs transition-opacity duration-150 group-hover/info:visible group-hover/info:opacity-100 group-has-focus-visible/info:visible group-has-focus-visible/info:opacity-100 before:absolute before:-top-1 before:size-3 before:rotate-45 before:rounded-[2px] before:bg-inherit dark:bg-gray-950 dark:ring-1 dark:ring-white/10 ' + pos + '">' +
       esc(text) + "</span></span>"
+    );
+  }
+
+  /**
+   * Add-on info bubble = Figma SE "SE/Menu/Add-ons/Info Bubbles" 4511:349353 + Card 4511:349551.
+   * Trigger (Actions Small, 22px): default gray-400 duotone icon; hover gray-100 square + gray-500; open (= SE Focus
+   * variant) white square + 2px blue-600 ring. Opens on click / Enter / Space and on keyboard focus; closes on Esc,
+   * outside click and blur (el-popover = native auto popover, top layer, so the narrow panel never clips it).
+   * Popover: gray-900 panel rounded-lg shadow-2xl w-72, one card per product.infoCards item (gray-800 rounded-md p-4):
+   * 36px product icon + outline pill badge, title (white, semibold, base), description (gray-300, sm).
+   * Opens to the right of the menu (SE) on lg+, below the icon in the phone drawer.
+   */
+  var INFO_BADGE_TONE = {
+    blue: "border-blue-400/50 bg-blue-500/20 text-blue-400",
+    cyan: "border-cyan-400/50 bg-cyan-500/20 text-cyan-400",
+    orange: "border-orange-400/50 bg-orange-500/20 text-orange-400",
+    yellow: "border-yellow-400/50 bg-yellow-500/20 text-yellow-400",
+    green: "border-emerald-400/50 bg-emerald-500/20 text-emerald-400",
+  };
+  var INFO_TRIGGER =
+    "inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 " +
+    "aria-expanded:bg-white aria-expanded:text-gray-500 aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 " +
+    "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 " +
+    "dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:aria-expanded:bg-white/10 dark:aria-expanded:text-gray-300 dark:aria-expanded:outline-blue-400 dark:focus-visible:outline-blue-400";
+
+  function infoBubble(p) {
+    var id = "se-product-info-" + p.id;
+    var cards = (p.infoCards || []).map(function (c) {
+      return '<div class="flex flex-col gap-2.5 rounded-md bg-gray-800 p-4">' +
+        '<div class="flex items-center gap-2">' +
+        '<img src="' + ROOT + "assets/smart-enroll/" + esc(c.icon) + '.svg?v=20261126se" alt="" width="36" height="36" class="size-9 shrink-0" />' +
+        '<span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs/4 font-medium ' + (INFO_BADGE_TONE[c.tone] || INFO_BADGE_TONE.blue) + '">' + esc(c.badge) + "</span></div>" +
+        '<div class="flex flex-col gap-1.5"><p class="type-title-card text-white">' + esc(c.title) + "</p>" +
+        '<p class="type-body text-gray-300">' + esc(c.text) + "</p></div></div>";
+    }).join("");
+    return (
+      '<button type="button" popovertarget="' + id + '" data-se-info-trigger aria-expanded="false" class="' + INFO_TRIGGER + '">' +
+      '<span class="sr-only">About ' + esc(p.name) + "</span>" + ICON.info + "</button>" +
+      '<el-popover id="' + id + '" popover anchor="' + (LG.matches ? "right start" : "bottom end") + '" role="dialog" aria-label="About ' + esc(p.name) + '" ' +
+      'class="w-72 max-w-[calc(100vw-2rem)] rounded-lg bg-gray-900 shadow-2xl ring-1 ring-white/10 [--anchor-gap:--spacing(3)] transition transition-discrete data-closed:opacity-0 data-enter:duration-150 data-enter:ease-out data-leave:duration-100 data-leave:ease-in motion-reduce:transition-none dark:bg-gray-950">' +
+      '<div class="flex flex-col gap-4 p-4">' + cards + "</div></el-popover>"
     );
   }
 
@@ -211,6 +268,7 @@ window.SmartEnroll = (function () {
 
   function tabState(id) {
     var p = state.progress[id] || { required: 0, filled: 0 };
+    if (p.error) return "error";
     if (p.required > 0 && p.filled >= p.required) return "complete";
     if (p.filled > 0) return "progress";
     return "empty";
@@ -275,7 +333,7 @@ window.SmartEnroll = (function () {
         '<button type="button" data-se-invite="' + where + '" class="' + LINK + " " + size + '">Invite people ' + ICON.userPlus + "</button>" +
         infoTip("se-invite-tip-" + where, "About inviting people", (state.data.invite || {}).info, "end") +
         "</span>" +
-        '<span aria-hidden="true" class="h-8 w-px bg-gray-200 dark:bg-white/10"></span>' +
+        '<span aria-hidden="true" class="h-8 w-px bg-gray-300 dark:bg-white/15"></span>' +
         '<span class="flex -space-x-2">' + people.map(avatarHtml).join("") + "</span>";
     });
   }
@@ -332,12 +390,15 @@ window.SmartEnroll = (function () {
     var badge = refs.panel.querySelector("[data-se-progress-badge]");
     var bar = refs.panel.querySelector("[data-se-progress-bar]");
     var fill = refs.panel.querySelector("[data-se-progress-fill]");
-    badge.textContent = p.percent + "%";
-    badge.className = BADGE + " " + (p.percent >= 100 ? BADGE_TONE.emerald : BADGE_TONE.blue);
+    var done = state.status === "approved" || p.percent >= 100;
+    // Figma State=Approved: green badge with a 14px check circle (pl-1), green bar fill.
+    badge.innerHTML = (done ? ICON.checkCircle("size-3.5 shrink-0 text-green-500 dark:text-green-400") : "") + esc(p.percent + "%");
+    badge.className = BADGE + " " + (done ? BADGE_TONE.green + " pl-1" : BADGE_TONE.blue);
     bar.setAttribute("aria-valuenow", String(p.percent));
     bar.setAttribute("aria-valuetext", p.percent + "% · " + p.filled + " of " + p.required + " required fields");
     // Tailwind v4 fraction width (w-37/100), so the bar stays class-only (no inline style).
-    fill.className = fill.className.replace(/\bw-(0|full|\d+\/100)\b/g, "").trim() + " " + pctClass(p.percent);
+    fill.className = fill.className.replace(/\bw-(0|full|\d+\/100)\b/g, "").replace(/\s*\b(dark:)?bg-(blue|emerald|green)-\d+\b/g, "").trim() + " " + pctClass(p.percent) +
+      (done ? " bg-green-500 dark:bg-green-400" : " bg-blue-600 dark:bg-blue-500");
     emit("progress", p);
   }
 
@@ -354,43 +415,72 @@ window.SmartEnroll = (function () {
     var icon = s.icon === "check" ? ICON.checkCircle(iconCls)
       : s.icon === "exclamation" ? ICON.exclamationCircle(iconCls)
       : s.icon === "x" ? ICON.xCircle(iconCls)
+      : s.icon === "clock" ? ICON.clock(iconCls)
+      : s.icon === "clipboard" ? ICON.clipboard(iconCls)
       : ICON.dashed(iconCls);
     box.className = "flex gap-2 rounded-md p-3 " + tone.box;
     box.innerHTML =
       icon +
-      '<div class="flex min-w-0 flex-col gap-1 ' + tone.text + '">' +
-      '<p class="type-label">' + esc(s.label) + "</p>" +
-      '<p class="type-body">' + esc(phoneText(s.text)) + "</p>" +
+      '<div class="flex min-w-0 flex-col gap-2">' +
+      '<p class="type-label ' + tone.title + '">' + esc(s.label) + "</p>" +
+      '<p class="type-body ' + tone.text + '">' + esc(phoneText(s.text)) + "</p>" +
       "</div>";
   }
 
-  var ROW = "flex items-center gap-2 rounded-md border border-gray-200 bg-white p-2.5 dark:border-white/10 dark:bg-gray-900";
+  // Figma SE (In Progress) Main Menu/Add-ons 4511:377691, row h52 rounded-md. 1px border = p-2.5, 2px border = p-2 (same height).
+  var ROW = "flex items-center justify-between gap-2 rounded-md border border-gray-200 bg-white p-2.5 dark:border-white/10 dark:bg-gray-900";
+  // Added=On: 2px blue-600 border + Figma shadow/xl (= Tailwind shadow-xl).
+  var ROW_ON = "flex items-center justify-between gap-2 rounded-md border-2 border-blue-600 bg-white p-2 shadow-xl dark:border-blue-500 dark:bg-gray-900 dark:shadow-none";
+  // Figma "Actions" Small (remove add-on): p-0.5 rounded-md, 18px X, gray-400 → hover gray-100 box + gray-500.
+  var ACTION_SM =
+    "inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 " + FOCUS +
+    " disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-gray-400 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:disabled:hover:bg-transparent dark:disabled:hover:text-gray-500";
 
+  function productLogo(p) {
+    // Figma "Master ADDS-ON": 32px gradient circle + white 20px product logomark (asset per product), shadow/sm.
+    return '<img src="' + ROOT + "assets/smart-enroll/addon-" + esc(p.id) + '.svg?v=20261126se" alt="" width="32" height="32" class="size-8 shrink-0 rounded-full shadow-xs" />';
+  }
+
+  /**
+   * One add-on row per SE variant:
+   *   base (AP/AR) while editable        → Added=On without X (2px blue border, logo, In Progress spinner, info)
+   *   add-on added while editable        → Added=On (same + X = remove, confirm modal)
+   *   base / added add-on when read-only → Sticked/Not editable (1px gray border, logo, Clock, info; no plus, no X)
+   *   not added                          → Added=Off (dashed plus gray-300, blue label; hover gray-50 bg + blue-500 ring)
+   *   soon (Supply Chain Financing, D-10) → disabled Added=Off, no badge, no action
+   * Status icon sits right after the label; the info bubble is always the trailing slot (before X).
+   */
   function productRow(p) {
-    var tip = infoTip("se-product-tip-" + p.id, "About " + p.name, p.info, "end");
+    var tip = infoBubble(p);
     var readOnly = isReadOnly();
-    if (p.kind === "base" || (p.kind === "addon" && state.addons[p.id])) {
-      var logo = '<img src="' + ROOT + 'assets/illustrations/smart-hub-tile.svg?v=20261111" alt="" width="28" height="28" class="size-7 shrink-0 rounded-full" />';
+    var on = p.kind === "base" || (p.kind === "addon" && state.addons[p.id]);
+    if (on) {
+      var label = '<span class="min-w-0 truncate type-label text-gray-800 dark:text-gray-100">' + esc(p.name) + "</span>";
+      if (readOnly) {
+        return '<li class="' + ROW + '">' +
+          '<span class="flex min-w-0 items-center gap-2">' + productLogo(p) + label +
+          ICON.clock("size-4.5 shrink-0 text-blue-500 dark:text-blue-400") + '<span class="sr-only">(' + (p.kind === "base" ? "included" : "added") + ", pending)</span></span>" +
+          '<span class="flex shrink-0 items-center">' + tip + "</span></li>";
+      }
       var remove = p.kind === "addon"
-        ? '<button type="button" data-se-addon-remove="' + esc(p.id) + '" data-tooltip="Remove ' + esc(p.name) + '"' + (readOnly ? " disabled" : "") +
-          ' class="inline-flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-gray-400 hover:bg-red-50 hover:text-red-600 ' + FOCUS + ' disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-gray-400 dark:text-gray-500 dark:hover:bg-red-400/10 dark:hover:text-red-400 dark:disabled:hover:text-gray-500">' +
-          '<span class="sr-only">Remove ' + esc(p.name) + "</span>" + ICON.trash + "</button>"
+        ? '<button type="button" data-se-addon-remove="' + esc(p.id) + '" data-tooltip="Remove ' + esc(p.name) + '" class="' + ACTION_SM + '"><span class="sr-only">Remove ' + esc(p.name) + "</span>" + ICON.x + "</button>"
         : "";
-      return '<li class="' + ROW + '">' + logo +
-        '<span class="min-w-0 flex-1 truncate type-label text-default">' + esc(p.name) + "</span>" +
-        (p.kind === "addon" ? '<span class="sr-only">(added)</span>' : "") + remove + tip + "</li>";
+      return '<li class="' + ROW_ON + '">' +
+        '<span class="flex min-w-0 items-center gap-2">' + productLogo(p) + label +
+        ICON.spinner("size-4.5 shrink-0 text-blue-500 dark:text-blue-400") + '<span class="sr-only">(' + (p.kind === "base" ? "included" : "added") + ", in progress)</span></span>" +
+        '<span class="flex shrink-0 items-center">' + tip + remove + "</span></li>";
     }
     if (p.kind === "soon") {
-      // D-10: listed, disabled, "Coming soon".
+      // D-10: listed but not addable (disabled Added=Off look, no click action). No "Coming soon" badge (PO 2026-11-26).
       return '<li class="' + ROW + '">' +
         '<button type="button" disabled class="group/add flex min-w-0 flex-1 cursor-not-allowed items-center gap-2 text-left text-gray-400 dark:text-gray-500">' + ICON.plusDashed +
-        '<span class="min-w-0 type-label text-gray-400 dark:text-gray-500">' + esc(p.name) + "</span></button>" +
-        '<span class="' + BADGE + " " + BADGE_TONE.gray + ' shrink-0">Coming soon</span>' + tip + "</li>";
+        '<span class="min-w-0 truncate type-label text-gray-400 dark:text-gray-500">' + esc(p.name) + '<span class="sr-only"> (not available yet)</span></span></button>' + tip + "</li>";
     }
-    return '<li class="' + ROW + '">' +
+    // Added=Off. Hover (SE): row gray-50, dashed ring + plus blue-500, label stays blue-600. Pressed (not drawn): gray-100.
+    return '<li class="' + ROW + ' has-[[data-se-addon-add]:hover:not(:disabled)]:bg-gray-50 has-[[data-se-addon-add]:active:not(:disabled)]:bg-gray-100 dark:has-[[data-se-addon-add]:hover:not(:disabled)]:bg-white/5 dark:has-[[data-se-addon-add]:active:not(:disabled)]:bg-white/10">' +
       '<button type="button" data-se-addon-add="' + esc(p.id) + '"' + (readOnly ? " disabled" : "") +
-      ' class="group/add flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-sm text-left text-blue-600 hover:text-blue-700 ' + FOCUS + ' disabled:cursor-not-allowed disabled:text-gray-400 dark:text-blue-400 dark:hover:text-blue-300 dark:disabled:text-gray-500">' + ICON.plusDashed +
-      '<span class="min-w-0 truncate type-label text-blue-600 group-hover/add:text-blue-700 group-disabled/add:text-gray-400 dark:text-blue-400 dark:group-hover/add:text-blue-300 dark:group-disabled/add:text-gray-500"><span class="sr-only">Add </span>' + esc(p.name) + "</span></button>" +
+      ' class="group/add flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-sm text-left text-blue-600 ' + FOCUS + ' disabled:cursor-not-allowed disabled:text-gray-400 dark:text-blue-400 dark:disabled:text-gray-500">' + ICON.plusDashed +
+      '<span class="min-w-0 truncate type-label text-blue-600 group-disabled/add:text-gray-400 dark:text-blue-400 dark:group-disabled/add:text-gray-500"><span class="sr-only">Add </span>' + esc(p.name) + "</span></button>" +
       tip + "</li>";
   }
 
@@ -401,22 +491,51 @@ window.SmartEnroll = (function () {
   function renderHelp() {
     var h = state.data.help || {};
     var mount = refs.panel.querySelector("[data-se-help]");
+    // Toggle = Figma SE Transcard Support Off (question icon + gray-500 label, chevron). Expanded content per R1 28107:8955
+    // (content rule): "SMART Suite Knowledge Base" link + info bubble (help.linkLabel / href / info). The SE popover
+    // (support team card, Email / Call) is replaced by this R1 content (DS row in discrepancies.md).
     mount.innerHTML =
-      '<button type="button" aria-expanded="false" aria-controls="se-help-body" data-se-help-toggle class="group/help -mx-2 flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-left text-secondary hover:bg-gray-50 ' + FOCUS + ' dark:hover:bg-white/5">' +
-      ICON.question + '<span class="flex-1 type-label text-secondary">' + esc(h.title) + "</span>" + ICON.chevronDown + "</button>" +
-      '<div id="se-help-body" hidden class="flex items-center gap-1 px-1 pb-1">' +
-      '<a href="' + esc(h.href) + '" target="_blank" rel="noopener noreferrer" class="' + LINK + ' text-sm">' + esc(h.linkLabel) + '<span class="sr-only"> (opens in a new tab)</span></a>' +
-      infoTip("se-help-tip", "About the knowledge base", h.info) +
+      '<button type="button" aria-expanded="false" aria-controls="se-help-body" data-se-help-toggle class="group/help -mx-2 flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-left text-gray-500 hover:bg-gray-50 hover:text-gray-700 ' + FOCUS + ' dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200">' +
+      ICON.question + '<span class="flex-1 type-label">' + esc(h.title) + "</span>" + ICON.chevronDown + "</button>" +
+      '<div id="se-help-body" hidden class="flex items-center gap-1 pl-7">' +
+      '<a href="' + esc(h.href) + '" target="_blank" rel="noopener noreferrer" class="' + LINK + ' text-sm">' + esc(h.linkLabel) +
+      '<span class="sr-only"> (opens in a new tab)</span></a>' +
+      infoTip("se-help-tip", "About " + h.linkLabel, h.info, "end") +
       "</div>";
   }
 
   /* ---------- tabs + main card ---------- */
 
+  /**
+   * Figma SE Step Tabs Status Icons 4944:363327 (18px): None = gray-400 dot, In progress = blue-500 spinner,
+   * Pending Approval = blue-500 clock, Approved / Completed = green-500 check, Error = amber-500 exclamation.
+   * Hover / focus on the icon shows the shared dark tooltip (SE 1240:272484, status + "filled / required" like the SE
+   * status dropdown). Titles from SE Status Description 5242:334566 (Progress / Error / Completed); the
+   * description lines are adapted from its designer notes: TODO(confirm) wording with design.
+   */
+  var TAB_STATUS = {
+    empty: { label: "Not started", text: "No required field filled yet." },
+    progress: { label: "In progress", text: "At least one field is filled." },
+    error: { label: "Error", text: "Required fields are missing or have a wrong format." },
+    complete: { label: "Completed", text: "All required fields are filled in with no format errors." },
+    pending: { label: "Pending Approval", text: "Submitted and under review." },
+    approved: { label: "Approved", text: "Verified and approved." },
+  };
+
   function tabIcon(id) {
-    var s = tabState(id);
-    if (s === "complete") return ICON.checkCircle("size-4 shrink-0 text-green-600 dark:text-green-400") + '<span class="sr-only">(complete)</span>';
-    if (s === "progress") return ICON.dashed("size-4 shrink-0 text-blue-600 dark:text-blue-400") + '<span class="sr-only">(in progress)</span>';
-    return "";
+    var s = state.status === "pending-approval" ? "pending" : state.status === "approved" ? "approved" : tabState(id);
+    var cls = "size-4.5 shrink-0 ";
+    var icon = s === "error" ? ICON.exclamationCircle(cls + "text-amber-500 dark:text-amber-400")
+      : s === "complete" || s === "approved" ? ICON.checkCircle(cls + "text-green-500 dark:text-green-400")
+      : s === "progress" ? ICON.spinner(cls + "text-blue-500 dark:text-blue-400")
+      : s === "pending" ? ICON.clock(cls + "text-blue-500 dark:text-blue-400")
+      : ICON.dot(cls + "text-gray-400 dark:text-gray-500");
+    var p = state.progress[id] || { required: 0, filled: 0 };
+    var meta = TAB_STATUS[s];
+    var counts = p.required > 0 && s !== "pending" && s !== "approved" ? " " + Math.min(p.filled, p.required) + " / " + p.required + " required fields." : "";
+    var tip = meta.label + ". " + meta.text + counts;
+    // The tooltip sits on the icon (SE: hover on the status icon); the sr-only text gives the same to screen readers.
+    return '<span data-tooltip="' + esc(tip) + '" class="inline-flex shrink-0">' + icon + '</span><span class="sr-only">(' + esc(tip) + ")</span>";
   }
 
   function renderTabs() {
@@ -565,6 +684,8 @@ window.SmartEnroll = (function () {
     window.history.replaceState(null, "", url);
     renderStatusBox();
     renderProducts();
+    renderTabs();
+    renderProgress();
     applyReadOnly();
     renderFooterNav();
     syncDemo();
@@ -596,8 +717,18 @@ window.SmartEnroll = (function () {
     renderProgress();
     toast(p.name + " added.");
     emit("addon-change", { addon: id, added: true, tabs: p.tabs || [] });
-    var btn = refs.panel.querySelector('[data-se-addon-remove="' + id + '"]');
-    if (btn) btn.focus();
+    // SE prototype (page 215:99777, frame 10130:351897): no modal; the add-on turns Added=On and its tab opens.
+    // Select + scroll to the first new tab, close the drawer (<1024) and move focus to the card heading.
+    var first = (p.tabs || [])[0];
+    if (first && goToTab(first)) {
+      closeDrawer(false);
+      var tabBtn = document.getElementById("se-tab-" + first);
+      if (tabBtn && tabBtn.scrollIntoView) tabBtn.scrollIntoView({ block: "nearest", inline: "nearest" });
+      if (refs.main.getBoundingClientRect().top < 0) refs.main.scrollIntoView({ block: "start" });
+      refs.title.setAttribute("tabindex", "-1");
+      refs.title.classList.add("focus:outline-hidden"); // programmatic focus target only, not a control
+      refs.title.focus({ preventScroll: true });
+    }
   }
 
   function discardAddon(id) {
@@ -777,6 +908,26 @@ window.SmartEnroll = (function () {
       if (t.closest("[data-se-drawer-close]") || t.closest("[data-se-drawer-backdrop]")) { closeDrawer(); return; }
     });
 
+    // Add-on info bubbles: aria-expanded follows the popover (open style = SE Focus), keyboard focus opens, blur closes.
+    document.addEventListener("toggle", function (e) {
+      var pop = e.target;
+      if (!pop || !pop.id || pop.id.indexOf("se-product-info-") !== 0) return;
+      var trigger = document.querySelector('[popovertarget="' + pop.id + '"]');
+      if (trigger) trigger.setAttribute("aria-expanded", String(e.newState === "open"));
+    }, true);
+    refs.panel.addEventListener("focusin", function (e) {
+      var trigger = e.target.closest && e.target.closest("[data-se-info-trigger]");
+      if (!trigger || !trigger.matches(":focus-visible")) return;
+      var pop = document.getElementById(trigger.getAttribute("popovertarget"));
+      if (pop && pop.showPopover && !pop.matches(":popover-open")) { try { pop.showPopover(); } catch (err) { /* not connected */ } }
+    });
+    refs.panel.addEventListener("focusout", function (e) {
+      var trigger = e.target.closest && e.target.closest("[data-se-info-trigger]");
+      if (!trigger) return;
+      var pop = document.getElementById(trigger.getAttribute("popovertarget"));
+      if (pop && pop.matches(":popover-open") && !pop.contains(e.relatedTarget)) { try { pop.hidePopover(); } catch (err) { /* closed */ } }
+    });
+
     // Tabs: arrows / Home / End move and activate (automatic activation).
     refs.tabs.addEventListener("keydown", function (e) {
       var keys = ["ArrowLeft", "ArrowRight", "Home", "End"];
@@ -801,6 +952,41 @@ window.SmartEnroll = (function () {
     LG.addEventListener("change", function () { if (LG.matches) closeDrawer(false); });
   }
 
+  /* ---------- shared UI builders (tabs) ---------- */
+
+  /**
+   * Yes / No choice pill = Figma SE Buttons-Toggle YES/NO 4929:491507: 48x32 (h-8 min-w-12), rounded-md, 1px ring.
+   * Off: white / gray-300 / gray-700 → hover ring gray-400 + text gray-900 (bg stays white).
+   * On (checked radio): blue-50 / blue-300 / blue-700 → hover blue-100 / blue-400 / blue-800.
+   * Disabled: off ring gray-400 + text gray-500; on blue-100 / blue-400 + text gray-500.
+   * Focus: SE draws none; keeps the shared focus-visible outline (a11y). Error: `group/yn` wrapper with data-invalid.
+   */
+  var CHOICE =
+    "relative inline-flex h-8 min-w-12 cursor-pointer items-center justify-center rounded-md bg-white px-3 type-button uppercase text-gray-700 inset-ring inset-ring-gray-300 hover:text-gray-900 hover:inset-ring-gray-400 " +
+    "has-checked:bg-blue-50 has-checked:text-blue-700 has-checked:inset-ring-blue-300 has-checked:hover:bg-blue-100 has-checked:hover:text-blue-800 has-checked:hover:inset-ring-blue-400 " +
+    "group-data-invalid/yn:inset-ring-red-300 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-blue-600 " +
+    "has-disabled:cursor-not-allowed has-disabled:text-gray-500 has-disabled:inset-ring-gray-400 has-disabled:hover:text-gray-500 has-disabled:hover:inset-ring-gray-400 " +
+    "has-disabled:has-checked:bg-blue-100 has-disabled:has-checked:text-gray-500 has-disabled:has-checked:inset-ring-blue-400 has-disabled:has-checked:hover:bg-blue-100 has-disabled:has-checked:hover:text-gray-500 has-disabled:has-checked:hover:inset-ring-blue-400 " +
+    "dark:bg-white/5 dark:text-gray-300 dark:inset-ring-white/15 dark:hover:bg-white/10 dark:hover:text-white dark:hover:inset-ring-white/25 " +
+    "dark:has-checked:bg-blue-400/10 dark:has-checked:text-blue-300 dark:has-checked:inset-ring-blue-400/40 dark:has-checked:hover:bg-blue-400/20 dark:has-checked:hover:text-blue-200 dark:has-checked:hover:inset-ring-blue-400/60 " +
+    "dark:group-data-invalid/yn:inset-ring-red-400/50 dark:has-focus-visible:outline-blue-400 " +
+    "dark:has-disabled:text-gray-500 dark:has-disabled:inset-ring-white/15 dark:has-disabled:hover:bg-white/5 dark:has-disabled:hover:text-gray-500 dark:has-disabled:hover:inset-ring-white/15 " +
+    "dark:has-disabled:has-checked:bg-blue-400/15 dark:has-disabled:has-checked:text-gray-400 dark:has-disabled:has-checked:inset-ring-blue-400/30 dark:has-disabled:has-checked:hover:bg-blue-400/15 dark:has-disabled:has-checked:hover:text-gray-400";
+
+  /** One pill: a label wrapping an sr-only radio. o = { name, value, text, checked, attrs (raw attribute string) }. */
+  function choicePill(o) {
+    return '<label class="' + CHOICE + '"><input type="radio" class="sr-only" name="' + esc(o.name) + '" value="' + esc(o.value) + '"' + (o.attrs || "") +
+      (o.checked ? " checked" : "") + " />" + esc(o.text) + "</label>";
+  }
+
+  /** YES + NO pills. o = { name, value (current: "yes" | "no" | null), attrs, labels: ["YES", "NO"] }. The caller owns the radiogroup wrapper. */
+  function yesNo(o) {
+    var labels = o.labels || ["YES", "NO"];
+    return ["yes", "no"].map(function (v, i) {
+      return choicePill({ name: o.name, value: v, text: labels[i], checked: o.value === v, attrs: o.attrs });
+    }).join("");
+  }
+
   /* ---------- public API ---------- */
 
   function registerTab(id, renderer) {
@@ -810,7 +996,7 @@ window.SmartEnroll = (function () {
 
   function setProgress(id, counts) {
     if (!counts) return;
-    state.progress[id] = { required: Math.max(0, counts.required | 0), filled: Math.max(0, counts.filled | 0) };
+    state.progress[id] = { required: Math.max(0, counts.required | 0), filled: Math.max(0, counts.filled | 0), error: !!counts.error };
     if (!state.data) return;
     renderTabs();
     renderProgress();
@@ -894,5 +1080,6 @@ window.SmartEnroll = (function () {
     prev: function () { return step(-1); },
     on: on,
     storageKey: storageKey,
+    ui: { CHOICE: CHOICE, choicePill: choicePill, yesNo: yesNo },
   };
 })();

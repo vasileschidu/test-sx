@@ -63,6 +63,6 @@ Page: `src/pages/smart-enroll/sign-in.html` (script `src/scripts/smart-enroll/si
 - Entering the application stores the business id in sessionStorage `se_business_v1` and opens
   `application.html?status=<business status>`. Businesses that are not in `smart-enroll.json` (Harbor, Cedar, Lumen) show the
   shell's first business name.
-- TODO(confirm): the code info-circle tooltip text (not in Figma; the User Management invite copy is reused) and the ⋮ menu on
+- The code info-circle tooltip text (not in Figma; the User Management invite copy is reused) is the agent-written copy accepted by the product owner 2026-11-25. TODO(confirm): the ⋮ menu on
   the Microsoft account row (not built; the screen is a bitmap in Figma). Empty email / code only: Figma has no "invalid
   email format" message, so any non-empty email is accepted.

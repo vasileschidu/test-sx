@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "_comment": "SMART Enroll fake data (TCDM-5241). tabs[].cardTitle = card heading when Figma's is longer than the tab label. Every name, number and address is invented. Shell: src/scripts/smart-enroll/shell.js. Spec: wiki/products/smart-enroll/flows/application-shell.md.",
+  "_comment": "SMART Enroll fake data (TCDM-5241). tabs[].cardTitle = card heading when Figma's is longer than the tab label. Every name, number and address is invented. Shell: src/scripts/smart-enroll/shell.js. Spec: wiki/products/smart-enroll/flows/application-shell.md. products[].infoCards = info bubble popover cards (Figma SE Info Bubbles 4511:349353 / Card 4511:349551; copy from the PO 2026-11-26).",
   "support": {
     "phone": "800-890-3128",
     "email": "support@smart-hub.com",
@@ -107,8 +107,8 @@
     {
       "id": "pending-enrollment-data",
       "label": "Pending enrollment data",
-      "tone": "amber",
-      "icon": "dashed",
+      "tone": "blue",
+      "icon": "clipboard",
       "editable": true,
       "text": "Your application is under review and additional information is needed. You should have received an email from our customer service team indicating that information. If you have not received an email, please contact our Customer Service team at {phone}."
     },
@@ -116,7 +116,7 @@
       "id": "pending-approval",
       "label": "Pending Approval",
       "tone": "blue",
-      "icon": "dashed",
+      "icon": "clock",
       "editable": false,
       "text": "We are completing our final checks and setups for you to use SMART Hub. You'll receive an email soon when the process is complete. If you have any questions, please contact our Customer Service team at {phone}."
     },
@@ -150,27 +150,77 @@
       "id": "ap-ar",
       "name": "AP/AR Payments",
       "kind": "base",
-      "info": "Pay your suppliers and get paid by your customers from one place. Always included."
+      "info": "Pay your suppliers and get paid by your customers from one place. Always included.",
+      "infoCards": [
+        {
+          "icon": "info-ap",
+          "badge": "Accounts Payable",
+          "tone": "blue",
+          "title": "AP Payments",
+          "text": "Disburse funds to any individual or supplier via any payment method, over any payment rail, and from any originating bank account."
+        },
+        {
+          "icon": "info-ar",
+          "badge": "Accounts Receivable",
+          "tone": "cyan",
+          "title": "AR Payments",
+          "text": "Receive funds from any individual or buyer via any payment method, over any payment rail, and deposited directly to any bank account."
+        }
+      ]
     },
     {
       "id": "supply-chain",
       "name": "Supply Chain Financing",
       "kind": "soon",
-      "info": "Early payment and financing for your supply chain. Coming soon."
+      "info": "Early payment and financing for your supply chain. Coming soon.",
+      "infoCards": [
+        {
+          "icon": "info-supply-chain",
+          "badge": "Accounts Payable",
+          "tone": "green",
+          "title": "Early Payment Option",
+          "text": "Early payment option enables suppliers receive payment in advance at a discount."
+        },
+        {
+          "icon": "info-ar",
+          "badge": "Accounts Receivable",
+          "tone": "cyan",
+          "title": "Supply Chain Financing",
+          "text": "Accept credit and debit card transactions."
+        }
+      ]
     },
     {
       "id": "merchant",
       "name": "Merchant Services",
       "kind": "addon",
       "info": "Accept card payments from your customers. Adds the Financial and Business Plan tabs.",
-      "tabs": ["financial", "business-plan"]
+      "tabs": ["financial", "business-plan"],
+      "infoCards": [
+        {
+          "icon": "info-merchant",
+          "badge": "Accounts Receivable",
+          "tone": "yellow",
+          "title": "Merchant Services",
+          "text": "Accept credit and debit card transactions."
+        }
+      ]
     },
     {
       "id": "cross-border",
       "name": "Cross-Border Payments",
       "kind": "addon",
       "info": "Pay and get paid in other currencies. Adds the Transactional tab.",
-      "tabs": ["transactional"]
+      "tabs": ["transactional"],
+      "infoCards": [
+        {
+          "icon": "info-cross-border",
+          "badge": "Accounts Payable",
+          "tone": "orange",
+          "title": "Cross-Border Payments",
+          "text": "Disburse funds to any individual or supplier internationally."
+        }
+      ]
     }
   ],
   "tabs": [

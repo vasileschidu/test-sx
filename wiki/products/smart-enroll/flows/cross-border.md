@@ -32,7 +32,7 @@ split by foreign currencies."
 | Are you involved in any of the following activities? | required, **one** YES / NO for the list: Dealer of precious stones · Dealer in weapons · Dealer in virtual currency · Controlled substances related · Are you a financial institution |
 
 Order as in Figma (earlier drafts listed Highest first and a Yes/No per activity: DS-026). 5 required answers feed the
-tab progress. Errors: "<Field> is required." on leaving an empty field; "Select Yes or No." (TODO confirm).
+tab progress. Errors: "<Field> is required." on leaving an empty field; "Select Yes or No." (agent-written copy accepted by the product owner 2026-11-25).
 Prototype: `src/scripts/smart-enroll/cross-border.js` (TCDM-5249).
 
 ## FX Provider

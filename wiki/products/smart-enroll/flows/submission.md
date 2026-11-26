@@ -32,12 +32,12 @@ record it under [variants/](../variants/README.md) with a client code when it's 
 | 3 "Accept the terms" | [28676:95204](https://www.figma.com/design/jLooCmHwqJcYV5p5d8BHnO/-R1--SMART-Enroll?node-id=28676-95204) + [v2 29621:11095](https://www.figma.com/design/jLooCmHwqJcYV5p5d8BHnO/-R1--SMART-Enroll?node-id=29621-11095) | "Are you authorized to sign?" (from v2). **Yes** → Provide additional details (Full Name, DOB, Nationality, Government ID Number, Upload Government ID, address, contact; Edit Details), attestation, DDA consent, T&Cs + Privacy (each **Review**), **Confirm**. **No** → "Send to an authorized signatory" (First Name, Last Name, Email, Note) → Request sent. |
 | 4 "Your information has been received!" | [28676:94930](https://www.figma.com/design/jLooCmHwqJcYV5p5d8BHnO/-R1--SMART-Enroll?node-id=28676-94930) | Go back to onboarding / Done. Status becomes **Pending Approval**. |
 
-TODO(confirm): DDA consent text mentions "Canadian banking regulations" — likely copied; prototype uses neutral wording.
+DDA consent: Figma's text mentions "Canadian banking regulations" (likely copied); the prototype's neutral wording and DDA tooltip are the agent-written copy accepted by the product owner 2026-11-25.
 
 ## Authorized signer (D-2)
 Figma: [29624:11989](https://www.figma.com/design/jLooCmHwqJcYV5p5d8BHnO/-R1--SMART-Enroll?node-id=29624-11989)
 
-When the applicant answers **No**, the application **waits for the signer**: status box "Waiting for signature" (TODO(confirm) label — not drawn),
+When the applicant answers **No**, the application **waits for the signer**: status box "Waiting for signature" (not drawn; agent-written copy accepted by the product owner 2026-11-25),
 Submit disabled, the applicant can still edit. The signer **does not sign in** — they use a secure, single-use link.
 
 1. Email "Action Required: Sign the Application" from SMART Enroll (signer name, custom note, **Review and Acknowledge**).
@@ -47,7 +47,8 @@ Submit disabled, the applicant can still edit. The signer **does not sign in** �
 
 **Signing completes the application** (TCDM-5251 brief, 2026-11-24): once the signer confirms, the application goes to
 **Pending Approval** on its own — the applicant does not submit again. (The earlier draft said the applicant's Step 3 shows
-"Signed by <name> on <date>" and they submit; changed with the T11 brief — TODO(confirm) with product.) The same signer flow
+"Signed by <name> on <date>" and they submit; changed with the T11 brief.) Agreed by the product owner 2026-11-25: the signer's signature moves the
+application straight to Pending Approval. The same signer flow
 serves the Merchant Services BlueSnap terms ([merchant-services.md](merchant-services.md)).
 TODO(confirm): link expiry and resend; prototype: Resend from the status box, no expiry; a new request voids the previous link.
 
@@ -62,10 +63,10 @@ TODO(confirm): link expiry and resend; prototype: Resend from the status box, no
 - Step 3: "Provide additional details" and "Send to an authorized signatory" open **in place** inside the Submit dialog (one dialog
   at a time); Cancel returns to Step 3 with the previous answer. Review opens the document in a new tab, then the row shows its
   checkbox. **Confirm** needs details + DDA + both terms → Step 4 and status **Pending Approval**.
-- **No** → Send → "Request sent" (TODO(confirm) copy) with the demo link; the left panel shows the amber **Waiting for signature**
+- **No** → Send → "Request sent" (agent-written copy accepted by the product owner 2026-11-25) with the demo link; the left panel shows the amber **Waiting for signature**
   box (Resend, "Open the email (demo)") and Next Step on the last tab is `aria-disabled` with the reason as tooltip.
 - Signer page: `sign.html?token=<token>` (`&view=email` = the demo email). The review box shows a snapshot of the application
-  taken when the request was sent + the E-Sign Consent text (TODO(confirm) copy; Figma shows a Terms of Use document). A used or
+  taken when the request was sent + the E-Sign Consent text (agent-written copy accepted by the product owner 2026-11-25; Figma shows a Terms of Use document). A used or
   unknown token shows "This link has expired".
 - State: localStorage `se_sign_v1` (shared by the applicant's tab and the signer's tab, so the applicant's tab turns Pending Approval
   as soon as the signer confirms), sessionStorage `se_submission_v1` (Step 3 answers), status via the shell (`se_status_v1`).
