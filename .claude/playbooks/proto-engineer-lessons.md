@@ -156,3 +156,8 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-26 [smart-enroll][ownership] Brief names can drift from Figma (asked "Date of Incorporation", Figma only has Date of Birth): screenshot R1 + SE first, apply to the real field, log a DS row. Next Step handlers: capture-phase click on `[data-se-next]` + `SE.on("submit")` to flag errors for the tab.
 - 2026-11-26 [smart-enroll][a11y] Whole-row accordion header with several controls: put `after:absolute after:inset-0` on the toggle button (header `relative`) and `relative z-10` on the inner controls (pills); Playwright needs `force: true` to click the covered label text.
 - 2026-11-26 [figma] `get_metadata` on a Figma section (e.g. R1 BlueSnap `30397:63675`) dumps ~15k tokens; use it only on a single tab frame, then `get_design_context` on the Top Header / Form Section child with `excludeScreenshot`.
+
+## 2026-11-26 TCDM-5247 / 5251 (SMART Enroll)
+- `tools/serve.py <port>` silently fails to bind if another worktree already serves that port: check `lsof -p <pid> | grep cwd` before trusting a preview.
+- Demo-state seeding: tab scripts read sessionStorage `se_tab_<id>` on `SE.ready`/first render, so seed inside shell `init()` before `renderActive`; a status switch seeds then reloads.
+- A tab-level hook can live in shell.js by listening to another tab's document event (`smart-enroll:connectors-change`) instead of editing that tab's script.

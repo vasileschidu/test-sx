@@ -59,7 +59,7 @@ TODO(confirm): link expiry and resend; prototype: Resend from the status box, no
 - Step 1 is skipped when every add-on is added and Connectors is complete (the stepper still reads "Step 2 of 4"). ⊕ adds the add-on
   and opens its first tab. Connectors actions (Validate Connection, Add bank account, Connect a data source) close the dialog and open
   the Connectors tab.
-- Step 2 accordions are a read-only summary per tab (description list) + **Edit** — not the embedded form drawn in 28676:132706.
+- Step 2 accordions (SE Review Info Drops 5280:338651): header = title + "N% complete" badge + **Edit** (Secondary xs) + chevron; open = gray-50 header; a tab below 100% turns yellow with the badge "Missing required information" and its empty rows get an amber label, warning icon and "--". Content is a read-only summary per tab (description list), **Edit** jumps to the tab — not the embedded form drawn in 28676:132706.
 - Step 3: "Provide additional details" and "Send to an authorized signatory" open **in place** inside the Submit dialog (one dialog
   at a time); Cancel returns to Step 3 with the previous answer. Review opens the document in a new tab, then the row shows its
   checkbox. **Confirm** needs details + DDA + both terms → Step 4 and status **Pending Approval**.

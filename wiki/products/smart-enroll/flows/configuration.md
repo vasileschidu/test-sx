@@ -20,8 +20,9 @@ Figma: [28566:45740](https://www.figma.com/design/jLooCmHwqJcYV5p5d8BHnO/-R1--SM
 the SMART Hub portal as well."
 
 ## SMART Exchange Payment Preferences
-"SMART Exchange is an option you can enable for instant payments. What is SMART Exchange?" — toggle (off by default).
-When on:
+"SMART Exchange is an option you can enable for instant payments. What is SMART Exchange?" — **no toggle**: R1
+`28566:45740` and SE `5136:333009` both draw the fields always visible (the earlier "toggle, off by default" is superseded, DS-009).
+Save is disabled until something changes and disabled again after saving.
 
 | Field | Rule |
 |---|---|
@@ -33,5 +34,5 @@ When on:
 Exchange. If no values are entered, all invoices will be eligible." **Save**.
 
 ## Rules
-- The tab counts as complete when it was saved once (toggle off is a valid answer).
+- The tab counts as complete when it was saved once (account chosen; min / max optional). Save needs the account ("Select a default receiving account.").
 - Error text for max < min (not drawn; agent-written copy accepted by the product owner 2026-11-25): "Max. invoice amount must be greater than Min. invoice amount."

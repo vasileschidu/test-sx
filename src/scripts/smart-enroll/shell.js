@@ -22,6 +22,9 @@
  *   rerender(id)
  *   setProgress(id, { required, filled, error })   per-tab counts → progress % + tab icon (✓ / in progress / empty;
  *                              error: true → Figma Tab "Error" amber exclamation, e.g. after a blocked submit)
+ *   setTabAlert(tabId, { tone: 'amber'|'red'|'blue'|'green', title, text }) / clearTabAlert(tabId)
+ *                              Info Box above the tab strip while that tab is active (SE 6017:347689). Connectors' Action
+ *                              Required banks raise it from the `smart-enroll:connectors-change` event (no hook needed in connectors.js).
  *   getProgress()              { percent, required, filled, tabs: { id: { required, filled, state } } }
  *   getStatus() / setStatus(id) / isReadOnly()
  *   getAddons() / hasAddon(id) / addAddon(id) / removeAddon(id, { confirm: false })
@@ -640,6 +643,7 @@ window.SmartEnroll = (function () {
     url.searchParams.set("tab", id);
     window.history.replaceState(null, "", url);
     renderTabs();
+    renderTabAlert();
     renderActive();
     if (opts && opts.focusTab) {
       var btn = document.getElementById("se-tab-" + id);
@@ -671,6 +675,127 @@ window.SmartEnroll = (function () {
     if (!event.defaultPrevented) toast("Submission opens here in a later release.", "info");
   }
 
+  /* ---------- demo status seed ---------- */
+
+  // Pending Approval / Approved / Declined / Suspended mean the application was submitted complete: every tab is filled with
+  // valid demo data (the same sessionStorage keys the tab scripts read). Not submitted / Pending enrollment data restore
+  // what the user had before (snapshot in SEED_BACKUP). Financial and Business Plan (Merchant Services add-on) are not seeded.
+  var SEED_BACKUP = "se_demo_backup_v1";
+  var COMPLETE_STATUSES = { "pending-approval": true, approved: true, declined: true, suspended: true };
+  var DEMO_FILE = { name: "resume_back_end_developer.pdf", size: 245760, type: "PDF" };
+  var STATE_NAMES = { OR: "Oregon", OH: "Ohio", CT: "Connecticut", CO: "Colorado", TX: "Texas" };
+
+  function tabStorageKeys() {
+    var keys = [];
+    for (var i = 0; i < window.sessionStorage.length; i++) {
+      var k = window.sessionStorage.key(i);
+      if (k && k.indexOf("se_tab_") === 0) keys.push(k);
+    }
+    return keys;
+  }
+
+  function demoBusinessModel(b) {
+    var parts = String(b.legalAddress || "").split(",").map(function (x) { return x.trim(); });
+    var last = /^([A-Za-z]{2})\s+(\d{5})/.exec(parts[parts.length - 1]) || [];
+    var host = String(b.website || "").replace(/^www\./, "");
+    return {
+      legalName: b.legalName || b.name, referenceId: "", structure: /LLC/.test(b.structure) ? "Limited Liability Company (LLC)" : "Corporations (C-Corp and S-Corp)",
+      stockSymbol: "", address: parts[0] || "", address2: parts.length > 3 ? parts.slice(1, -2).join(", ") : "", city: parts[parts.length - 2] || "",
+      zip: last[2] || "", state: STATE_NAMES[last[1]] || "", phone: b.phone || "", email: b.email || "", website: b.website || "",
+      csEmail: "support@" + host, csPhone: b.phone || "", orgIdType: "Business Number", orgIdNumber: b.orgIdNumber || "4723250093",
+      dba: "no", dbaName: "", files: { icon: [], logo: [], dbaStatement: [] }, bannerDismissed: true,
+    };
+  }
+
+  function seedCompleteApplication() {
+    var d = state.data;
+    var write = function (tabId, v) { store("sessionStorage", storageKey(tabId), v); };
+    var models = {};
+    (d.businesses || []).forEach(function (b) { models[b.id] = demoBusinessModel(b); });
+    write("business-information", models);
+    var applicant = d.applicant || {};
+    write("ownership", {
+      owners: [{
+        id: "own_demo", type: "individual", firstName: applicant.firstName || "Jordan", lastName: applicant.lastName || "Ellis", legalName: "", answer: "yes", share: "100",
+        details: { dob: "04-12-1980", country: "US", address1: "120 Harbor View Drive", address2: "", city: "Portland", state: "OR", zip: "97209", phone: applicant.phone || "", email: applicant.email || "", nationality: "US", idType: "passport", idNumber: "X1234567", idCountry: "US" },
+        govId: [DEMO_FILE],
+      }],
+      doc: [DEMO_FILE],
+    });
+    write("connectors", {
+      source: "erp", view: "detail", api: null,
+      erp: { provider: "quickbooks", email: applicant.email || "", status: "connected", validUntil: "11/26/2027" },
+      banks: [{ id: "ba_demo1", bankId: "bofa", name: "Pacific Coast Bank Checking", holder: ((d.businesses || [])[0] || {}).legalName || "", address: "", country: "United States", state: "OR", zip: "97209", type: "checking", routing: "021000021", account: "000123454821", companyId: "", status: "connected" }],
+    });
+    write("configuration", { account: "ba_chk_4821", min: "100.00", max: "50,000.00" });
+    if (state.addons["cross-border"]) {
+      write("transactional", { "estimated-count": "1200", "average-value": "2,500.00", "highest-value": "40,000.00", purpose: "Paying overseas suppliers for inventory.", activities: "no" });
+    }
+  }
+
+  /** Writes (or restores) the tab storage for a status. Returns true when it changed anything. */
+  function seedForStatus(id) {
+    var backup = store("sessionStorage", SEED_BACKUP);
+    if (COMPLETE_STATUSES[id]) {
+      if (backup) return false;
+      var snap = {};
+      tabStorageKeys().forEach(function (k) { snap[k] = window.sessionStorage.getItem(k); });
+      store("sessionStorage", SEED_BACKUP, snap);
+      seedCompleteApplication();
+      return true;
+    }
+    if (!backup) return false;
+    tabStorageKeys().forEach(function (k) { window.sessionStorage.removeItem(k); });
+    Object.keys(backup).forEach(function (k) { window.sessionStorage.setItem(k, backup[k]); });
+    window.sessionStorage.removeItem(SEED_BACKUP);
+    return true;
+  }
+
+  /* ---------- tab alert (SE 6017:347689: warning Info Box above the tab strip) ---------- */
+
+  var tabAlerts = {};
+
+  function tabAlertSlot() {
+    var card = refs.tabs && refs.tabs.parentElement && refs.tabs.parentElement.parentElement;
+    if (!card) return null;
+    var slot = card.querySelector("[data-se-tab-alert]");
+    if (!slot) {
+      slot = document.createElement("div");
+      slot.setAttribute("data-se-tab-alert", "");
+      card.insertBefore(slot, card.firstChild);
+    }
+    return slot;
+  }
+
+  function renderTabAlert() {
+    var slot = tabAlertSlot();
+    if (!slot) return;
+    var a = tabAlerts[state.activeTab];
+    if (!a) { slot.className = "hidden"; slot.innerHTML = ""; return; }
+    var tone = STATUS_TONE[a.tone] || STATUS_TONE.amber;
+    var cls = "mt-0.5 size-5 shrink-0 " + tone.icon;
+    slot.className = "px-4 pt-4 sm:px-6";
+    slot.innerHTML =
+      '<div role="alert" class="flex gap-2 rounded-md p-3 ' + tone.box + '">' +
+      ICON.exclamationCircle(cls) +
+      '<div class="flex min-w-0 flex-col gap-1">' +
+      '<p class="type-label ' + tone.title + '">' + esc(a.title) + "</p>" +
+      (a.text ? '<p class="type-body ' + tone.text + '">' + esc(a.text) + "</p>" : "") + "</div></div>";
+  }
+
+  function setTabAlert(tabId, alert) {
+    if (!alert) delete tabAlerts[tabId];
+    else tabAlerts[tabId] = { tone: alert.tone || "amber", title: alert.title || "", text: alert.text || "" };
+    renderTabAlert();
+  }
+
+  // Connectors: a bank in Action Required (missing account name) raises the tab alert (SE "Bank account name missing").
+  function syncConnectorsAlert() {
+    var c = window.SmartEnrollConnectors;
+    var action = c && c.getState().banks.some(function (b) { return b.status === "action"; });
+    setTabAlert("connectors", action ? { tone: "amber", title: "Bank account name missing", text: "Your ERP connector is missing the Bank Account Name. SMART Hub is unable to update your information. Please add one." } : null);
+  }
+
   /* ---------- statuses ---------- */
 
   function setStatus(id) {
@@ -682,6 +807,8 @@ window.SmartEnroll = (function () {
     var url = new URL(window.location.href);
     url.searchParams.set("status", id);
     window.history.replaceState(null, "", url);
+    // The tab scripts read their storage on load: re-seed, then reload so every tab, icon and the progress follow the status.
+    if (seedForStatus(id)) { window.location.reload(); return; }
     renderStatusBox();
     renderProducts();
     renderTabs();
@@ -1014,6 +1141,7 @@ window.SmartEnroll = (function () {
     state.role = (roleParam || store("sessionStorage", KEY.role)) === "contributor" ? "contributor" : "applicant";
     store("sessionStorage", KEY.role, state.role);
     state.addons = store("sessionStorage", KEY.addons) || {};
+    seedForStatus(state.status); // before any tab renders: ?status= applies the same seed
     state.businessId = store("sessionStorage", KEY.business) || ((data.businesses || [])[0] || {}).id;
     (data.tabs || []).forEach(function (t) { if (!state.progress[t.id]) state.progress[t.id] = defaultProgress(t); });
 
@@ -1042,6 +1170,8 @@ window.SmartEnroll = (function () {
     renderProgress();
     renderDemo();
     bind();
+    document.addEventListener("smart-enroll:connectors-change", syncConnectorsAlert);
+    renderTabAlert();
     resolveReady(data);
   }
 
@@ -1061,6 +1191,8 @@ window.SmartEnroll = (function () {
     registerTab: registerTab,
     rerender: function (id) { mountTab(id, true); applyReadOnly(); },
     setProgress: setProgress,
+    setTabAlert: setTabAlert,
+    clearTabAlert: function (tabId) { setTabAlert(tabId, null); },
     getProgress: getProgress,
     getStatus: function () { return state.status; },
     setStatus: setStatus,
