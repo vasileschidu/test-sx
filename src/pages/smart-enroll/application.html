@@ -38,30 +38,30 @@
     <script src="../../scripts/um-email.js?v=20261113fg" defer></script>
     <script src="../../scripts/um-invite.js?v=20261124t10" defer></script>
     <script src="../../scripts/smart-enroll/file-upload.js?v=20261123t1" defer></script>
-    <script src="../../scripts/smart-enroll/shell.js?v=20261126cs" defer></script>
+    <script src="../../scripts/smart-enroll/shell.js?v=20261126sk" defer></script>
     <!-- Tab scripts: each registers its tab with SmartEnroll.registerTab -->
     <script src="../../scripts/smart-enroll/invite.js?v=20261124t10" defer></script>
     <script src="../../scripts/smart-enroll/business-information.js?v=20261126bi" defer></script>
     <script src="../../scripts/smart-enroll/ownership.js?v=20261126ow" defer></script>
     <script src="../../scripts/smart-enroll/connectors.js?v=20261126states" defer></script>
     <script src="../../scripts/smart-enroll/configuration.js?v=20261126cs" defer></script>
-    <script src="../../scripts/smart-enroll/merchant-services.js?v=20261126sf" defer></script>
+    <script src="../../scripts/smart-enroll/merchant-services.js?v=20261126sk" defer></script>
     <script src="../../scripts/smart-enroll/cross-border.js?v=20261126se" defer></script>
     <!-- Submission (T11): blockers, Submit modal, authorized signer -->
     <script src="../../scripts/smart-enroll/submission.js?v=20261126cs" defer></script>
   </head>
   <body class="min-h-full font-['Inter'] antialiased">
 
-    <!-- Top bar (Figma "Top Menu" 96px: logo · Invite people · avatars · business switcher · Next Step) -->
+    <!-- Top bar (Figma "Top Menu" 96px on a 1728 frame; 72px here (compact, user 2026-11-26): logo · Invite people · avatars · business switcher · Next Step) -->
     <header class="sticky top-0 z-30 border-b border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900">
-      <div class="mx-auto flex h-16 max-w-360 items-center gap-3 px-4 sm:gap-4 lg:h-24 lg:px-10">
+      <div class="mx-auto flex h-16 max-w-360 items-center gap-3 px-4 sm:gap-4 lg:h-18 lg:px-10">
         <button type="button" data-se-drawer-open aria-controls="se-panel" aria-expanded="false" class="-ml-1 inline-flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:hidden dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:outline-blue-400">
           <span class="sr-only">Open application menu</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
         </button>
         <a href="application.html" class="shrink-0 rounded-md transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">
-          <img src="../../assets/illustrations/SMART%20Hub.svg" width="140" height="35" alt="SMART Hub" class="h-8 w-auto lg:h-12 dark:hidden" />
-          <img src="../../assets/illustrations/SMART%20Hub%20Dark.svg" width="140" height="35" alt="SMART Hub" class="hidden h-8 w-auto lg:h-12 dark:block" />
+          <img src="../../assets/illustrations/SMART%20Hub.svg" width="140" height="35" alt="SMART Hub" class="h-8 w-auto lg:h-10 dark:hidden" />
+          <img src="../../assets/illustrations/SMART%20Hub%20Dark.svg" width="140" height="35" alt="SMART Hub" class="hidden h-8 w-auto lg:h-10 dark:block" />
         </a>
         <div class="ml-auto flex min-w-0 items-center gap-4 lg:gap-6">
           <div data-se-people="top" class="hidden items-center gap-4 xl:flex"></div>
@@ -75,11 +75,11 @@
       <!-- Drawer backdrop (below 1024 only) -->
       <div data-se-drawer-backdrop aria-hidden="true" class="pointer-events-none fixed inset-0 z-40 bg-gray-900/75 opacity-0 transition-opacity duration-300 ease-out motion-reduce:transition-none data-open:pointer-events-auto data-open:opacity-100 lg:hidden"></div>
 
-      <!-- Left panel: static from 1024, a drawer below -->
+      <!-- Left panel: sticky under the top bar from 1024 (scrolls on its own if taller than the window), a drawer below -->
       <aside
         id="se-panel"
         aria-label="Application menu"
-        class="invisible fixed inset-y-0 left-0 z-50 flex w-full max-w-sm -translate-x-full flex-col gap-6 overflow-y-auto bg-gray-100 p-4 transition-[translate,visibility] duration-300 ease-out motion-reduce:transition-none data-open:visible data-open:translate-x-0 lg:visible lg:static lg:z-auto lg:w-91 lg:max-w-none lg:shrink-0 lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:transition-none dark:bg-gray-950 lg:dark:bg-transparent"
+        class="invisible fixed inset-y-0 left-0 z-50 flex w-full max-w-sm -translate-x-full flex-col gap-6 overflow-y-auto bg-gray-100 p-4 transition-[translate,visibility] duration-300 ease-out motion-reduce:transition-none data-open:visible data-open:translate-x-0 lg:visible lg:sticky lg:top-22 lg:z-auto lg:-m-2 lg:max-h-[calc(100dvh-var(--spacing)*28)] lg:w-95 lg:max-w-none lg:shrink-0 lg:self-start lg:translate-x-0 lg:overflow-y-auto lg:overscroll-contain lg:bg-transparent lg:p-2 lg:transition-none dark:bg-gray-950 lg:dark:bg-transparent"
       >
         <div class="flex items-center justify-between lg:hidden">
           <span class="type-title-modal text-default">Application</span>
