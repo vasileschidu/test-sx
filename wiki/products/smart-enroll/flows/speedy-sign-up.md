@@ -91,9 +91,11 @@ always returns this list). US states and the Terms of Use / Privacy Policy text 
 | `prefill` | what Business Information shows: the match's name and address over Step 1, Step 1 email and phone |
 | `submittedAt` | ISO time of the last Step 3 submit, else `null` |
 
-### TODO(confirm)
+### Agent-written copy (accepted by the product owner 2026-11-25)
 - Next Step on Step 2 with nothing picked: Figma shows no state; the prototype shows "Select your business, or choose “No, this isn't my business.”".
 - Invalid email on Step 1: Figma shows only "is required"; the prototype says "Enter a valid email address".
+
+### TODO(confirm)
 - Contact Us: no SMART Enroll frame; the prototype opens a dialog with the support phone / email from `smart-enroll.json` (copy buttons).
 - "Sign in": Figma has no Sign in link on these steps; the SMART Hub logo links to `sign-in.html`.
 - Figma error text "Zip/ Postal Code is required" is shipped as "Zip / Postal Code is required" (same as the label).

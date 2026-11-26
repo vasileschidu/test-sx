@@ -236,6 +236,7 @@
   },
   "help": {
     "title": "Help from Transcard",
+    "team": { "title": "Onboarding Support Team", "email": "support@transcard.com" },
     "linkLabel": "SMART Suite Knowledge Base",
     "href": "https://www.transcard.com/support",
     "info": "To view all SMART Suite FAQs and Transcard User Guides that will provide step by step instructions on how to use Transcard SMART Products."

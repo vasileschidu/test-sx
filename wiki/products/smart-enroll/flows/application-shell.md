@@ -32,7 +32,7 @@ SMART Hub logo · **Invite people** (+ info icon) · avatars of people on the ap
    - Supply Chain Financing — shown **disabled with a "Coming soon" badge** (D-10).
    - Merchant Services — add-on, see [merchant-services.md](merchant-services.md).
    - Cross-Border Payments — add-on, see [cross-border.md](cross-border.md).
-4. **Help from Transcard** (collapsible) — "SMART Suite Knowledge Base — To view all SMART Suite FAQs and Transcard User Guides…".
+4. **Help from Transcard** (collapsible) — opens the "Onboarding Support Team" card (support@transcard.com · support phone, Email / Call), as Figma `Main Menu/Transcard Support Team` State=On (2026-11-25). The earlier "SMART Suite Knowledge Base" link is not in Figma and was dropped (DS-039).
 5. Footer: Powered by Transcard · Terms of Use • Privacy Policy.
 
 ### Adding and removing add-ons (D-11)

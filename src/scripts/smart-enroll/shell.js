@@ -20,7 +20,8 @@
  *                              data, addons }. Called once when the tab is first shown (and again via rerender(id)).
  *                              The body is wrapped in a <fieldset> that is `disabled` while read-only.
  *   rerender(id)
- *   setProgress(id, { required, filled })   per-tab counts → progress % + tab icon (✓ / in progress / empty)
+ *   setProgress(id, { required, filled, error })   per-tab counts → progress % + tab icon (✓ / in progress / empty;
+ *                              error: true → Figma Tab "Error" amber exclamation, e.g. after a blocked submit)
  *   getProgress()              { percent, required, filled, tabs: { id: { required, filled, state } } }
  *   getStatus() / setStatus(id) / isReadOnly()
  *   getAddons() / hasAddon(id) / addAddon(id) / removeAddon(id, { confirm: false })
@@ -75,12 +76,12 @@ window.SmartEnroll = (function () {
     "inline-flex w-full cursor-pointer items-center justify-center rounded-md bg-red-600 px-3.5 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 dark:bg-red-500 dark:shadow-none dark:hover:bg-red-400 dark:focus-visible:outline-red-400";
   // Link primary (Add / Invite actions).
   var LINK = "inline-flex cursor-pointer items-center gap-1.5 rounded-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors " + FOCUS + " dark:text-blue-400 dark:hover:text-blue-300";
-  // Previous / next tab in the card footer (text button, no fill at rest).
+  // Previous / next tab in the card footer: Figma Footer "Move between tabs" = Button/Link Secondary (no fill at rest).
   var BTN_NAV =
-    "-mx-2 inline-flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 type-button text-gray-700 hover:bg-gray-100 hover:text-gray-900 " + FOCUS + " dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white";
+    "-mx-2.5 inline-flex cursor-pointer items-center gap-1 rounded-md px-2.5 py-1.5 type-button text-gray-700 hover:bg-gray-100 hover:text-gray-900 " + FOCUS + " dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white";
   // Underline tabs (Card details page, card-manager-details.js).
   var TAB_BASE =
-    "inline-flex h-10.5 shrink-0 cursor-pointer items-center gap-2 border-b-2 py-2.5 text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400";
+    "inline-flex h-10.5 shrink-0 cursor-pointer items-center gap-2 border-b-2 px-1 py-2.5 text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400";
   var TAB_ON = "border-blue-500 text-blue-600 hover:text-blue-700 dark:border-blue-400 dark:text-blue-300 dark:hover:text-blue-200";
   var TAB_OFF = "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-white/20 dark:hover:text-gray-200";
   // Menu items (el-menu, card-manager-details.js).
@@ -99,15 +100,16 @@ window.SmartEnroll = (function () {
 
   // Status box (Figma Main Menu/Application Progress): tinted box, icon + title + text.
   var STATUS_TONE = {
-    amber: { box: "bg-amber-50 dark:bg-amber-400/10", text: "text-amber-700 dark:text-amber-300", icon: "text-amber-500 dark:text-amber-400" },
-    blue: { box: "bg-blue-50 dark:bg-blue-400/10", text: "text-blue-700 dark:text-blue-300", icon: "text-blue-500 dark:text-blue-400" },
-    green: { box: "bg-green-50 dark:bg-green-400/10", text: "text-green-700 dark:text-green-300", icon: "text-green-500 dark:text-green-400" },
-    red: { box: "bg-red-50 dark:bg-red-400/10", text: "text-red-700 dark:text-red-300", icon: "text-red-500 dark:text-red-400" },
+    amber: { box: "bg-amber-50 dark:bg-amber-400/10", title: "text-amber-800 dark:text-amber-200", text: "text-amber-700 dark:text-amber-300", icon: "text-amber-500 dark:text-amber-400" },
+    blue: { box: "bg-blue-50 dark:bg-blue-400/10", title: "text-blue-800 dark:text-blue-200", text: "text-blue-700 dark:text-blue-300", icon: "text-blue-500 dark:text-blue-400" },
+    green: { box: "bg-green-50 dark:bg-green-400/10", title: "text-green-800 dark:text-green-200", text: "text-green-700 dark:text-green-300", icon: "text-green-500 dark:text-green-400" },
+    red: { box: "bg-red-50 dark:bg-red-400/10", title: "text-red-800 dark:text-red-200", text: "text-red-700 dark:text-red-300", icon: "text-red-500 dark:text-red-400" },
   };
 
   /* ---------- icons ---------- */
 
   var ICON = {
+    // Figma "Actions" Small: 18px icon in a p-0.5 rounded-md box (info bubbles, remove add-on).
     info: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5"><path fill-rule="evenodd" clip-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" /></svg>',
     userPlus: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M10 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 0 1 7 18a9.953 9.953 0 0 1-5.385-1.572ZM16.25 5.75a.75.75 0 0 0-1.5 0v2h-2a.75.75 0 0 0 0 1.5h2v2a.75.75 0 0 0 1.5 0v-2h2a.75.75 0 0 0 0-1.5h-2v-2Z" /></svg>',
     briefcase: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-blue-600 dark:text-blue-400"><path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 0 1 8.75 1h2.5A2.75 2.75 0 0 1 14 3.75v.443c.572.055 1.14.122 1.706.2C17.053 4.582 18 5.75 18 7.07v3.469c0 1.126-.694 2.191-1.83 2.54-1.952.599-4.024.921-6.17.921s-4.219-.322-6.17-.921C2.694 12.73 2 11.665 2 10.539V7.07c0-1.321.947-2.489 2.294-2.676A41.047 41.047 0 0 1 6 4.193V3.75Zm6.5 0v.325a41.622 41.622 0 0 0-5 0V3.75c0-.69.56-1.25 1.25-1.25h2.5c.69 0 1.25.56 1.25 1.25ZM10 10a1 1 0 0 0-1 1v.01a1 1 0 0 0 1 1h.01a1 1 0 0 0 1-1V11a1 1 0 0 0-1-1H10Z" clip-rule="evenodd" /><path d="M3 15.055v-.684c.126.053.255.1.39.142 2.092.642 4.313.987 6.61.987 2.297 0 4.518-.345 6.61-.987.135-.041.264-.089.39-.142v.684c0 1.347-.985 2.53-2.363 2.686a41.454 41.454 0 0 1-9.274 0C3.985 17.585 3 16.402 3 15.055Z" /></svg>',
@@ -118,12 +120,14 @@ window.SmartEnroll = (function () {
     xCircle: function (cls) { return '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' + cls + '"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" /></svg>'; },
     // Figma "in progress" mark: a dashed ring (static; motion-safe spin would distract on a tab).
     dashed: function (cls) { return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="2.6 2.6" aria-hidden="true" class="' + cls + '"><circle cx="10" cy="10" r="7.25" /></svg>'; },
-    plusDashed: '<span aria-hidden="true" class="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-dashed border-gray-300 text-gray-400 group-hover/add:border-blue-400 group-hover/add:text-blue-600 group-disabled/add:border-gray-200 group-disabled/add:text-gray-300 dark:border-white/20 dark:text-gray-500 dark:group-hover/add:border-blue-400 dark:group-hover/add:text-blue-400 dark:group-disabled/add:border-white/10 dark:group-disabled/add:text-gray-600"><svg viewBox="0 0 20 20" fill="currentColor" class="size-4"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg></span>',
-    trash: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd" /></svg>',
+    plusDashed: '<span aria-hidden="true" class="inline-flex size-8 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-gray-300 text-gray-400 group-hover/add:border-blue-500 group-hover/add:text-blue-600 group-disabled/add:border-gray-200 group-disabled/add:text-gray-300 dark:border-white/20 dark:text-gray-500 dark:group-hover/add:border-blue-400 dark:group-hover/add:text-blue-400 dark:group-disabled/add:border-white/10 dark:group-disabled/add:text-gray-600"><svg viewBox="0 0 20 20" fill="currentColor" class="size-5"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg></span>',
+    x: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg>',
+    mail: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500"><path d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z" /><path d="m19 8.839-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z" /></svg>',
+    phone: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M2 3.5A1.5 1.5 0 0 1 3.5 2h1.148a1.5 1.5 0 0 1 1.465 1.175l.716 3.223a1.5 1.5 0 0 1-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 0 0 6.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 0 1 1.767-1.052l3.223.716A1.5 1.5 0 0 1 18 15.352V16.5a1.5 1.5 0 0 1-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 0 1 2.43 8.326 13.019 13.019 0 0 1 2 5V3.5Z" clip-rule="evenodd" /></svg>',
     question: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM8.94 6.94a.75.75 0 1 1-1.061-1.061 3 3 0 1 1 2.871 5.026v.345a.75.75 0 0 1-1.5 0v-.5c0-.72.57-1.172 1.081-1.287A1.5 1.5 0 1 0 8.94 6.94ZM10 15a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" /></svg>',
     chevronDown: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 transition-transform group-aria-expanded/help:rotate-180 motion-reduce:transition-none dark:text-gray-500"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>',
-    chevronLeft: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" /></svg>',
-    chevronRight: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>',
+    chevronLeft: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" /></svg>',
+    chevronRight: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>',
     external: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4"><path d="M6.22 8.72a.75.75 0 0 0 1.06 1.06l5.22-5.22v1.69a.75.75 0 0 0 1.5 0v-3.5a.75.75 0 0 0-.75-.75h-3.5a.75.75 0 0 0 0 1.5h1.69L6.22 8.72Z" /><path d="M3.5 6.75c0-.69.56-1.25 1.25-1.25H7A.75.75 0 0 0 7 4H4.75A2.75 2.75 0 0 0 2 6.75v4.5A2.75 2.75 0 0 0 4.75 14h4.5A2.75 2.75 0 0 0 12 11.25V9a.75.75 0 0 0-1.5 0v2.25c0 .69-.56 1.25-1.25 1.25h-4.5c-.69 0-1.25-.56-1.25-1.25v-4.5Z" /></svg>',
     warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6 text-red-600 dark:text-red-400"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" /></svg>',
   };
@@ -182,7 +186,8 @@ window.SmartEnroll = (function () {
   }
 
   /**
-   * SMART System "Information circle + Tooltip" (components skill). `align: 'end'` anchors the bubble to
+   * SMART System "Information circle + Tooltip" (components skill); trigger = Figma SE "Info Bubbles" (Actions Small:
+   * p-0.5 rounded-md, hover gray-100 box). Figma Focus draws a 2px blue border; code keeps the shared outline (DS-038). `align: 'end'` anchors the bubble to
    * the icon's right edge so icons at the right of a narrow panel never push it off-screen.
    */
   function infoTip(id, label, text, align) {
@@ -190,8 +195,8 @@ window.SmartEnroll = (function () {
       ? "right-0 -mr-1 before:right-1.5"
       : "left-1/2 -translate-x-2/5 before:left-2/5 before:-translate-x-1/2";
     return (
-      '<span class="group/info relative inline-flex size-5 shrink-0 items-center justify-center">' +
-      '<span tabindex="0" role="button" aria-describedby="' + esc(id) + '" class="inline-flex cursor-help rounded-full text-gray-400 hover:text-gray-900 focus-visible:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:text-white dark:focus-visible:text-white dark:focus-visible:outline-blue-400">' +
+      '<span class="group/info relative inline-flex shrink-0 items-center justify-center">' +
+      '<span tabindex="0" role="button" aria-describedby="' + esc(id) + '" class="inline-flex cursor-help rounded-md p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:focus-visible:text-gray-300 dark:focus-visible:outline-blue-400">' +
       '<span class="sr-only">' + esc(label) + "</span>" + ICON.info + "</span>" +
       '<span id="' + esc(id) + '" role="tooltip" class="pointer-events-none invisible absolute top-full z-30 mt-3 w-max max-w-64 sm:max-w-[343px] rounded-lg bg-gray-900 p-3 text-left text-sm/5 font-normal text-gray-100 opacity-0 shadow-xs transition-opacity duration-150 group-hover/info:visible group-hover/info:opacity-100 group-has-focus-visible/info:visible group-has-focus-visible/info:opacity-100 before:absolute before:-top-1 before:size-3 before:rotate-45 before:rounded-[2px] before:bg-inherit dark:bg-gray-950 dark:ring-1 dark:ring-white/10 ' + pos + '">' +
       esc(text) + "</span></span>"
@@ -211,6 +216,7 @@ window.SmartEnroll = (function () {
 
   function tabState(id) {
     var p = state.progress[id] || { required: 0, filled: 0 };
+    if (p.error) return "error";
     if (p.required > 0 && p.filled >= p.required) return "complete";
     if (p.filled > 0) return "progress";
     return "empty";
@@ -275,7 +281,7 @@ window.SmartEnroll = (function () {
         '<button type="button" data-se-invite="' + where + '" class="' + LINK + " " + size + '">Invite people ' + ICON.userPlus + "</button>" +
         infoTip("se-invite-tip-" + where, "About inviting people", (state.data.invite || {}).info, "end") +
         "</span>" +
-        '<span aria-hidden="true" class="h-8 w-px bg-gray-200 dark:bg-white/10"></span>' +
+        '<span aria-hidden="true" class="h-8 w-px bg-gray-300 dark:bg-white/15"></span>' +
         '<span class="flex -space-x-2">' + people.map(avatarHtml).join("") + "</span>";
     });
   }
@@ -332,12 +338,15 @@ window.SmartEnroll = (function () {
     var badge = refs.panel.querySelector("[data-se-progress-badge]");
     var bar = refs.panel.querySelector("[data-se-progress-bar]");
     var fill = refs.panel.querySelector("[data-se-progress-fill]");
-    badge.textContent = p.percent + "%";
-    badge.className = BADGE + " " + (p.percent >= 100 ? BADGE_TONE.emerald : BADGE_TONE.blue);
+    var done = state.status === "approved" || p.percent >= 100;
+    // Figma State=Approved: green badge with a 14px check circle (pl-1), green bar fill.
+    badge.innerHTML = (done ? ICON.checkCircle("size-3.5 shrink-0 text-emerald-500 dark:text-emerald-400") : "") + esc(p.percent + "%");
+    badge.className = BADGE + " " + (done ? BADGE_TONE.emerald + " pl-1" : BADGE_TONE.blue);
     bar.setAttribute("aria-valuenow", String(p.percent));
     bar.setAttribute("aria-valuetext", p.percent + "% · " + p.filled + " of " + p.required + " required fields");
     // Tailwind v4 fraction width (w-37/100), so the bar stays class-only (no inline style).
-    fill.className = fill.className.replace(/\bw-(0|full|\d+\/100)\b/g, "").trim() + " " + pctClass(p.percent);
+    fill.className = fill.className.replace(/\bw-(0|full|\d+\/100)\b/g, "").replace(/\s*\b(dark:)?bg-(blue|emerald)-\d+\b/g, "").trim() + " " + pctClass(p.percent) +
+      (done ? " bg-emerald-500 dark:bg-emerald-400" : " bg-blue-600 dark:bg-blue-500");
     emit("progress", p);
   }
 
@@ -358,27 +367,38 @@ window.SmartEnroll = (function () {
     box.className = "flex gap-2 rounded-md p-3 " + tone.box;
     box.innerHTML =
       icon +
-      '<div class="flex min-w-0 flex-col gap-1 ' + tone.text + '">' +
-      '<p class="type-label">' + esc(s.label) + "</p>" +
-      '<p class="type-body">' + esc(phoneText(s.text)) + "</p>" +
+      '<div class="flex min-w-0 flex-col gap-2">' +
+      '<p class="type-label ' + tone.title + '">' + esc(s.label) + "</p>" +
+      '<p class="type-body ' + tone.text + '">' + esc(phoneText(s.text)) + "</p>" +
       "</div>";
   }
 
-  var ROW = "flex items-center gap-2 rounded-md border border-gray-200 bg-white p-2.5 dark:border-white/10 dark:bg-gray-900";
+  var ROW = "flex items-center justify-between gap-2 rounded-md border border-gray-200 bg-white p-2.5 dark:border-white/10 dark:bg-gray-900";
+  // Figma "Actions" Small (remove add-on): p-0.5 rounded-md, 18px X, gray-400 → hover gray-100 box + gray-500.
+  var ACTION_SM =
+    "inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 " + FOCUS +
+    " disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-gray-400 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:disabled:hover:bg-transparent dark:disabled:hover:text-gray-500";
+
+  function productLogo(p) {
+    // Figma "Master ADDS-ON": 32px gradient circle + white product logomark (asset per product).
+    return '<img src="' + ROOT + "assets/smart-enroll/addon-" + esc(p.id) + '.svg?v=20261125st" alt="" width="32" height="32" class="size-8 shrink-0 rounded-full" />';
+  }
 
   function productRow(p) {
     var tip = infoTip("se-product-tip-" + p.id, "About " + p.name, p.info, "end");
     var readOnly = isReadOnly();
     if (p.kind === "base" || (p.kind === "addon" && state.addons[p.id])) {
-      var logo = '<img src="' + ROOT + 'assets/illustrations/smart-hub-tile.svg?v=20261111" alt="" width="28" height="28" class="size-7 shrink-0 rounded-full" />';
+      // Figma SE/Menu/Add-ons: Sticked (base, not editable) and Added=On look the same — white row, no hover change;
+      // Added=On adds the remove action after the info bubble.
       var remove = p.kind === "addon"
         ? '<button type="button" data-se-addon-remove="' + esc(p.id) + '" data-tooltip="Remove ' + esc(p.name) + '"' + (readOnly ? " disabled" : "") +
-          ' class="inline-flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-gray-400 hover:bg-red-50 hover:text-red-600 ' + FOCUS + ' disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-gray-400 dark:text-gray-500 dark:hover:bg-red-400/10 dark:hover:text-red-400 dark:disabled:hover:text-gray-500">' +
-          '<span class="sr-only">Remove ' + esc(p.name) + "</span>" + ICON.trash + "</button>"
+          ' class="' + ACTION_SM + '"><span class="sr-only">Remove ' + esc(p.name) + "</span>" + ICON.x + "</button>"
         : "";
-      return '<li class="' + ROW + '">' + logo +
-        '<span class="min-w-0 flex-1 truncate type-label text-default">' + esc(p.name) + "</span>" +
-        (p.kind === "addon" ? '<span class="sr-only">(added)</span>' : "") + remove + tip + "</li>";
+      return '<li class="' + ROW + '">' +
+        '<span class="flex min-w-0 items-center gap-2">' + productLogo(p) +
+        '<span class="min-w-0 truncate type-label text-gray-800 dark:text-gray-100">' + esc(p.name) + "</span>" +
+        (p.kind === "addon" ? '<span class="sr-only">(added)</span>' : "") + "</span>" +
+        '<span class="flex shrink-0 items-center">' + tip + remove + "</span></li>";
     }
     if (p.kind === "soon") {
       // D-10: listed, disabled, "Coming soon".
@@ -387,10 +407,11 @@ window.SmartEnroll = (function () {
         '<span class="min-w-0 type-label text-gray-400 dark:text-gray-500">' + esc(p.name) + "</span></button>" +
         '<span class="' + BADGE + " " + BADGE_TONE.gray + ' shrink-0">Coming soon</span>' + tip + "</li>";
     }
-    return '<li class="' + ROW + '">' +
+    // Figma SE/Menu/Add-ons, Added=Off, State=Hover: row bg gray-50, dashed circle blue-500, text stays blue-600.
+    return '<li class="' + ROW + ' has-[[data-se-addon-add]:hover:not(:disabled)]:bg-gray-50 dark:has-[[data-se-addon-add]:hover:not(:disabled)]:bg-white/5">' +
       '<button type="button" data-se-addon-add="' + esc(p.id) + '"' + (readOnly ? " disabled" : "") +
-      ' class="group/add flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-sm text-left text-blue-600 hover:text-blue-700 ' + FOCUS + ' disabled:cursor-not-allowed disabled:text-gray-400 dark:text-blue-400 dark:hover:text-blue-300 dark:disabled:text-gray-500">' + ICON.plusDashed +
-      '<span class="min-w-0 truncate type-label text-blue-600 group-hover/add:text-blue-700 group-disabled/add:text-gray-400 dark:text-blue-400 dark:group-hover/add:text-blue-300 dark:group-disabled/add:text-gray-500"><span class="sr-only">Add </span>' + esc(p.name) + "</span></button>" +
+      ' class="group/add flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-sm text-left text-blue-600 ' + FOCUS + ' disabled:cursor-not-allowed disabled:text-gray-400 dark:text-blue-400 dark:disabled:text-gray-500">' + ICON.plusDashed +
+      '<span class="min-w-0 truncate type-label text-blue-600 group-disabled/add:text-gray-400 dark:text-blue-400 dark:group-disabled/add:text-gray-500"><span class="sr-only">Add </span>' + esc(p.name) + "</span></button>" +
       tip + "</li>";
   }
 
@@ -400,22 +421,37 @@ window.SmartEnroll = (function () {
 
   function renderHelp() {
     var h = state.data.help || {};
+    var team = h.team || {};
+    var phone = (state.data.support || {}).phone || "";
     var mount = refs.panel.querySelector("[data-se-help]");
+    // Figma Main Menu/Transcard Support Team: Off = question icon + gray-500 label, chevron (Button/Link Secondary) at the
+    // right; On = the "Transcard Support Team/Dropdown" card (team, email | phone, Email / Call). Shown inline below the
+    // toggle (the panel is narrower than the 388px Figma popover and doubles as the phone drawer).
+    var cell = "flex flex-1 cursor-pointer items-center justify-center gap-2 px-4 py-3.5 type-label text-gray-700 hover:bg-gray-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-300 dark:hover:bg-white/5 dark:focus-visible:outline-blue-400";
     mount.innerHTML =
-      '<button type="button" aria-expanded="false" aria-controls="se-help-body" data-se-help-toggle class="group/help -mx-2 flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-left text-secondary hover:bg-gray-50 ' + FOCUS + ' dark:hover:bg-white/5">' +
-      ICON.question + '<span class="flex-1 type-label text-secondary">' + esc(h.title) + "</span>" + ICON.chevronDown + "</button>" +
-      '<div id="se-help-body" hidden class="flex items-center gap-1 px-1 pb-1">' +
-      '<a href="' + esc(h.href) + '" target="_blank" rel="noopener noreferrer" class="' + LINK + ' text-sm">' + esc(h.linkLabel) + '<span class="sr-only"> (opens in a new tab)</span></a>' +
-      infoTip("se-help-tip", "About the knowledge base", h.info) +
-      "</div>";
+      '<button type="button" aria-expanded="false" aria-controls="se-help-body" data-se-help-toggle class="group/help -mx-2 flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-left text-gray-500 hover:bg-gray-50 hover:text-gray-700 ' + FOCUS + ' dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200">' +
+      ICON.question + '<span class="flex-1 type-label">' + esc(h.title) + "</span>" + ICON.chevronDown + "</button>" +
+      '<div id="se-help-body" hidden class="overflow-hidden rounded-lg bg-white shadow-lg outline-1 outline-black/5 dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
+      '<div class="flex items-center gap-4 p-4">' +
+      '<img src="' + ROOT + 'assets/illustrations/smart-hub-tile.svg?v=20261111" alt="" width="48" height="48" class="size-12 shrink-0 rounded-full" />' +
+      '<div class="flex min-w-0 flex-col gap-1.5"><p class="type-label text-default">' + esc(team.title) + "</p>" +
+      // Figma puts email | phone on one line (388px card); the 299px panel card stacks them.
+      '<p class="flex flex-col type-body text-tertiary"><span class="truncate">' + esc(team.email) + "</span><span>" + esc(phone) + "</span></p></div></div>" +
+      '<div class="flex border-t border-gray-200 dark:border-white/10">' +
+      '<a href="mailto:' + esc(team.email) + '" class="' + cell + '">' + ICON.mail + 'Email<span class="sr-only"> ' + esc(team.title) + "</span></a>" +
+      '<span aria-hidden="true" class="w-px bg-gray-200 dark:bg-white/10"></span>' +
+      '<a href="tel:' + esc(phone.replace(/[^0-9+]/g, "")) + '" class="' + cell + '">' + ICON.phone + 'Call<span class="sr-only"> ' + esc(team.title) + "</span></a>" +
+      "</div></div>";
   }
 
   /* ---------- tabs + main card ---------- */
 
   function tabIcon(id) {
     var s = tabState(id);
-    if (s === "complete") return ICON.checkCircle("size-4 shrink-0 text-green-600 dark:text-green-400") + '<span class="sr-only">(complete)</span>';
-    if (s === "progress") return ICON.dashed("size-4 shrink-0 text-blue-600 dark:text-blue-400") + '<span class="sr-only">(in progress)</span>';
+    // Figma Tab/Status: 20px; Completed green-500, In Progress blue, Error amber-500.
+    if (s === "error") return ICON.exclamationCircle("size-5 shrink-0 text-amber-500 dark:text-amber-400") + '<span class="sr-only">(needs attention)</span>';
+    if (s === "complete") return ICON.checkCircle("size-5 shrink-0 text-green-500 dark:text-green-400") + '<span class="sr-only">(complete)</span>';
+    if (s === "progress") return ICON.dashed("size-5 shrink-0 text-blue-600 dark:text-blue-400") + '<span class="sr-only">(in progress)</span>';
     return "";
   }
 
@@ -565,6 +601,7 @@ window.SmartEnroll = (function () {
     window.history.replaceState(null, "", url);
     renderStatusBox();
     renderProducts();
+    renderProgress();
     applyReadOnly();
     renderFooterNav();
     syncDemo();
@@ -810,7 +847,7 @@ window.SmartEnroll = (function () {
 
   function setProgress(id, counts) {
     if (!counts) return;
-    state.progress[id] = { required: Math.max(0, counts.required | 0), filled: Math.max(0, counts.filled | 0) };
+    state.progress[id] = { required: Math.max(0, counts.required | 0), filled: Math.max(0, counts.filled | 0), error: !!counts.error };
     if (!state.data) return;
     renderTabs();
     renderProgress();

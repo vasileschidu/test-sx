@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+<!-- Figma SE/Menu/Add-ons "Master ADDS-ON" (Merchant Services): Gradient/Add-on + white 20px logomark. -->
+<defs><linearGradient id="g-merchant" x1="16" y1="0" x2="16" y2="32" gradientUnits="userSpaceOnUse"><stop stop-color="#F2C04B"/><stop offset="1" stop-color="#E9A03B"/></linearGradient></defs>
+<circle cx="16" cy="16" r="16" fill="url(#g-merchant)"/>
+<g transform="translate(6 6)">
+<g id="Icon24/Duotone/Credit-card">
+<path id="Combined Shape" opacity="0.3" d="M16.6667 4.16667H3.33333C2.41286 4.16667 1.66667 4.91286 1.66667 5.83333V14.1667C1.66667 15.0871 2.41286 15.8333 3.33333 15.8333H16.6667C17.5871 15.8333 18.3333 15.0871 18.3333 14.1667V5.83333C18.3333 4.91286 17.5871 4.16667 16.6667 4.16667Z" fill="white"/>
+<path id="Rectangle 59" d="M18.3333 6.66667H1.66667V9.16667H18.3333V6.66667Z" fill="white"/>
+<path id="Rectangle 59 Copy" opacity="0.3" d="M15.8333 11.6667H14.1667C13.7064 11.6667 13.3333 12.0398 13.3333 12.5C13.3333 12.9602 13.7064 13.3333 14.1667 13.3333H15.8333C16.2936 13.3333 16.6667 12.9602 16.6667 12.5C16.6667 12.0398 16.2936 11.6667 15.8333 11.6667Z" fill="white"/>
+</g>
+</g>
+</svg>
