@@ -39,6 +39,11 @@ Full details: [suite/integrations.md](../../suite/integrations.md).
   [discrepancies.md](../../design-system/discrepancies.md).
 - Scope: what exists only in SE (Compliance, Goldman Sachs, QuickBooks/Acumatica token and profile states,
   QB ERP Connector page) is **not** in R1.
+- Decisions 2026-11-26 (gap lists in [gaps/](gaps/)):
+  Business Plan creation wizard (SE only) is **out** of R1, "Get Started Now" stays "Coming soon";
+  logo/icon upload **keeps the File Upload dropzone** (DS-012) instead of the Figma square placeholder;
+  Configuration follows Figma (no toggle, Save disabled until a change); ERP connect keeps the R1 3-step flow
+  with SE's Failed connection / Disconnect / Please wait dialogs added.
 
 ## What the R1 Figma file shows (read 2026-11-11, not yet built in code)
 Source: [R1] SMART Enroll `jLooCmHwqJcYV5p5d8BHnO`. Desktop frames only (1728 wide); no mobile/tablet.
