@@ -265,6 +265,17 @@ Wrap in `<fieldset>` with `<legend class="mb-1.5 text-xs font-medium text-gray-5
 `<div class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5">` + description list rows.
 Use when Figma shows a plain gray box; an Edit action goes above the box (right-aligned xs link), not in a header bar.
 
+### Payment method radio rows (`sx-onboarding/payment.html`, Figma 37236:77372)
+The SD method row (`paywall.js` `methodMarkup`) as a radio: `div[role=radiogroup][aria-labelledby]` (`gap-2`) > per option
+`label.group.flex.w-full.cursor-pointer.items-center.gap-4.rounded-lg.border.border-gray-200.bg-white.py-3.pr-4.pl-3.hover:bg-gray-50`
++ `has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 has-checked:ring-inset` + `has-focus-visible:outline-2
+outline-offset-2 outline-blue-600` (dark: `white/10` border, `gray-900` bg, `hover:bg-white/5`, checked `blue-500`, outline `blue-400`).
+Radio on the right = sx-onboarding-acp `RADIO` minus its own outline (`focus-visible:outline-none`) + `not-checked:group-hover:border-gray-400`
+(dark `white/20`). **Full row (60px)**: `size-8 rounded-md bg-gray-50` icon tile (24px Heroicons outline img) + title `text-sm/5 font-semibold`
++ detail `text-xs/4 text-gray-500`. **Compact row, no icon (40px)**: one `flex flex-wrap gap-x-1.5 text-xs leading-4` line, title
+`font-semibold text-gray-900` + detail `text-gray-500` (SD compact row). Picking = save + go: click / Space / Enter continue, arrow keys
+only move the selection (an arrow fires `click` on the new radio: skip it while the arrow key is down).
+
 ### Radio card with expanding form (`sx-onboarding-acp.js`)
 `fieldset` (disable it while loading) → per option `div.overflow-hidden.rounded-lg.border.border-gray-200.bg-white` >
 `label.flex.cursor-pointer.items-center.gap-3.px-4.py-3.hover:bg-gray-50.has-checked:bg-gray-50.has-disabled:cursor-not-allowed`

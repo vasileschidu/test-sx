@@ -15,6 +15,9 @@
         var stored = JSON.parse(localStorage.getItem("sx_demo_case_v1") || "null");
         id = stored && stored.id;
       }
+      // The standalone SX onboarding (no ?case=, sample payment) keeps its own
+      // STP answers too, so it never changes the general portal's state.
+      if (!id && /\/sx-onboarding\/[^/]*$/.test(window.location.pathname)) id = "sx-sample";
       return id ? ":" + id : "";
     } catch (error) {
       return "";

@@ -64,6 +64,12 @@ window.OBFlow = (function () {
 
   (function fromUrl() {
     var flow = new URLSearchParams(window.location.search).get('flow');
+    // A SMART Exchange payment link (Hub email, flow=sx) built by an older token
+    // service lands here: SX has its own onboarding (TCDM-5262). SD flows unchanged.
+    if (flow === 'sx') {
+      window.location.replace('../sx-onboarding/index.html' + window.location.search + window.location.hash);
+      return;
+    }
     if (flow === MULTI) {
       setFlow(MULTI);
       // A fresh multi-party link starts a fresh demo.

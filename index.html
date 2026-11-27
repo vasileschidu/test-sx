@@ -2,7 +2,9 @@
   @file index.html
   @description GitHub Pages entry point. Provides navigation links to the
     Onboarding flow, the SMART Disburse folder (onboarding flow + UK demo),
-    the SMART Exchange, the Consumer Portal and the SMART Suite Wiki.
+    the SMART Exchange, the STP walkthrough, the SMART Exchange onboarding
+    with payment (standalone, sample payment), the Consumer Portal and the
+    SMART Suite Wiki. Follows the saved theme (theme-init.js).
 -->
 <!doctype html>
 <html lang="en">
@@ -10,72 +12,84 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>test-sx</title>
+    <script src="src/scripts/theme-init.js?v=20261123mrg"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:where(.dark, .dark *));
+    </style>
     <script src="src/scripts/tailwind-theme.js"></script>
     <script src="src/scripts/design-tokens.js"></script>
     <link rel="stylesheet" href="src/styles/cursor.css" />
   </head>
-  <body class="min-h-screen bg-gray-100 text-gray-900 antialiased">
+  <body class="min-h-screen bg-gray-100 text-gray-900 antialiased dark:bg-gray-950 dark:text-white">
     <main
       class="mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center px-6 py-10"
     >
       <h1 class="text-3xl font-bold">test-sx</h1>
-      <p class="mt-2 text-sm text-gray-600">GitHub Pages entry point</p>
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">GitHub Pages entry point</p>
 
       <div class="mt-8 grid w-full gap-4 sm:grid-cols-2">
         <a
           href="src/pages/onboarding/index.html"
-          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50"
+          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:ring-white/10 dark:hover:bg-gray-800"
         >
           <h2 class="text-lg font-semibold">Onboarding Flow</h2>
-          <p class="mt-1 text-sm text-gray-600">Start onboarding pages.</p>
+          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Start onboarding pages.</p>
         </a>
 
-        <a href="src/pages/smart-disburse/index.html" class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50">
+        <a href="src/pages/smart-disburse/index.html" class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:ring-white/10 dark:hover:bg-gray-800">
           <h2 class="flex items-center gap-2 text-lg font-semibold">
-            <svg class="size-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"/></svg>
+            <svg class="size-5 text-gray-500 dark:text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"/></svg>
             SMART Disburse
           </h2>
-          <p class="mt-1 text-sm text-gray-600">SMART Disburse - US Default Flow and US Multi-Party.</p>
+          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">SMART Disburse - US Default Flow and US Multi-Party.</p>
         </a>
 
         <a
           href="src/pages/dashboard/supplier-portal.html"
-          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50"
+          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:ring-white/10 dark:hover:bg-gray-800"
         >
           <h2 class="text-lg font-semibold">SMART Exchange</h2>
-          <p class="mt-1 text-sm text-gray-600">Open smart disburse page.</p>
+          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Open smart disburse page.</p>
         </a>
 
         <a
           href="src/pages/demo/stp-case.html"
-          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50"
+          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:ring-white/10 dark:hover:bg-gray-800"
         >
           <h2 class="text-lg font-semibold">STP walkthrough (demo case)</h2>
-          <p class="mt-1 text-sm text-gray-600">
+          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
             Create a payment case, enrol with it, open its SMART Exchange Portal.
           </p>
         </a>
 
         <a
+          href="src/pages/sx-onboarding/index.html"
+          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:ring-white/10 dark:hover:bg-gray-800"
+        >
+          <h2 class="text-lg font-semibold">SMART Exchange Onboarding</h2>
+          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Onboarding with payment (token)</p>
+        </a>
+
+        <a
           href="src/pages/dashboard/consumer-payments-received.html"
-          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50"
+          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:ring-white/10 dark:hover:bg-gray-800"
         >
           <h2 class="text-lg font-semibold">Consumer Portal</h2>
-          <p class="mt-1 text-sm text-gray-600">
+          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
             Smart Disburse payments a person or business has received.
           </p>
         </a>
 
         <a
           href="src/pages/wiki/index.html"
-          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 sm:col-span-2"
+          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:ring-white/10 dark:hover:bg-gray-800 sm:col-span-2"
         >
           <h2 class="flex items-center gap-2 text-lg font-semibold">
-            <svg class="size-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg>
+            <svg class="size-5 text-gray-500 dark:text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg>
             SMART Suite Wiki
           </h2>
-          <p class="mt-1 text-sm text-gray-600">
+          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
             Products, current standard versions, client variants, integrations, layouts and the design system.
           </p>
         </a>
