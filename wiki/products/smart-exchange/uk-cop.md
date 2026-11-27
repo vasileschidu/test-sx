@@ -49,7 +49,7 @@ shows "Verification Limit Reached" (other method available). Changing the demo o
 
 ## Notes
 
-- Dialogs use `OBModal` (flat backdrop, 8px, motion), X top-left as drawn in Figma with the standard dialog X styling, 48px
+- Dialogs use `OBModal` (flat backdrop, 8px, motion), X top-right (Alina, 2026-11-27: right everywhere in SX Preboarding and Onboarding; Figma draws it left) with the standard dialog X styling, 48px
   tone circle, full-width stacked buttons; 343 wide on phones.
 - Tooltips on the result cards ("Close Match", "Doesn't Match", Account Reference) open on hover, focus or tap, above the icon.
 - TODO(confirm): the value shown under "Account Holder Name" (Figma sample "Jonathan Alexander Williamson"; the prototype shows

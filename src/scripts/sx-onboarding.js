@@ -1254,8 +1254,8 @@
    * SMART Exchange logo from Figma (36525:48449) and a 48px side padding so
    * "Automatic Card Processing" stays on one line; the footer block is centred.
    */
-  function applySidebarLook() {
-    var slots = document.querySelectorAll("[data-ob-sidebar]");
+  function applySidebarLook(only) {
+    var slots = only && only.nodeType === 1 ? [only] : document.querySelectorAll("[data-ob-sidebar]");
     for (var i = 0; i < slots.length; i += 1) {
       slots[i].classList.replace("px-14", "px-12");
       // The 212px footer block (Contact / Decline, language, terms, Powered by) is
@@ -1273,6 +1273,8 @@
       logo.className = "absolute inset-0 block size-full";
     }
   }
+  // Called by onboarding-sidebar.js while it builds the menu (no late shift).
+  window.SXSidebarLook = applySidebarLook;
   document.addEventListener("DOMContentLoaded", function () {
     setTimeout(applySidebarLook, 0);
   });

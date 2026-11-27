@@ -589,8 +589,8 @@
   });
 
   /** SX logo in the shared SD sidebar + Contact only (same look as sx-onboarding.js). */
-  function applySidebarLook() {
-    var slots = document.querySelectorAll("[data-ob-sidebar]");
+  function applySidebarLook(only) {
+    var slots = only && only.nodeType === 1 ? [only] : document.querySelectorAll("[data-ob-sidebar]");
     for (var i = 0; i < slots.length; i += 1) {
       slots[i].classList.replace("px-14", "px-12");
       var footer = slots[i].querySelector(".w-\\[212px\\]");
@@ -604,6 +604,8 @@
       logo.className = "absolute inset-0 block size-full";
     }
   }
+  // Called by onboarding-sidebar.js while it builds the menu (no late shift).
+  window.SXSidebarLook = applySidebarLook;
   document.addEventListener("DOMContentLoaded", function () {
     setTimeout(applySidebarLook, 0);
   });

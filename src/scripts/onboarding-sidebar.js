@@ -118,6 +118,13 @@
 
   var langCount = 0;
 
+  // SX region showcases (?region=uk|ca, sx-region.js) show their own flag; every
+  // other flow keeps the US one. The country name is translated by sx-region.js.
+  function flagFile() {
+    var r = window.SXRegion && window.SXRegion.region;
+    return r === 'uk' ? 'flag-gb.svg' : r === 'ca' ? 'flag-ca.svg' : 'flag-us.svg';
+  }
+
   /**
    * Language button + dropdown (Figma node 21874:66338), trimmed to the one
    * locale this flow supports: United States / English, shown as selected.
@@ -129,20 +136,45 @@
     return '<div data-ob-lang class="relative">' +
       '<button type="button" data-ob-lang-toggle aria-haspopup="true" aria-expanded="false" aria-controls="' + id + '" ' +
         'class="flex cursor-pointer items-center justify-center gap-1 rounded px-1.5 py-0.5 text-xs leading-4 ' + look.button + '">' +
-        flag('flag-us.svg') + 'English' +
+        flag(flagFile()) + 'English' +
         '<img src="' + ASSETS + look.chevron + '" alt="" width="16" height="16" data-ob-lang-chevron class="size-4 shrink-0 transition-transform duration-150">' +
       '</button>' +
       '<div id="' + id + '" data-ob-lang-menu class="absolute bottom-full left-1/2 z-10 mb-2 hidden w-max -translate-x-1/2 flex-col gap-1 rounded-md bg-white dark:bg-gray-900 p-[5px] shadow-lg ring-1 ring-black/5 dark:ring-white/10">' +
-        '<div class="flex items-start gap-3 rounded-md bg-gray-100 dark:bg-white/10 px-4 py-3">' +
-          flag('flag-us.svg', 'size-5') +
-          '<div class="flex flex-col items-start gap-1">' +
-            '<p class="text-sm leading-5 font-medium text-gray-900 dark:text-white">United States</p>' +
-            '<button type="button" data-ob-lang-option aria-pressed="true" ' +
-              'class="flex cursor-pointer items-center gap-1 rounded-md bg-gray-200 dark:bg-white/10 px-2.5 py-1.5 text-sm leading-5 font-semibold text-gray-900 dark:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
-              'English<img src="' + ASSETS + 'icon-check.svg" alt="" width="18" height="18" class="size-[18px] shrink-0">' +
-            '</button>' +
-          '</div>' +
-        '</div>' +
+        countries().map(countryRow).join('') +
+      '</div>' +
+    '</div>';
+  }
+
+  /**
+   * Countries in the menu. The SX flows (Preboarding, Onboarding with payment)
+   * list United States, United Kingdom and Canada; choosing one opens the same
+   * page in that region's flow (?region=, sx-region.js). Other flows: US only.
+   * The rows carry data-no-i18n: they always show each country's own names.
+   */
+  var COUNTRIES = [
+    { region: 'us', flag: 'flag-us.svg', name: 'United States', lang: 'English' },
+    { region: 'uk', flag: 'flag-gb.svg', name: 'United Kingdom', lang: 'English (UK)' },
+    { region: 'ca', flag: 'flag-ca.svg', name: 'Canada', lang: 'Fran\u00e7ais' }
+  ];
+
+  function isSx() {
+    return /\/pages\/sx-(onboarding|preboarding)\//.test(location.pathname);
+  }
+
+  function countries() {
+    return isSx() ? COUNTRIES : [COUNTRIES[0]];
+  }
+
+  function countryRow(c) {
+    var current = ((window.SXRegion && window.SXRegion.region) || 'us') === c.region;
+    return '<div data-no-i18n class="flex items-start gap-3 rounded-md px-4 py-3 ' + (current ? 'bg-gray-100 dark:bg-white/10' : '') + '">' +
+      flag(c.flag, 'size-5') +
+      '<div class="flex flex-col items-start gap-1">' +
+        '<p class="text-sm leading-5 font-medium text-gray-900 dark:text-white">' + c.name + '</p>' +
+        '<button type="button" data-ob-lang-option data-ob-region="' + c.region + '" aria-pressed="' + current + '" ' +
+          'class="flex cursor-pointer items-center gap-1 rounded-md ' + (current ? 'bg-gray-200 dark:bg-white/10' : 'hover:bg-gray-100 dark:hover:bg-white/10') + ' px-2.5 py-1.5 text-sm leading-5 font-semibold text-gray-900 dark:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+          c.lang + (current ? '<img src="' + ASSETS + 'icon-check.svg" alt="" width="18" height="18" class="size-[18px] shrink-0">' : '') +
+        '</button>' +
       '</div>' +
     '</div>';
   }
@@ -164,9 +196,19 @@
     toggle.addEventListener('click', function () {
       setOpen(menu.classList.contains('hidden'));
     });
-    wrap.querySelector('[data-ob-lang-option]').addEventListener('click', function () {
-      setOpen(false);
-      toggle.focus();
+    Array.prototype.forEach.call(wrap.querySelectorAll('[data-ob-lang-option]'), function (option) {
+      option.addEventListener('click', function () {
+        var picked = option.getAttribute('data-ob-region');
+        var now = (window.SXRegion && window.SXRegion.region) || 'us';
+        setOpen(false);
+        if (picked && picked !== now && isSx()) {
+          var url = new URL(location.href);
+          url.searchParams.set('region', picked);
+          location.href = url.toString();
+          return;
+        }
+        toggle.focus();
+      });
     });
     document.addEventListener('click', function (event) {
       if (!wrap.contains(event.target)) setOpen(false);
@@ -247,6 +289,9 @@
       // A page can pick the stepper state on the slot, e.g. data-ob-step="none".
       var step = slots[i].getAttribute('data-ob-step');
       if (step) slots[i].querySelector('[data-ob-stepper]').setAttribute('data-ob-step', step);
+      // SX flows restyle the menu (logo, padding) here, before first paint,
+      // so it doesn't shift when the next page loads.
+      if (typeof window.SXSidebarLook === 'function') window.SXSidebarLook(slots[i]);
       bindLanguage(slots[i]);
     }
 

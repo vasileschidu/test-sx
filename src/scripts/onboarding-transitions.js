@@ -38,7 +38,12 @@
   // the new one. The simulated loading (skeletons) still runs inside the page.
   // Other flows that load this script (the UK claim demo in src/pages/sd-uk/)
   // keep the cross-fade.
-  var INSTANT_PAGE_CHANGES = /\/pages\/onboarding\//.test(window.location.pathname);
+  // The SMART Exchange Preboarding and Onboarding-with-payment flows follow the
+  // same rule (no cross-fade between pages) and use the same menu, so they get
+  // its placeholders below too (SX adds its 48px side padding).
+  var SD_SHELL = /\/pages\/onboarding\//.test(window.location.pathname);
+  var INSTANT_PAGE_CHANGES = SD_SHELL ||
+    /\/pages\/sx-(onboarding|preboarding)\//.test(window.location.pathname);
 
   // Browsers with cross-document View Transitions cross-fade one page into the
   // next themselves; the menu and the phone top bar are named so they stay put
@@ -155,6 +160,7 @@
       // (it tags <html> with .ob-mobile-header), so Welcome shows none.
       INSTANT_PAGE_CHANGES
         ? '@media (min-width:1024px){[data-ob-sidebar]{display:flex;width:325px;flex-shrink:0;align-self:stretch;' +
+            (SD_SHELL ? '' : 'padding:56px 48px 32px;box-sizing:border-box;') +
             'background-image:linear-gradient(to bottom,#1E326F,#090C38);}}' +
           '@media (max-width:1023.98px){' +
             'html.ob-mobile-header:not(:has([data-ob-mobile-header])) [data-ob-sidebar]{display:block;width:100%;height:104px;overflow:hidden;' +

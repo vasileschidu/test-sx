@@ -176,13 +176,13 @@ window.SXUkBank = (function () {
   function closeDialog() { window.OBModal.close(); }
 
   /**
-   * One CoP dialog (Figma: 512 / 343 card, X top-left, 48px circle, heading,
+   * One CoP dialog (Figma: 512 / 343 card, X top-right, 48px circle, heading,
    * body, optional cards or field, stacked full-width buttons).
    */
   function dialog(o) {
     var M = window.OBModal;
     var header =
-      '<div class="flex h-14 shrink-0 items-start justify-start px-4 pt-4">' + M.closeButton("data-ob-modal-close") + "</div>";
+      '<div class="flex h-14 shrink-0 items-start justify-end px-4 pt-4">' + M.closeButton("data-ob-modal-close") + "</div>";
     var body =
       '<div class="flex flex-col gap-6 px-4 pb-6 sm:px-6">' +
       '<div class="flex flex-col items-center gap-4 text-center">' + illustration(o.tone, o.icon) +
