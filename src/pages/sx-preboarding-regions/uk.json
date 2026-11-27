@@ -1,0 +1,42 @@
+{
+ "lang": "en-GB",
+ "months": [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+ ],
+ "dateFormat": "{d} {m} {y}",
+ "text": {
+  "A 3-17 digit number at the bottom of the check or on a bank statement.": "A 3-17 digit number at the bottom of the cheque or on a bank statement.",
+  "A 9-digit number in the lower left corner of the check.": "A 9-digit number in the lower left corner of the cheque.",
+  "By clicking “Next”, you confirm you are authorized to accept payments for": "By clicking “Next”, you confirm you are authorised to accept payments for",
+  "By clicking “Next”, you confirm you are authorized to accept payments for <1>Pinnacle Group</1>.": "By clicking “Next”, you confirm you are authorised to accept payments for <1>Pinnacle Group</1>.",
+  "English": "English (UK)",
+  "Enter a 5-digit ZIP code": "Enter a 5-digit postcode",
+  "I want a check": "I want a cheque",
+  "Mailing zip code is required": "Mailing postcode is required",
+  "Request a Check": "Request a Cheque",
+  "Request a Check · SMART Exchange": "Request a Cheque · SMART Exchange",
+  "Request a Paper Check": "Request a Paper Cheque",
+  "Sample check: the 9-digit routing number is at the bottom left, the 3-17 digit account number just to its right": "Sample cheque: the 9-digit routing number is at the bottom left, the 3-17 digit account number just to its right",
+  "Sign to authorize payment": "Sign to authorise payment",
+  "State / Province": "County",
+  "State/Province": "County",
+  "To modernize the payment experience, create an account for easy access and visibility.": "To modernise the payment experience, create an account for easy access and visibility.",
+  "You can customize payment preferences by payer in SMART Exchange at any time.": "You can customise payment preferences by payer in SMART Exchange at any time.",
+  "Your mailing zip code": "Your mailing postcode",
+  "Zip / Postal Code": "Postcode",
+  "Zip/Postal Code": "Postcode",
+  "on the bottom of the check as issued by your bank (": "on the bottom of the cheque as issued by your bank ("
+ },
+ "patterns": []
+}
