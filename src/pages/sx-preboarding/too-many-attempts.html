@@ -1,0 +1,46 @@
+<!--
+  @file sx-preboarding/too-many-attempts.html
+  @description ERROR "Too many attempts have been made" (Figma 38223:36596, m 38223:36579):
+    reached after the last wrong Confirm Identity answer. No step menu.
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Too many attempts · SMART Exchange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js?v=20261127sys"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+  <script src="../../scripts/tailwind-theme.js"></script>
+  <script src="../../scripts/design-tokens.js"></script>
+  <script src="../../scripts/data-source.js"></script>
+  <script src="../../scripts/onboarding-transitions.js?v=20261106a"></script>
+  <script src="../../scripts/sx-preboarding.js?v=20261127pb"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261112cmp"></script>
+  <script src="../../scripts/onboarding-field.js?v=20261106a"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261124fix"></script>
+  <link rel="stylesheet" href="../../styles/cursor.css" />
+</head>
+<body data-pb-step="too-many-attempts" class="min-h-screen bg-white dark:bg-gray-900 px-0 antialiased font-['Inter'] lg:bg-gray-200 dark:lg:bg-gray-950 lg:px-6">
+
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white dark:bg-gray-900">
+    <main data-ob-content class="flex flex-1 flex-col items-center justify-center px-4 py-16">
+      <div role="alert" class="flex w-full max-w-sm flex-col items-center gap-4 text-center">
+        <img src="../../assets/onboarding/icon-x-circle-red.svg" alt="" width="40" height="40" class="size-10">
+        <div class="flex flex-col gap-2">
+          <h1 class="type-title-card text-default">Too many attempts have been made</h1>
+          <p class="type-body text-tertiary">We have notified your customer. If you have any questions, please contact <span data-pb-buyer class="font-medium text-default">Horizon Inc</span> by emailing <span data-pb-buyer-email class="font-medium text-default">ap@horizon-inc.com</span>.</p>
+        </div>
+      </div>
+    </main>
+    <div data-ob-footer></div>
+  </div>
+
+</body>
+</html>

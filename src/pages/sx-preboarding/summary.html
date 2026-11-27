@@ -1,0 +1,83 @@
+<!--
+  @file sx-preboarding/summary.html
+  @description Step 5 "Complete" — "Almost Done" (Figma card 38223:38613, bank 39301:278851,
+    check 39301:281113; m 38223:39151 / 39301:280631 / 281203). Business summary,
+    the chosen method, the three consents (OBConsents); Submit → "We’re processing
+    your request" (Figma Pending 38728:48548) → complete.html, or issue.html with
+    ?fail=1 (demo). Writes the preferred method for Payment Preferences.
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Almost Done · SMART Exchange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js?v=20261127sys"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+    app-checkbox label:hover input[type="checkbox"]:not(:checked):not(:indeterminate):not(:disabled) { border-color: var(--color-gray-400); }
+    .dark app-checkbox label:hover input[type="checkbox"]:not(:checked):not(:indeterminate):not(:disabled) { border-color: rgb(255 255 255 / 0.4); }
+    app-checkbox label:hover input[type="checkbox"]:checked:not(:disabled) { border-color: var(--color-blue-700); background-color: var(--color-blue-700); }
+    app-checkbox label:hover > span:last-child, app-checkbox label:hover > span:last-child > span:first-child { color: var(--color-gray-900); }
+    .dark app-checkbox label:hover > span:last-child, .dark app-checkbox label:hover > span:last-child > span:first-child { color: var(--color-white); }
+  </style>
+  <script src="../../scripts/tailwind-theme.js"></script>
+  <script src="../../scripts/design-tokens.js"></script>
+  <script src="../../scripts/data-source.js"></script>
+  <script src="../../scripts/onboarding-transitions.js?v=20261106a"></script>
+  <script src="../../scripts/sx-preboarding.js?v=20261127pb"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261112cmp"></script>
+  <script src="../../scripts/onboarding-field.js?v=20261106a"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261124fix"></script>
+  <script src="../../scripts/checkbox-component.js"></script>
+  <script src="../../scripts/onboarding-consents.js?v=20261109d"></script>
+  <script src="../../scripts/onboarding-stepper.js?v=20261104a"></script>
+  <script src="../../scripts/onboarding-mobile-header.js"></script>
+  <link rel="stylesheet" href="../../styles/cursor.css" />
+  <link rel="stylesheet" href="../../styles/checkbox.css" />
+  <link rel="stylesheet" href="../../styles/onboarding-checkbox.css" />
+</head>
+<body data-pb-step="summary" class="min-h-screen bg-white dark:bg-gray-900 px-0 antialiased font-['Inter'] lg:bg-gray-200 dark:lg:bg-gray-950 lg:px-6">
+
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white dark:bg-gray-900 lg:h-screen lg:flex-row lg:overflow-hidden">
+
+    <div data-ob-sidebar data-ob-no-decline></div>
+
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div class="flex flex-1 flex-col lg:min-h-screen">
+
+        <div data-ob-content class="flex flex-1 flex-col gap-14">
+          <div class="flex flex-col gap-6 px-4 pt-10 lg:px-14 lg:pt-14">
+            <div class="flex w-full flex-col gap-4">
+              <h1 class="type-title-page text-default">Almost Done</h1>
+              <p class="type-description text-tertiary">Make sure all the details are accurate.</p>
+            </div>
+
+            <div data-pb-business class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5"></div>
+            <div data-pb-method class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5"></div>
+
+            <ul data-pb-consents role="list" class="flex w-full flex-col divide-y divide-gray-200 dark:divide-white/10 overflow-hidden rounded-lg border border-gray-200 dark:border-white/10"></ul>
+          </div>
+
+          <div class="mt-auto flex flex-col items-center gap-6 px-4 pb-6 lg:px-14 lg:pb-14">
+            <div class="grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
+              <a href="create-account.html" data-pb-back
+                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 dark:text-gray-300 shadow-xs hover:bg-gray-50 dark:hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 lg:flex">Back</a>
+              <button type="button" data-pb-submit disabled
+                class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[23px] pl-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div data-ob-footer class="lg:hidden"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

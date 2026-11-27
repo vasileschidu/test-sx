@@ -1,0 +1,46 @@
+<!--
+  @file sx-preboarding/issue.html
+  @description "We have run into an issue." (Figma 38663:300068, m 38663:300104). Reached from
+    Submit on summary.html?fail=1 (demo; TODO(confirm) the real trigger).
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Something went wrong · SMART Exchange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js?v=20261127sys"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+  <script src="../../scripts/tailwind-theme.js"></script>
+  <script src="../../scripts/design-tokens.js"></script>
+  <script src="../../scripts/data-source.js"></script>
+  <script src="../../scripts/onboarding-transitions.js?v=20261106a"></script>
+  <script src="../../scripts/sx-preboarding.js?v=20261127pb"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261112cmp"></script>
+  <script src="../../scripts/onboarding-field.js?v=20261106a"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261124fix"></script>
+  <link rel="stylesheet" href="../../styles/cursor.css" />
+</head>
+<body data-pb-step="issue" class="min-h-screen bg-white dark:bg-gray-900 px-0 antialiased font-['Inter'] lg:bg-gray-200 dark:lg:bg-gray-950 lg:px-6">
+
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white dark:bg-gray-900">
+    <main data-ob-content class="flex flex-1 flex-col items-center justify-center px-4 py-16">
+      <div role="alert" class="flex w-full max-w-sm flex-col items-center gap-4 text-center">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="size-10 text-amber-400 dark:text-amber-400"><path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm.008 7.5a.75.75 0 1 0 0 1.5h.008a.75.75 0 0 0 0-1.5h-.008Z" clip-rule="evenodd" /></svg>
+        <div class="flex flex-col gap-2">
+          <h1 class="type-title-card text-default">We have run into an issue.</h1>
+          <p class="type-body text-secondary">Please contact customer service by emailing <a href="mailto:custserv@transcard.com" class="rounded-sm text-blue-600 underline hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">custserv@transcard.com</a> or calling 1-888-743-8863</p>
+        </div>
+      </div>
+    </main>
+    <div data-ob-footer></div>
+  </div>
+
+</body>
+</html>

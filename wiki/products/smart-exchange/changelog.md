@@ -10,6 +10,16 @@ product: smart-exchange
 
 Standard versions only, newest first. Entry format: [templates/changelog-entry.md](../../templates/changelog-entry.md).
 
+## Unreleased — 2026-11-27
+
+TODO(confirm): which release this belongs to.
+
+- Added: Preboarding, token flow, new user (TCDM-5263): invite with no payment → confirm identity and
+  business, choose a preferred payment method, create an account. See [preboarding.md](preboarding.md).
+- Changed: Payment Preferences keeps the Global Preferences default order after Save (`pp_default_methods_v1`)
+  and shows the method saved by Preboarding.
+- Cross-product impact: none.
+
 ## Unreleased — 2026-10-19
 
 TODO(confirm): which release this belongs to.

@@ -1829,6 +1829,31 @@ window.__ppStorageKey = function (name) {
   var saveBtn = document.getElementById("gp-default-payment-save-btn");
   if (!gpSelects.length) return;
   var savedSnapshot = [];
+  // The saved order of default methods (Save below; SMART Exchange Preboarding
+  // writes the preferred method into slot 1). Restored once, after the bank /
+  // check options exist (renderAllViews → __ppUpdateGpSavedSnapshot).
+  var DEFAULTS_KEY = window.__ppStorageKey("default_methods_v1");
+  var defaultsRestored = false;
+  function restoreStoredDefaults() {
+    if (defaultsRestored) return;
+    defaultsRestored = true;
+    var stored = null;
+    try {
+      stored = JSON.parse(localStorage.getItem(DEFAULTS_KEY) || "null");
+    } catch (error) {
+      stored = null;
+    }
+    if (!Array.isArray(stored)) return;
+    gpSelects.forEach(function (selectEl, index) {
+      var value = stored[index] || "";
+      if (
+        value &&
+        !selectEl.querySelector('el-option[value="' + value.replace(/"/g, "") + '"]')
+      )
+        return;
+      if (value || index > 0) setSelectedValue(selectEl, value);
+    });
+  }
   var footerActions = window.__ppInitFooterActions({
     undoBtn: undoBtn,
     saveBtn: saveBtn,
@@ -1838,6 +1863,9 @@ window.__ppStorageKey = function (name) {
     },
     onSave: function (setDirty) {
       savedSnapshot = getSnapshot();
+      try {
+        localStorage.setItem(DEFAULTS_KEY, JSON.stringify(savedSnapshot));
+      } catch (error) {}
       setDirty(false);
     },
   });
@@ -1927,6 +1955,7 @@ window.__ppStorageKey = function (name) {
   window.__ppGetGpSelectedValue = getSelectedValue;
   window.__ppApplyUniqueSelection = applyUniqueSelection;
   window.__ppUpdateGpSavedSnapshot = function () {
+    restoreStoredDefaults();
     ensurePrimaryMethod();
     savedSnapshot = getSnapshot();
     footerActions.setDirty(false);
@@ -2825,6 +2854,43 @@ window.__ppStorageKey = function (name) {
       .filter(Boolean);
   }
 
+  // SMART Exchange Preboarding (src/pages/sx-preboarding/, TCDM-5263) saves the
+  // supplier's preferred bank account / check address in `sx_preboarding_v1`;
+  // it is added to the lists here (Supplier Portal only: default `pp_` prefix,
+  // no dataset), so it can be the default in Global Preferences.
+  function addPreboardingMethod() {
+    if (window.__ppConfig.dataset || window.__ppConfig.storagePrefix) return;
+    var record = null;
+    try {
+      record = JSON.parse(localStorage.getItem("sx_preboarding_v1") || "null");
+    } catch (error) {
+      record = null;
+    }
+    if (!record) return;
+    var bank = normalizeBankAccounts(record.bankAccount ? [record.bankAccount] : [])[0];
+    if (bank) {
+      bank.isDefault = !!record.bankAccount.isDefault;
+      if (bank.isDefault)
+        bankAccounts.forEach(function (item) {
+          item.isDefault = false;
+        });
+      bankAccounts = [bank].concat(
+        bankAccounts.filter(function (item) {
+          return item.id !== bank.id;
+        }),
+      );
+    }
+    var address = normalizeCheckAddresses(
+      record.checkAddress ? [record.checkAddress] : [],
+    )[0];
+    if (address)
+      checkAddresses = [address].concat(
+        checkAddresses.filter(function (item) {
+          return item.id !== address.id;
+        }),
+      );
+  }
+
   async function initializeSharedData() {
     var storedBanks = normalizeBankAccounts(
       getStoredArray(BANK_ACCOUNTS_STORAGE_KEY),
@@ -2866,6 +2932,8 @@ window.__ppStorageKey = function (name) {
     } else {
       checkAddresses = [];
     }
+
+    addPreboardingMethod();
 
     saveBankAccounts();
     saveCheckAddresses();

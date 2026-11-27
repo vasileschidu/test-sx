@@ -1,0 +1,34 @@
+{
+  "_comment": "Built-in sample for the SMART Exchange preboarding flow (src/pages/sx-preboarding/, sx-preboarding.js, TCDM-5263). Preboarding is sent with NO payment: a buyer (payer) invites a supplier to confirm its business, pick a preferred payment method and create an account. Copied once per tab into sessionStorage `sx-preboarding-sample`. Demo rules: identity answers made only of zeros (e.g. 0000) are wrong; `existingEmails` trigger the Create Account 'already exists' error.",
+  "id": "PREBOARD-SAMPLE",
+  "referenceCode": "PB-58210",
+  "supplier": {
+    "name": "Pinnacle Group",
+    "dba": "Pinnacle Group",
+    "dbaSameAsLegal": true,
+    "tin": "12-3450001",
+    "vendorId": "0001",
+    "contactFirst": "Johnny",
+    "contactLast": "Anderson",
+    "email": "johnny@hotmail.com",
+    "phone": "(555) 987-6543",
+    "address": {
+      "country": "US",
+      "line1": "2972 Westheimer Rd",
+      "line2": "Suite 1010",
+      "line3": "",
+      "city": "Chicago",
+      "state": "IL",
+      "zip": "85486"
+    }
+  },
+  "buyer": {
+    "name": "Horizon Inc",
+    "email": "ap@horizon-inc.com",
+    "phone": "+1 (555) 010-2000",
+    "address": "3476 Orphan Road\nSuite 1010\nHayward, Wisconsin 54843\nUnited States",
+    "cardBrand": "Mastercard"
+  },
+  "identity": { "maxAttempts": 3 },
+  "existingEmails": ["taken@example.com"]
+}

@@ -1,0 +1,102 @@
+<!--
+  @file sx-preboarding/complete.html
+  @description "Account Created Successfully!" (Figma 39702:152173, m 39702:152258): username
+    + "Go to SMART Hub" (= the Supplier Portal). Desktop shows the feedback card
+    bottom right (Figma); mobile has none. Logic: sx-preboarding.js (page "complete").
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Created · SMART Exchange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js?v=20261127sys"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+  <script src="../../scripts/tailwind-theme.js"></script>
+  <script src="../../scripts/design-tokens.js"></script>
+  <script src="../../scripts/data-source.js"></script>
+  <script src="../../scripts/onboarding-transitions.js?v=20261106a"></script>
+  <script src="../../scripts/sx-preboarding.js?v=20261127pb"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261112cmp"></script>
+  <script src="../../scripts/onboarding-field.js?v=20261106a"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261124fix"></script>
+  <link rel="stylesheet" href="../../styles/cursor.css" />
+</head>
+<body data-pb-step="complete" class="min-h-screen bg-white dark:bg-gray-900 px-0 antialiased font-['Inter'] lg:bg-gray-200 dark:lg:bg-gray-950 lg:px-6">
+
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white dark:bg-gray-900">
+    <main data-ob-content class="flex flex-1 flex-col items-center justify-center px-4 py-16">
+      <div class="flex w-full max-w-sm flex-col items-center gap-6">
+        <div class="flex flex-col items-center gap-4 text-center">
+          <img src="../../assets/onboarding/icon-check-circle-green.svg" alt="" width="40" height="40" class="size-10">
+          <h1 class="type-title-section text-default">Account Created Successfully!</h1>
+        </div>
+
+        <section aria-labelledby="pb-created-title" class="w-full overflow-hidden rounded-lg border border-gray-200 dark:border-white/10">
+          <div class="flex flex-col gap-1 border-b border-gray-200 p-4 dark:border-white/10">
+            <h2 id="pb-created-title" class="type-title-card text-default">Account Created</h2>
+            <p class="type-description text-secondary">Access the SMART Hub to view payment details.</p>
+          </div>
+          <dl class="grid grid-cols-2 gap-4 border-b border-gray-200 p-4 dark:border-white/10">
+            <dt class="type-body text-tertiary">Username</dt>
+            <dd data-pb-username class="min-w-0 type-body break-words text-default">johnny@hotmail.com</dd>
+          </dl>
+          <div class="p-4">
+            <a href="../dashboard/supplier-portal.html" class="inline-flex items-center gap-1 rounded-sm text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">
+              Go to SMART Hub
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+            </a>
+          </div>
+        </section>
+      </div>
+    </main>
+    <div data-ob-footer></div>
+  </div>
+
+  <!-- Feedback card (Figma 39702:152173, desktop only) -->
+  <aside data-pb-feedback aria-labelledby="pb-feedback-title" class="fixed right-6 bottom-6 z-40 hidden w-80 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-900/5 lg:block dark:bg-gray-800 dark:ring-white/10">
+    <div class="absolute top-2 right-2">
+      <button type="button" data-pb-feedback-close class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400"><span class="sr-only">Close</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
+    </div>
+    <div data-pb-feedback-ask class="flex flex-col items-center gap-4 pt-4 text-center">
+      <div class="flex flex-col gap-1 px-4">
+        <h2 id="pb-feedback-title" class="type-title-card text-default">We would appreciate your feedback!</h2>
+        <p class="type-description-small text-tertiary">Let us know about your experience.</p>
+      </div>
+      <div class="flex w-full flex-col gap-1">
+        <div role="group" aria-label="Rate your experience" class="flex justify-between">
+            <button type="button" data-pb-face="1" class="flex size-10 cursor-pointer items-center justify-center rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 active:bg-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">
+              <span class="sr-only">Very unsatisfied</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" class="size-6"><circle cx="12" cy="12" r="9" /><path d="M9 9.5v.5M15 9.5v.5" /><path d="M8 7.5l2 1M16 7.5l-2 1" /><path d="M8.5 16.5c1.8-1.6 5.2-1.6 7 0" /></svg>
+            </button>
+            <button type="button" data-pb-face="2" class="flex size-10 cursor-pointer items-center justify-center rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 active:bg-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">
+              <span class="sr-only">Unsatisfied</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" class="size-6"><circle cx="12" cy="12" r="9" /><path d="M9 9.5v.5M15 9.5v.5" /><path d="M8.5 16c1.8-1.2 5.2-1.2 7 0" /></svg>
+            </button>
+            <button type="button" data-pb-face="3" class="flex size-10 cursor-pointer items-center justify-center rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 active:bg-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">
+              <span class="sr-only">Neutral</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" class="size-6"><circle cx="12" cy="12" r="9" /><path d="M9 9.5v.5M15 9.5v.5" /><path d="M9 15.5h6" /></svg>
+            </button>
+            <button type="button" data-pb-face="4" class="flex size-10 cursor-pointer items-center justify-center rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 active:bg-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">
+              <span class="sr-only">Satisfied</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" class="size-6"><circle cx="12" cy="12" r="9" /><path d="M9 9.5v.5M15 9.5v.5" /><path d="M8.5 14.5c1.8 1.4 5.2 1.4 7 0" /></svg>
+            </button>
+            <button type="button" data-pb-face="5" class="flex size-10 cursor-pointer items-center justify-center rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 active:bg-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">
+              <span class="sr-only">Very satisfied</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" class="size-6"><circle cx="12" cy="12" r="9" /><path d="M9 9.5v.5M15 9.5v.5" /><path d="M8 14h8c-.6 2.2-2.2 3.2-4 3.2S8.6 16.2 8 14Z" /></svg>
+            </button>
+        </div>
+        <div aria-hidden="true" class="flex justify-between type-caption text-tertiary"><span>Very unsatisfied</span><span>Very satisfied</span></div>
+      </div>
+    </div>
+    <!-- TODO(confirm): Figma has no "after rating" state. -->
+    <p data-pb-feedback-thanks hidden tabindex="-1" role="status" class="px-6 pt-4 pb-2 text-center type-title-small text-default focus:outline-none">Thank you for your feedback!</p>
+  </aside>
+</body>
+</html>
