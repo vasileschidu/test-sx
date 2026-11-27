@@ -1,0 +1,113 @@
+<!--
+  @file sx-preboarding/index.html
+  @description SMART Exchange Preboarding (TCDM-5263), welcome (Figma 38223:36208, m 38223:36325;
+    Learn More 38223:36261 / 36350). Token flow, new user. Same card as
+    sx-onboarding/index.html; no payment, so the notice is the enrolment text.
+    Logic: src/scripts/sx-preboarding.js (page "welcome").
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome · SMART Exchange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js?v=20261127sys"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+  <script src="../../scripts/tailwind-theme.js"></script>
+  <script src="../../scripts/design-tokens.js"></script>
+  <script src="../../scripts/data-source.js"></script>
+  <script src="../../scripts/onboarding-transitions.js?v=20261106a"></script>
+  <script src="../../scripts/sx-preboarding.js?v=20261127pb"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261112cmp"></script>
+  <script src="../../scripts/onboarding-field.js?v=20261106a"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261124fix"></script>
+  <script src="../../scripts/onboarding-stepper.js?v=20261104a"></script>
+  <link rel="stylesheet" href="../../styles/cursor.css" />
+</head>
+<body data-pb-step="welcome" class="min-h-screen bg-white dark:bg-gray-900 px-0 antialiased font-['Inter'] lg:bg-gray-200 dark:lg:bg-gray-950 lg:px-6">
+
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white dark:bg-gray-900 lg:h-screen lg:flex-row lg:overflow-hidden">
+
+    <!-- LEFT SIDEBAR: nothing started yet -->
+    <div data-ob-sidebar data-ob-no-decline data-ob-step="none"></div>
+
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div data-ob-content class="flex flex-1 flex-col items-center gap-10 px-4 pt-10 pb-10 md:pb-4 lg:gap-9 lg:px-10 lg:py-14">
+
+        <p data-ob-no-skeleton class="flex h-15 items-center gap-2 text-xl text-default">
+          <img src="../../assets/sx-onboarding/sx-logomark.svg" alt="" width="30" height="30" class="size-7.5 shrink-0">
+          <span><span class="font-bold">SMART</span> Exchange</span>
+        </p>
+
+        <div class="flex w-full flex-col items-center gap-6">
+        <section data-ob-tone="dark" aria-labelledby="welcome-name"
+          class="relative flex min-h-[444px] w-full max-w-[548px] flex-1 flex-col overflow-hidden rounded-[32px] bg-[linear-gradient(180deg,#1e326f_0%,#090c38_100%)] shadow-xl md:h-[624px] md:w-[505px] md:flex-none md:rounded-3xl">
+
+          <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 h-[572px] overflow-hidden md:hidden">
+            <img src="../../assets/onboarding/wave-m-1.svg" alt="" width="151.643" height="151.643" class="absolute top-[calc(50%+218px)] left-[-20.82px] max-w-none -translate-y-1/2 opacity-60">
+            <img src="../../assets/onboarding/wave-m-2.svg" alt="" width="358.429" height="358.429" class="absolute top-[calc(50%+218px)] left-[-124.21px] max-w-none -translate-y-1/2 opacity-60">
+            <img src="../../assets/onboarding/wave-m-3.svg" alt="" width="565.214" height="565.214" class="absolute top-[calc(50%+218px)] left-[-227.61px] max-w-none -translate-y-1/2 opacity-60">
+            <img src="../../assets/onboarding/wave-m-4.svg" alt="" width="772" height="772" class="absolute top-[calc(50%+218px)] left-[-331px] max-w-none -translate-y-1/2 opacity-60">
+          </div>
+          <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-[-2px] hidden h-[627px] overflow-hidden md:block">
+            <img src="../../assets/onboarding/wave-d-1.svg" alt="" width="331.571" height="331.571" class="absolute bottom-[431.71px] left-[294.21px] max-w-none opacity-60">
+            <img src="../../assets/onboarding/wave-d-2.svg" alt="" width="783.714" height="783.714" class="absolute bottom-[205.64px] left-[68.14px] max-w-none opacity-60">
+            <img src="../../assets/onboarding/wave-d-3.svg" alt="" width="1235.86" height="1235.86" class="absolute bottom-[-20.43px] left-[-157.93px] max-w-none opacity-60">
+            <img src="../../assets/onboarding/wave-d-4.svg" alt="" width="1688" height="1688" class="absolute bottom-[-246.5px] left-[-384px] max-w-none opacity-60">
+          </div>
+
+          <div class="relative flex flex-col px-6 pt-12 md:flex-1 md:justify-center md:px-14 md:pt-24 md:pb-12">
+            <div class="flex flex-col gap-6">
+              <div class="flex flex-col gap-3 text-white">
+                <p class="text-base leading-6 md:text-xl md:leading-8 md:text-gray-300">Hi,</p>
+                <h1 id="welcome-name" data-ob-skeleton data-pb-supplier
+                  class="text-2xl leading-8 font-bold break-words md:text-3xl md:leading-9 md:font-extrabold">Pinnacle Group</h1>
+              </div>
+
+              <div class="flex flex-col gap-3">
+                <div class="flex min-h-20 items-center gap-2 rounded-[10px] bg-white/15 p-4 ring-8 ring-white/5">
+                  <div class="flex min-w-0 flex-1 flex-col gap-2">
+                    <img src="../../assets/onboarding/icon-bell-dot.svg" alt="" width="20" height="22" class="-mt-0.5 h-[22px] w-5">
+                    <p class="text-sm leading-5 text-white">
+                      Enrolling in the new process is <span class="font-semibold">fast and easy</span>. We just need to confirm that we have all the right information. It takes less than 5 minutes!
+                    </p>
+                  </div>
+                </div>
+
+                <button type="button" data-pb-learn
+                  class="flex w-fit cursor-pointer items-center gap-2 rounded-md px-3.5 py-2.5 text-base md:gap-3 md:py-3 md:pr-6 md:pl-0 leading-6 font-medium text-white underline underline-offset-2 hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                  <img src="../../assets/onboarding/icon-question-circle.svg" alt="" width="20" height="20" class="size-5">
+                  Learn more
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative p-6 md:p-14">
+            <a href="confirm-identity.html"
+              class="flex w-full items-center justify-center gap-2 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-6 py-4 text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:w-64">
+              Get Started
+              <img src="../../assets/onboarding/icon-arrow-right.svg" alt="" width="20" height="20" class="size-5 brightness-0 invert">
+            </a>
+          </div>
+        </section>
+
+        <!-- TODO(confirm): Figma shows this on desktop only; no SMART Exchange sign-in page in the prototype, so it opens the portal. -->
+        <p class="type-description text-secondary">Already have an account?
+          <a href="../dashboard/supplier-portal.html" class="rounded-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Sign in</a>
+        </p>
+        </div>
+      </div>
+
+      <footer data-ob-footer class="w-full lg:hidden"></footer>
+    </div>
+  </div>
+
+</body>
+</html>

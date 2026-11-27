@@ -49,6 +49,8 @@ state and add a row here in the same change. Tokens: see the `design-system` ski
 `createCheckAddressRow`, `createAccountDetailsComponent`, `createMiniCardComponent`,
 `buildDescriptionListItem`, `buildBankValidationIcon`, `buildAccountActionMenu`. Tabs:
 `payment-preferences-tabs.js`. STP banner/state: `STPState` (`stp-state.js`).
+Global Preferences default order is stored in `<prefix>default_methods_v1` (Save writes it, restored once after the
+bank / check options render); the Supplier Portal also merges the method saved by SX Preboarding (`sx_preboarding_v1`).
 
 ## SMART Disburse flow (`src/pages/onboarding/`)
 
@@ -88,6 +90,12 @@ state and add a row here in the same change. Tokens: see the `design-system` ski
 | Demo "open the email link" | waiting card in `sx-onboarding-acp.js`: link button `<a target="_blank" rel="noopener">` + external-link icon + sr-only "(opens in a new tab)", only when the email was not delivered (test mode) |
 | Presenter email opt-in | launcher (`demo/stp-case.html`): `<app-checkbox label description>` under the email hint, shown only for addresses off the config allowlist; list in localStorage `sx_extra_allowed_emails_v1` (read by `STPState`) |
 | SX enrolment helpers | `SXEnroll.textField(id, label, value, opts)` (OBField + error line), `.row(label, html)`, `.fieldError(input, msg)`, `.setLoading(btn, label)` → restore fn |
+| SX Preboarding helpers | `SXPreboarding` (`sx-preboarding.js`, `src/pages/sx-preboarding/`, TCDM-5263): same shell reuse as sx-onboarding (own `OB_FLOW_STEPS` with `alsoMatches`, Contact-only `OB_MOBILE_MENU`, `data-ob-no-decline` sidebar). `textField(id, label, value, { optional, tip, lead: "envelope" \| "flag", corner, helper, after })` = OBField + label row (smart-enroll `labelRow`: "Optional" right, info tip, corner link like "Can't find routing number?"); `selectField(id, label, [{value,label,html}], value, { placeholder })` = el-select at Text Field size, read with `selectValue(id)`, error `selectError(id, msg)`; `countryOption(label)` US flag option; `infoNotice(text)` = OBBank info box; `writePortalDefault(sample)` → `sx_preboarding_v1` + `pp_default_methods_v1` (read by payment-preferences-page.js) |
+| Form section card | `section(title, body, { tip })` in `sx-preboarding-forms.js` (Figma Business Information on File): `rounded-md border border-gray-200` > title bar `rounded-t-md border-b bg-gray-50 px-4 py-2` + `type-title-small` `h2` (+ info tip) > white body `p-4 gap-4` with fields (dark `white/10` borders, `white/5` bar). Not the read-only details card (gray body) |
+| Status page (no step menu) | `sx-preboarding/too-many-attempts.html`, `complete.html`, `issue.html`: flow column `max-w-[1024px]` without sidebar, `main` centred `max-w-sm` icon (40px) + `type-title-card` + `type-body` text, `data-ob-footer` at the bottom on every width |
+| Payer's card placeholder | `sx-preboarding/accept-card.html` (Figma 38223:37370): `figure.max-w-sm rounded-lg bg-gray-50` > `aspect-[1.586] rounded-lg bg-gray-800 p-4` card with `h-2.5 rounded-full bg-white/20` pills for number / CVC2 / Valid thru, payer name mono uppercase, `vc-mastercard.svg`; `figcaption type-caption` "You will receive card details at time of payment." |
+| Feedback card | `sx-preboarding/complete.html` `[data-pb-feedback]` (Figma 39702:152173, desktop only): fixed `right-6 bottom-6 w-80 rounded-lg shadow-lg ring-1`, dark `gray-800` + `white/10`; standard close X; five `size-10 rounded-md bg-blue-50 text-blue-600` face buttons (hover `blue-100`, active `blue-200`, dark `blue-500/10`→`/20`, sr-only labels) + "Very unsatisfied / Very satisfied" captions; a pick swaps in "Thank you for your feedback!" (`role=status`) |
+| Checkbox + Text label hover | `<app-checkbox label>` alone only darkens the box when the box itself is hovered. Pages that use it as a form row add (inside their `text/tailwindcss` style, see `sx-preboarding/*.html`): label hover → box `gray-400` border (dark `white/40`), checked `blue-700`, label text `gray-900` (dark white) |
 
 ## Markup patterns (copy exactly)
 
