@@ -6,7 +6,7 @@
  *
  * Fills the Configuration slot via SmartEnroll.registerTab("configuration"). Needs shell.js, onboarding-field.js (OBField),
  * @tailwindplus/elements (el-select). Values live in sessionStorage under SmartEnroll.storageKey("configuration").
- * The tab is complete once saved (toggle off is a valid answer): setProgress("configuration", { required: 1, filled: 0|1 }).
+ * No toggle (R1 28566:45740 and SE 5136:333009 agree); the tab is complete once saved: setProgress("configuration", { required: 1, filled: 0|1 }).
  * Bank accounts: Connectors tab (T6) stores them under storageKey("connectors") as { bankAccounts: [{ id, name, last4 }] };
  * until it does, data.bankAccounts (demo) is used. "Add New Bank Account" goes to the Connectors tab.
  */
@@ -14,7 +14,7 @@
   "use strict";
 
   var TAB = "configuration";
-  var LOGO = "../../assets/sx-enroll/sx-logomark.svg";
+  var LOGO = "../../assets/sx-onboarding/sx-logomark.svg";
   var FOCUS = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400";
   var BTN_PRIMARY =
     "inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md bg-blue-600 px-2.5 py-1.5 type-button text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 dark:disabled:hover:bg-blue-500/40 " + FOCUS;
@@ -83,7 +83,7 @@
   function render(el, ctx) {
     var saved = load();
     var accounts = bankAccounts(ctx);
-    var cur = saved ? { enabled: !!saved.enabled, account: saved.account || "", min: saved.min || "", max: saved.max || "" } : { enabled: false, account: "", min: "", max: "" };
+    var cur = saved ? { account: saved.account || "", min: saved.min || "", max: saved.max || "" } : { account: "", min: "", max: "" };
 
     var opts = accounts.map(function (a) {
       return '<el-option value="' + esc(a.id) + '" class="' + OPTION + '"><span class="block truncate font-normal group-aria-selected/option:font-semibold">' + esc(a.name) + " •••• " + esc(a.last4) + "</span>" + CHECK + "</el-option>";
@@ -99,14 +99,10 @@
       '<h2 id="se-cfg-title" tabindex="-1" class="text-2xl/8 font-semibold text-default focus:outline-none">SMART Exchange Payment Preferences</h2>' +
       '<p class="type-description text-tertiary">SMART Exchange is an option you can enable for instant payments. <a href="https://www.transcard.com/support" target="_blank" rel="noopener noreferrer" class="rounded-sm font-medium text-blue-600 hover:text-blue-700 ' + FOCUS + ' dark:text-blue-400 dark:hover:text-blue-300">What is SMART Exchange?<span class="sr-only"> (opens in a new tab)</span></a></p>' +
       "</div></div>" +
-      '<div class="flex shrink-0 items-center gap-4 sm:gap-6">' +
-      '<div class="flex items-center gap-3"><span data-cfg-state aria-hidden="true" class="type-label text-secondary w-6">Off</span>' +
-      '<span class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 has-disabled:cursor-not-allowed has-disabled:opacity-50 dark:bg-white/5 dark:inset-ring-white/10 dark:outline-blue-500 dark:has-checked:bg-blue-500">' +
-      '<span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5 motion-reduce:transition-none"></span>' +
-      '<input type="checkbox" data-cfg-toggle name="smart-exchange-enabled" aria-label="Enable SMART Exchange payments" class="absolute inset-0 size-full cursor-pointer appearance-none focus:outline-hidden disabled:cursor-not-allowed" /></span></div>' +
+      '<div class="flex shrink-0 items-center">' +
       '<button type="button" data-cfg-save class="' + BTN_PRIMARY + '">Save</button>' +
       "</div></div>" +
-      '<div data-cfg-fields hidden class="mt-6 flex flex-col gap-6 border-t border-gray-200 pt-6 dark:border-white/10">' +
+      '<div data-cfg-fields class="mt-6 flex flex-col gap-6 border-t border-gray-200 pt-6 dark:border-white/10">' +
       '<div class="flex max-w-sm flex-col gap-1.5">' +
       '<label id="se-cfg-account-label" for="se-cfg-account-btn" class="' + OBField.LABEL + '">Select Default Receiving Account</label>' +
       '<el-select data-cfg-account name="default-receiving-account" value="" class="block">' +
@@ -120,9 +116,6 @@
       '<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:w-104">' + amountField("se-cfg-min", "Min. invoice amount", "0.00") + amountField("se-cfg-max", "Max. invoice amount", "0.00") + "</div>" +
       "</div></div></section>";
 
-    var toggle = el.querySelector("[data-cfg-toggle]");
-    var stateLbl = el.querySelector("[data-cfg-state]");
-    var fields = el.querySelector("[data-cfg-fields]");
     var save = el.querySelector("[data-cfg-save]");
     var select = el.querySelector("[data-cfg-account]");
     var trigger = el.querySelector("#se-cfg-account-btn");
@@ -151,10 +144,10 @@
       return ok;
     }
     function snapshot() {
-      return { enabled: toggle.checked, account: select.value && select.value !== "__add" ? select.value : "", min: min.value.trim(), max: max.value.trim() };
+      return { account: select.value && select.value !== "__add" ? select.value : "", min: min.value.trim(), max: max.value.trim() };
     }
     function same(a, b) {
-      return a.enabled === b.enabled && (!a.enabled || (a.account === b.account && a.min === b.min && a.max === b.max));
+      return a.account === b.account && a.min === b.min && a.max === b.max;
     }
     function syncTitle() {
       // Long account names are truncated in the trigger: full text on hover.
@@ -162,28 +155,17 @@
       if (o) trigger.title = o.name + " •••• " + o.last4; else trigger.removeAttribute("title");
     }
     function syncSave() {
-      // Never saved: Save stays available (toggle off is a valid answer). Saved: only when something changed.
-      save.disabled = ctx.readOnly || (!!saved && same(snapshot(), saved));
-    }
-    function syncVisible() {
-      fields.hidden = !toggle.checked;
-      stateLbl.textContent = toggle.checked ? "On" : "Off";
+      // SE 5136:333009: Save is disabled until something changes, and again after saving.
+      save.disabled = ctx.readOnly || same(snapshot(), saved || { account: "", min: "", max: "" });
     }
 
-    toggle.checked = cur.enabled;
     min.value = cur.min;
     max.value = cur.max;
-    syncVisible();
     var hasAccount = cur.account && accounts.some(function (a) { return a.id === cur.account; });
     select.value = hasAccount ? cur.account : "";
     syncTitle();
     syncSave();
 
-    toggle.addEventListener("change", function () {
-      syncVisible();
-      if (!toggle.checked) { setAccountError(""); validateAmounts(); }
-      syncSave();
-    });
     select.addEventListener("change", function () {
       if (select.value === "__add") {
         select.value = (saved && saved.account) || "";
@@ -210,7 +192,7 @@
 
     save.addEventListener("click", function () {
       var v = snapshot();
-      if (v.enabled) {
+      {
         var ok = true;
         if (!v.account) { setAccountError(ERR_ACCOUNT); ok = false; }
         if (!validateAmounts()) ok = false;

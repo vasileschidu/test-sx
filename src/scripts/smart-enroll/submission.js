@@ -57,7 +57,9 @@
   var MD = " rounded-md px-2.5 py-1.5 text-sm";
   var LG = " rounded-md px-3 py-2 text-base";
   var XL = " rounded-md px-3.5 py-2.5 text-base";
+  var XS = " rounded-sm px-2 py-1 text-xs";
   var BTN = {
+    secondaryXs: SECONDARY + XS,
     primaryLg: PRIMARY + LG, primaryXl: PRIMARY + XL,
     secondaryMd: SECONDARY + MD, secondaryLg: SECONDARY + LG, secondaryXl: SECONDARY + XL,
     dangerMd: DANGER + MD,
@@ -74,12 +76,13 @@
     blue: "bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30",
     green: "bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:inset-ring-green-500/20",
     red: "bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20",
+    yellow: "bg-yellow-100 text-yellow-800 inset-ring-yellow-200 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20",
     amber: "bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20",
   };
   // Status card badge "Completed" (sx-sign-agreement.js BADGE_DONE).
   var BADGE_DONE =
     "inline-flex w-fit items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400";
-  // Radio (sx-enroll-acp.js RADIO) and radio card label row (merchant-services.js).
+  // Radio (sx-onboarding-acp.js RADIO) and radio card label row (merchant-services.js).
   var RADIO =
     "relative size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-gray-300 dark:border-white/10 bg-white dark:bg-white/5 before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 dark:checked:border-blue-500 checked:bg-blue-600 dark:checked:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:border-gray-300 dark:disabled:border-white/10 disabled:bg-gray-100 dark:disabled:bg-white/10 disabled:before:bg-gray-400 dark:disabled:before:bg-white/30";
   var RADIO_ROW =
@@ -116,6 +119,7 @@
     dashed: function (cls) { return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="2.6 2.6" aria-hidden="true" class="' + cls + '"><circle cx="10" cy="10" r="7.25" /></svg>'; },
     chevronLeft: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" /></svg>',
     chevronRight: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>',
+    chevronDown: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 transition-transform group-aria-expanded/acc:rotate-180 motion-reduce:transition-none"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>',
     plus: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>',
     plusSm: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>',
     minus: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M4 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H4.75A.75.75 0 0 1 4 10Z" clip-rule="evenodd" /></svg>',
@@ -497,6 +501,12 @@
       return b.status === "connected" ? "Connected" : b.status === "action" ? "Action Required" : "Pending Verification";
     }
 
+    function accountLabel(id) {
+      var list = (readJson("sessionStorage", SE.storageKey("connectors")) || {}).bankAccounts || data.bankAccounts || [];
+      var a = list.filter(function (x) { return x.id === id; })[0];
+      return a ? (a.name || "") + (a.last4 ? " •••• " + a.last4 : "") : id || "";
+    }
+
     function summaryRows(tabId) {
       var b = business();
       if (tabId === "business-information") {
@@ -528,11 +538,11 @@
       }
       if (tabId === "configuration") {
         var c = readJson("sessionStorage", SE.storageKey(tabId));
-        if (!c) return [["SMART Exchange", "Not saved yet"]];
+        if (!c) return [["Default receiving account", "", true]];
         return [
-          ["SMART Exchange", c.enabled ? "On" : "Off"],
-          ["Min. invoice amount", c.enabled && c.min ? "$" + c.min : "—"],
-          ["Max. invoice amount", c.enabled && c.max ? "$" + c.max : "—"],
+          ["Default receiving account", accountLabel(c.account)],
+          ["Min. invoice amount", c.min ? "$" + c.min : "—", false],
+          ["Max. invoice amount", c.max ? "$" + c.max : "—", false],
         ];
       }
       var p = (SE.getProgress().tabs || {})[tabId] || { required: 0, filled: 0 };
@@ -740,21 +750,29 @@
       return { software: sw, bank: bank };
     }
 
+    // SE Review Info Drops 5280:338651: header (white / open gray-50 / missing yellow) with chevron; Edit sits in the header.
     function accordion(t) {
       var open = !!ui.open[t.id];
+      var pct = percentOf(t.id);
+      var missing = pct < 100;
       var rows = summaryRows(t.id).map(function (r) {
-        return '<div class="grid grid-cols-1 gap-0.5 sm:grid-cols-2 sm:gap-4"><dt class="type-label text-default">' + esc(r[0]) + '</dt><dd class="type-body text-secondary break-words">' + esc(r[1] || "—") + "</dd></div>";
+        var miss = r[2] === undefined ? !r[1] : r[2];
+        return '<div class="grid grid-cols-1 gap-0.5 rounded-sm px-2 py-1.5 sm:grid-cols-2 sm:gap-4"><dt class="type-label ' + (miss ? "flex items-center gap-1.5 text-amber-800 dark:text-amber-300" : "text-default") + '">' +
+          (miss ? ICON.warnMini("size-4 shrink-0 text-amber-500 dark:text-amber-400") : "") + esc(r[0]) + '</dt><dd class="type-body break-words ' + (miss ? "text-amber-800 dark:text-amber-300" : "text-secondary") + '">' + esc(r[1] || "--") + "</dd></div>";
       }).join("");
+      var hdr = missing
+        ? "border-yellow-300 bg-yellow-50 dark:border-yellow-400/30 dark:bg-yellow-400/10"
+        : open ? "border-gray-300 bg-gray-50 dark:border-white/15 dark:bg-white/10" : "border-gray-300 bg-white dark:border-white/15 dark:bg-white/5";
       return (
-        '<li class="' + CARD + '">' +
-        '<h4><button type="button" data-sub-acc="' + esc(t.id) + '" aria-expanded="' + open + '" aria-controls="se-sub-acc-' + esc(t.id) + '" class="group/acc flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-3 text-left hover:bg-gray-50 ' + FOCUS + ' dark:hover:bg-white/5">' +
+        '<li class="' + CARD.replace("border-gray-200", "border-transparent") + ' flex flex-col gap-2">' +
+        '<h4 class="flex items-center gap-3 rounded-md border px-3 py-2 ' + hdr + '">' +
+        '<button type="button" data-sub-acc="' + esc(t.id) + '" aria-expanded="' + open + '" aria-controls="se-sub-acc-' + esc(t.id) + '" class="group/acc flex min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-sm text-left ' + FOCUS + '">' +
         '<span class="min-w-0 flex-1 truncate type-body-large text-default">' + esc(t.title) + "</span>" +
-        badge("gray", percentOf(t.id) + "% complete") +
-        '<span class="text-gray-500 group-hover/acc:text-gray-700 dark:text-gray-400 dark:group-hover/acc:text-gray-200">' + (open ? ICON.minus : ICON.plus) + "</span></button></h4>" +
-        '<div id="se-sub-acc-' + esc(t.id) + '"' + (open ? "" : " hidden") + ' class="flex flex-col gap-4 border-t border-gray-200 px-4 py-4 dark:border-white/10">' +
-        '<dl class="flex flex-col gap-2">' + rows + "</dl>" +
-        '<div><button type="button" data-sub-go="' + esc(t.id) + '" class="' + LINK + '">' + ICON.pencil + "Edit" + '<span class="sr-only"> ' + esc(t.title) + "</span></button></div>" +
-        "</div></li>"
+        (missing ? badge("yellow", "Missing required information", ICON.warnMini("size-3")) : badge("gray", pct + "% complete")) +
+        '<span class="text-gray-500 group-hover/acc:text-gray-700 dark:text-gray-400 dark:group-hover/acc:text-gray-200">' + ICON.chevronDown + "</span></button>" +
+        '<button type="button" data-sub-go="' + esc(t.id) + '" class="' + BTN.secondaryXs + '">' + ICON.pencil + "Edit" + '<span class="sr-only"> ' + esc(t.title) + "</span></button></h4>" +
+        '<div id="se-sub-acc-' + esc(t.id) + '"' + (open ? "" : " hidden") + ' class="rounded-md bg-gray-50 p-2 dark:bg-white/5">' +
+        '<dl class="flex flex-col gap-0.5">' + rows + "</dl></div></li>"
       );
     }
 
@@ -1133,7 +1151,6 @@
           var tid = el.getAttribute("data-sub-acc");
           ui.open[tid] = !ui.open[tid];
           el.setAttribute("aria-expanded", String(ui.open[tid]));
-          el.lastElementChild.innerHTML = ui.open[tid] ? ICON.minus : ICON.plus;
           document.getElementById("se-sub-acc-" + tid).hidden = !ui.open[tid];
           return;
         }

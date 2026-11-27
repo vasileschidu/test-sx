@@ -67,7 +67,9 @@ Hovering the icon shows a dark tooltip with the status and "filled / required" (
 Optional fields don't count. A tab is ✓ when all its required fields are filled and valid.
 
 ## Statuses (D-12)
-Set by compliance in the back office. The prototype simulates them with a floating "Demo status" switcher at the bottom right (also `?status=<id>`).
+Set by compliance in the back office. The prototype simulates them with a floating "Demo status" switcher at the bottom right (also `?status=<id>`). Each status seeds a consistent state: Pending Approval / Approved / Declined / Suspended fill every tab with valid demo data (Application Progress 100%, tab icons done / clock, read-only); Not submitted / Pending enrollment data restore what the user had. The Financial and Business Plan tabs (Merchant Services add-on) are not seeded.
+
+A tab-level warning alert (`SmartEnroll.setTabAlert`) sits above the tab strip, e.g. "Bank account name missing" on Connectors (SE `6017:347689`).
 The application is **editable only before submission and in Pending enrollment data**; every other status is read-only.
 
 | Status | Colour | Status box text | Figma |

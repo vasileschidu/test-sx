@@ -22,7 +22,7 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-05 [exchanges-table] A pending **Card** row with no review/signature is "Pending Your Action" and lives on the
   Action Required tab, not Pending — deep-link with `&tab=action-required` or the table looks empty.
 - 2026-11-05 [app-plans] Extra tenants (e.g. `sx-demo`) can only read globals loaded before `app-plans.js`; load `sx-demo-case.js` first.
-- 2026-11-05 [sd][sx-enroll] Reusing the SD shell in another flow: `OB_FLOW_STEPS` + `OB_MOBILE_MENU` before sidebar/stepper,
+- 2026-11-05 [sd][sx-onboarding] Reusing the SD shell in another flow: `OB_FLOW_STEPS` + `OB_MOBILE_MENU` before sidebar/stepper,
   a tiny `SDOnboardingContext` adapter (getState/saveState) and an `OBGo` wrapper for hard-coded hops — no SD file edited.
 - 2026-11-05 [qa] code-audit skips untracked files' lines (git diff is empty): run new files with `--all-lines`. Pages that need
   localStorage state: `--init tools/ui-qa/init/<seed>.js` (added to code-audit and hover-audit).
@@ -153,3 +153,14 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-26 [smart-enroll][popover] A click/keyboard info card in a narrow or scrolling panel: `button[popovertarget]` + Elements `el-popover popover anchor="right start"` (top layer, light-dismiss/Esc free); sync `aria-expanded` from the capture `toggle` event, open on `focusin` only when `:focus-visible`, close on `focusout`. Never put `flex` on the popover element itself (overrides the closed `display:none`): lay out an inner div.
 - 2026-11-26 [smart-enroll][shared ui] Pills copied into 3 tab scripts drifted (md / sm / opacity). Shared builders for tabs go on `window.SmartEnroll.ui` (shell loads first, tabs call it at render time); verify states with computed styles (checked hover vs hover vs disabled variant order).
 - 2026-11-26 [qa][serve] `tools/serve.py <port>` silently fails if another agent's server owns the port, and you then test their branch. `lsof -iTCP:<port>` (cwd) before trusting a render; pick an unused port.
+- 2026-11-26 [smart-enroll][ownership] Brief names can drift from Figma (asked "Date of Incorporation", Figma only has Date of Birth): screenshot R1 + SE first, apply to the real field, log a DS row. Next Step handlers: capture-phase click on `[data-se-next]` + `SE.on("submit")` to flag errors for the tab.
+- 2026-11-26 [smart-enroll][a11y] Whole-row accordion header with several controls: put `after:absolute after:inset-0` on the toggle button (header `relative`) and `relative z-10` on the inner controls (pills); Playwright needs `force: true` to click the covered label text.
+- 2026-11-26 [figma] `get_metadata` on a Figma section (e.g. R1 BlueSnap `30397:63675`) dumps ~15k tokens; use it only on a single tab frame, then `get_design_context` on the Top Header / Form Section child with `excludeScreenshot`.
+
+## 2026-11-26 TCDM-5247 / 5251 (SMART Enroll)
+- `tools/serve.py <port>` silently fails to bind if another worktree already serves that port: check `lsof -p <pid> | grep cwd` before trusting a preview.
+- Demo-state seeding: tab scripts read sessionStorage `se_tab_<id>` on `SE.ready`/first render, so seed inside shell `init()` before `renderActive`; a status switch seeds then reloads.
+- A tab-level hook can live in shell.js by listening to another tab's document event (`smart-enroll:connectors-change`) instead of editing that tab's script.
+- 2026-11-27 [sx-onboarding][standalone] Flow without `?case=`: a sample payment (`src/data/sx-onboarding.json` → sessionStorage `sx-enroll-sample`) behind `SXEnroll.update/urls/markCardProcessed/CHANGE_EVENT`; step scripts call those, never `SXDemoCase` directly. stp-state.js scopes the sample to `:sx-sample` so the general portal's STP state is untouched.
+- 2026-11-27 [radio][a11y] "Pick a row = continue" radio lists: an Arrow key also fires `click` on the newly checked radio — flag the arrow on keydown and skip that click; handle Enter / Space yourself (Space on an already-checked radio fires no click in Chrome).
+- 2026-11-27 [hub][email] The Hub token email URL is built in the worker (`workers/sd-sx-token-service` `buildOnboardingUrl`), not in payables-pay.js; a worker change needs a deploy, so add a client fallback (onboarding-flow.js redirects `flow=sx`).

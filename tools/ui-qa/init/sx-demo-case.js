@@ -1,4 +1,4 @@
-// QA seed for the SMART Exchange enrolment pages (src/pages/sx-enroll/*.html?case=SX-QA):
+// QA seed for the SMART Exchange enrolment pages (src/pages/sx-onboarding/*.html?case=SX-QA):
 // a demo case with STP on (self-signed) and an account, so every step renders with data.
 (function () {
   try {

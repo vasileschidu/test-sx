@@ -125,8 +125,11 @@
   var DIVIDER = "border-t border-gray-200 dark:border-white/10";
   var LABEL = "type-label text-secondary";
   var OPTIONAL = '<span class="shrink-0 type-label text-gray-400 dark:text-gray-500">Optional</span>';
-  // Link primary (+ Add Owner).
-  var LINK = "inline-flex cursor-pointer items-center gap-1.5 rounded-sm type-button text-blue-600 transition-colors hover:text-blue-700 " + FOCUS + " dark:text-blue-400 dark:hover:text-blue-300";
+  // Add Owner pill (Figma SE Add Owner 4929:491770): white pill, gray-200 border, user-add icon in a 2px gray-300 ring,
+  // blue label; hover = ring blue-400. SE draws no focus: shared focus-visible outline (a11y). Logged DS-060.
+  var ADD_OWNER = "group/add inline-flex cursor-pointer items-center gap-2 rounded-full border border-gray-200 bg-white py-1 pr-4 pl-1 type-button text-blue-600 transition-colors hover:text-blue-700 active:bg-gray-50 " + FOCUS +
+    " dark:border-white/10 dark:bg-white/5 dark:text-blue-400 dark:hover:text-blue-300 dark:active:bg-white/10";
+  var ADD_OWNER_ICON = "inline-flex size-8 shrink-0 items-center justify-center rounded-full text-gray-400 ring-2 ring-gray-300 transition-colors group-hover/add:ring-blue-400 dark:text-gray-500 dark:ring-white/15 dark:group-hover/add:ring-blue-400/60";
   // Link secondary (Remove) — text button, hover tint like the shell's footer nav.
   var BTN_REMOVE = "inline-flex shrink-0 cursor-pointer items-center rounded-md px-2 py-1 type-button text-gray-700 hover:bg-gray-100 hover:text-gray-900 " + FOCUS + " dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white";
   // Button/Gray 28px icon button (expand / collapse).
@@ -140,7 +143,7 @@
     " dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20";
   var BTN_DANGER_XL = "inline-flex w-full cursor-pointer items-center justify-center rounded-md bg-red-600 px-3.5 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 dark:bg-red-500 dark:shadow-none dark:hover:bg-red-400 dark:focus-visible:outline-red-400";
   var BADGE = "inline-flex shrink-0 items-center rounded-full border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs/4 font-medium text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300";
-  // Radio (sx-enroll-acp.js) + hover and error.
+  // Radio (sx-onboarding-acp.js) + hover and error.
   var RADIO = "relative size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden " +
     "not-checked:hover:border-gray-400 group-hover/radio:not-checked:border-gray-400 checked:border-blue-600 checked:bg-blue-600 checked:hover:bg-blue-500 group-hover/radio:checked:bg-blue-500 group-hover/radio:checked:border-blue-500 aria-invalid:border-red-300 aria-invalid:not-checked:hover:border-red-400 " + FOCUS +
     " disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 " +
@@ -383,9 +386,27 @@
       '<div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-6">' +
       '<div class="flex min-w-0 flex-col gap-1">' +
       '<span id="' + id + '-title" class="type-label-large text-default">' + esc(title) + "</span>" +
-      '<p class="type-description text-tertiary">' + esc(text) + "</p></div>" +
+      '<p data-own-upload-desc="' + id + '" class="type-description text-tertiary">' + esc(text) + "</p></div>" +
       '<div data-own-upload="' + id + '" class="w-full shrink-0 md:w-78"></div></div>'
     );
+  }
+
+  /** SE error frames (5413:371099, 5406:343819): the upload description turns red with the dropzone. */
+  function flagUploadDesc(slotId, on) {
+    var d = view.root && view.root.querySelector('[data-own-upload-desc="' + slotId + '"]');
+    if (!d) return;
+    d.classList.toggle("text-tertiary", !on);
+    d.classList.toggle("text-red-600", on);
+    d.classList.toggle("dark:text-red-400", on);
+  }
+
+  /** Organization Document is required (progress counts it); shown after Next Step / Submit. */
+  function applyDocError() {
+    if (!view.root || view.readOnly) return;
+    var on = !!state.docTried && !state.doc.length;
+    var up = view.docUpload;
+    if (up) up.setError(on ? "Organization Document is required." : null);
+    flagUploadDesc("se-own-orgdoc", on);
   }
 
   /* ---------- markup: owner card ---------- */
@@ -505,7 +526,7 @@
           '<ul role="list" class="flex flex-col gap-2">' + list.map(ownerHtml).join("") + "</ul>"
         : emptyHtml()) +
       '<div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-2">' +
-      (showAddOwner() ? '<button type="button" data-own-add class="' + LINK + '">' + ICON.plus + "Add Owner</button>" : "<span></span>") +
+      (showAddOwner() ? '<button type="button" data-own-add class="' + ADD_OWNER + '"><span aria-hidden="true" class="' + ADD_OWNER_ICON + '">' + ICON.userPlus + "</span>Add Owner</button>" : "<span></span>") +
       '<p data-own-total aria-live="polite" class="ml-auto flex items-center gap-4">' + totalHtml() + "</p>" +
       "</div></section>" +
       '<section aria-labelledby="se-own-legal-title" class="flex flex-col gap-4">' +
@@ -546,11 +567,12 @@
     if (!view.root) return;
     destroyUploads();
     view.root.innerHTML = pageHtml();
-    mountUpload("se-own-orgdoc", {
+    view.docUpload = mountUpload("se-own-orgdoc", {
       label: "Attach the Organization Document",
       files: state.doc,
-      onChange: function (files) { state.doc = files; persist(); progress(); },
+      onChange: function (files) { state.doc = files; persist(); progress(); applyDocError(); },
     });
+    applyDocError();
     view.root.querySelectorAll("[data-own-form]").forEach(bindForm);
     progress();
   }
@@ -675,6 +697,7 @@
       var govShow = !!errs.govId && (tried || !!state.touched[fid(id, "govId")]);
       if (govShow) { gov.setError(errs.govId); form._govErr = true; if (!first) first = "govId"; }
       else if (form._govErr) { gov.setError(null); form._govErr = false; }
+      flagUploadDesc(fid(id, "govId"), govShow);
     }
     return first;
   }
@@ -915,6 +938,23 @@
     if (view.readOnly) { state.draft = null; state.openId = null; state.tried = {}; }
     render();
   });
+
+  // Next Step / Submit from this tab: flag what is missing (open form, total, Organization Document) so it shows here.
+  function flagMissing() {
+    if (SE.isReadOnly()) return;
+    state.docTried = true;
+    if (state.openId) state.tried[state.openId] = true;
+    else if (state.owners.length || state.draft) state.tried.total = true;
+    if (view.root && view.loaded) {
+      render();
+      var open = state.openId && view.root.querySelector('[data-own-form="' + state.openId + '"]');
+      if (open) refresh(open);
+    }
+  }
+  document.addEventListener("click", function (e) {
+    if (e.target.closest && e.target.closest("[data-se-next]") && SE.getActiveTab() === TAB) flagMissing();
+  }, true);
+  SE.on("submit", flagMissing);
 
   // Progress from the saved values even before the tab is opened.
   SE.ready.then(function () {

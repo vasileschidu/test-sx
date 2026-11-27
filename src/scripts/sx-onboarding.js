@@ -1,6 +1,6 @@
 /**
- * sx-enroll.js — SMART Exchange enrolment for the STP walkthrough
- * (src/pages/sx-enroll/, Figma 9DRzbyv7FDCDYFYN5ZGuwZ "STP Enabled During
+ * sx-onboarding.js — SMART Exchange enrolment for the STP walkthrough
+ * (src/pages/sx-onboarding/, Figma 9DRzbyv7FDCDYFYN5ZGuwZ "STP Enabled During
  * Payment Flow" 33456:52272).
  *
  * The pages reuse the SMART Disburse onboarding shell and scripts without
@@ -16,13 +16,22 @@
  *   - window.OBGo: wrapped to map SD hops (review-documents.js → paywall.html)
  *     onto this flow and to keep ?case= on every page change.
  *
- * Data: the demo case (SXDemoCase, sx-demo-case.js). Missing or unknown
- * ?case= → a notice with a link to the case launcher instead of the step.
+ * Data: with ?case= the demo case (SXDemoCase, sx-demo-case.js; an unknown
+ * case → a notice with a link to the case launcher instead of the step).
+ * Without ?case= (standalone flow, Hub email link, root index card) the
+ * built-in sample payment src/data/sx-onboarding.json, copied once per tab
+ * into sessionStorage `sx-enroll-sample` (TCDM-5262). SXEnroll.update / urls /
+ * markCardProcessed / CHANGE_EVENT work on whichever of the two is active.
+ *
+ * Payment method (Confirm Payment): "card" | "bank-account" | "check" in the
+ * session state. Only card has the Automatic Card Processing step: for bank /
+ * check it leaves the stepper, card-processing.html redirects to
+ * create-account.html and Back on create-account goes to payment.html.
  *
  * Load order in <head>: sx-demo-case.js → onboarding-transitions.js →
- * sx-enroll.js → onboarding-sidebar.js → … → onboarding-stepper.js.
+ * sx-onboarding.js → onboarding-sidebar.js → … → onboarding-stepper.js.
  * Step pages set <body data-sx-step="…">; the Automatic Card Processing and
- * final pages add sx-enroll-acp.js / sx-enroll-complete.js.
+ * final pages add sx-onboarding-acp.js / sx-onboarding-complete.js.
  */
 (function () {
   "use strict";
@@ -38,7 +47,7 @@
   })();
 
   // Per case, so a tab reused for a new case never shows the previous case's answers.
-  var STATE_KEY = "sx-enroll-state:" + CASE_ID;
+  var STATE_KEY = "sx-enroll-state:" + CASE_ID; // old key name kept on purpose (TCDM-5261)
 
   /** "payment.html" → "payment.html?case=SX-…" (keeps any hash). */
   function withCase(href) {
@@ -70,7 +79,24 @@
     { id: "create-account", label: "Create SMART Exchange" },
     { id: "summary", label: "Complete" },
   ];
-  window.OB_FLOW_STEPS = STEPS.map(function (step) {
+  /** The saved payment method ("card" | "bank-account" | "check"), "" before the choice. */
+  function paymentMethod() {
+    return String(getState().paymentMethod || "");
+  }
+
+  /** Automatic Card Processing only exists for a card payment (or before the choice). */
+  function skipsCardProcessing() {
+    var method = paymentMethod();
+    return !!method && method !== "card";
+  }
+
+  // Bank / check: card-processing.html opened directly goes on to the next step.
+  if (skipsCardProcessing() && /\/card-processing\.html$/.test(window.location.pathname))
+    window.location.replace(withCase("create-account.html"));
+
+  window.OB_FLOW_STEPS = STEPS.filter(function (step) {
+    return !(step.id === "card-processing" && skipsCardProcessing());
+  }).map(function (step) {
     return {
       id: step.id,
       label: step.label,
@@ -122,9 +148,185 @@
     return next;
   }
 
+  // ---- Payment data: the demo case (?case=) or the built-in sample ---------
+
+  var SAMPLE_KEY = "sx-enroll-sample"; // "sx-enroll" prefix: a new demo case / Reset demo clears it too
+  var CHANGE_EVENT = "sx-demo-case:change"; // same event as SXDemoCase, so listeners work in both modes
+  // The sample is per tab (sessionStorage); a copy in localStorage lets the second
+  // signer's tab (sign-agreement.html?sample=1, opened with noopener or from the
+  // email) read and sign it, and the enrolment tab hear back (storage event).
+  var SHARED_SAMPLE_KEY = "sx-enroll-sample-shared";
+  var SIGNER_SAMPLE = (function () {
+    try {
+      return (
+        !CASE_ID &&
+        /\/sign-agreement\.html$/.test(window.location.pathname) &&
+        new URLSearchParams(window.location.search).get("sample") === "1"
+      );
+    } catch (error) {
+      return false;
+    }
+  })();
+
+  function readSharedSample() {
+    try {
+      var parsed = JSON.parse(localStorage.getItem(SHARED_SAMPLE_KEY) || "null");
+      return isPlainObject(parsed) && parsed.id ? parsed : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function shareSample(value) {
+    try {
+      localStorage.setItem(SHARED_SAMPLE_KEY, JSON.stringify(value));
+    } catch (error) {}
+  }
+
+  function isPlainObject(value) {
+    return (
+      value !== null &&
+      typeof value === "object" &&
+      Object.prototype.toString.call(value) === "[object Object]"
+    );
+  }
+
+  /** Objects merge key by key; arrays, primitives and null replace (as SXDemoCase.update). */
+  function deepMerge(base, patch) {
+    var out = isPlainObject(base) ? Object.assign({}, base) : {};
+    if (!isPlainObject(patch)) return out;
+    Object.keys(patch).forEach(function (key) {
+      var next = patch[key];
+      if (next === undefined) return;
+      out[key] = isPlainObject(next)
+        ? deepMerge(isPlainObject(out[key]) ? out[key] : {}, next)
+        : next;
+    });
+    return out;
+  }
+
+  function readSample() {
+    try {
+      var parsed = JSON.parse(sessionStorage.getItem(SAMPLE_KEY) || "null");
+      if (isPlainObject(parsed) && parsed.id) return parsed;
+    } catch (error) {}
+    return SIGNER_SAMPLE ? readSharedSample() : null;
+  }
+
+  function writeSample(value) {
+    try {
+      sessionStorage.setItem(SAMPLE_KEY, JSON.stringify(value));
+    } catch (error) {}
+    shareSample(value);
+    try {
+      window.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: { case: value } }));
+    } catch (error) {}
+    return value;
+  }
+
+  function todayIso() {
+    var now = new Date();
+    return (
+      now.getFullYear() +
+      "-" +
+      String(now.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(now.getDate()).padStart(2, "0")
+    );
+  }
+
+  /** The sample payment, loaded once per tab from src/data/sx-onboarding.json. */
+  function loadSample() {
+    if (readSample() || !window.DataSource) return Promise.resolve(readSample());
+    return window.DataSource.load("../../data/sx-onboarding.json").then(function (data) {
+      if (!isPlainObject(data)) return null;
+      var sample = deepMerge({}, data);
+      delete sample._comment;
+      sample.id = sample.id || "SAMPLE";
+      sample.createdAt = new Date().toISOString();
+      sample.payment = sample.payment || {};
+      if (!sample.payment.dateInitiated) sample.payment.dateInitiated = todayIso();
+      try {
+        sessionStorage.setItem(SAMPLE_KEY, JSON.stringify(sample));
+      } catch (error) {}
+      shareSample(sample);
+      return sample;
+    });
+  }
+
+  // The signer's tab signed the shared copy → this tab's sample follows (same sample only).
+  window.addEventListener("storage", function (event) {
+    if (CASE_ID || event.key !== SHARED_SAMPLE_KEY) return;
+    var mine = null;
+    try {
+      mine = JSON.parse(sessionStorage.getItem(SAMPLE_KEY) || "null");
+    } catch (error) {}
+    var shared = readSharedSample();
+    if (!shared || !mine || mine.id !== shared.id || mine.createdAt !== shared.createdAt) return;
+    try {
+      sessionStorage.setItem(SAMPLE_KEY, JSON.stringify(shared));
+    } catch (error) {}
+    try {
+      window.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: { case: shared } }));
+    } catch (error) {}
+  });
+
   function currentCase() {
+    if (!CASE_ID) return readSample();
     var c = window.SXDemoCase ? window.SXDemoCase.get() : null;
     return c && c.id === CASE_ID ? c : null;
+  }
+
+  /** Patch the active payment (demo case or sample); returns it, or null without one. */
+  function update(patch) {
+    if (CASE_ID) return window.SXDemoCase ? window.SXDemoCase.update(patch) : null;
+    var current = readSample();
+    if (!current) return null;
+    var next = deepMerge(current, patch);
+    next.id = current.id;
+    return writeSample(next);
+  }
+
+  /** Links out of the flow. Sample: the general Supplier Portal, no case. */
+  function urls(c) {
+    if (CASE_ID && window.SXDemoCase) return window.SXDemoCase.urls(c);
+    // Root-relative paths, as SXDemoCase.urls returns (callers prefix location.origin).
+    var abs = function (relative) {
+      try {
+        return new URL(relative, window.location.href).pathname;
+      } catch (error) {
+        return relative;
+      }
+    };
+    return {
+      enrol: abs("index.html"),
+      portal: abs("../dashboard/supplier-portal.html"),
+      launcher: abs("../demo/stp-case.html"),
+      // ?sample=1: the signer page reads the shared sample, not the stored demo case.
+      sign: abs("sign-agreement.html") + "?sample=1",
+    };
+  }
+
+  function randomCode(count, chars) {
+    var out = "";
+    while (out.length < count) out += chars.charAt(Math.floor(Math.random() * chars.length));
+    return out;
+  }
+
+  /** Demo control "I've processed this card": case → SXDemoCase (portal row Paid, STP); sample → MID / TID only. */
+  function markCardProcessed() {
+    if (CASE_ID) return window.SXDemoCase ? window.SXDemoCase.markCardProcessed() : null;
+    var current = readSample();
+    if (!current) return null;
+    var stp = current.stp || {};
+    return update({
+      enrol: { cardProcessed: true },
+      stp: {
+        mid: stp.mid || "1" + randomCode(14, "0123456789"),
+        tid: stp.tid || randomCode(8, "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789"),
+        processedAt: new Date().toISOString(),
+      },
+    });
   }
 
   if (!window.SDOnboardingContext) {
@@ -353,12 +555,14 @@
     content.innerHTML =
       '<div class="flex flex-col gap-6 px-4 pt-10 pb-10 lg:px-14 lg:pt-14">' +
       '<div role="status" class="flex w-full max-w-md flex-col gap-3 rounded-lg border border-default bg-tertiary p-4">' +
-      '<p class="type-title-small text-default">No demo case found</p>' +
+      '<p class="type-title-small text-default">' +
+      (CASE_ID ? "No demo case found" : "Payment not available") +
+      "</p>" +
       '<p class="type-description text-tertiary">' +
       (CASE_ID
-        ? "The case " + esc(CASE_ID) + " is not in this browser anymore. "
-        : "This enrolment link needs a demo case. ") +
-      "Create one in the case launcher and start the enrolment from there.</p>" +
+        ? "The case " + esc(CASE_ID) + " is not in this browser anymore. Create one in the case launcher and start the enrolment from there."
+        : "The sample payment could not be loaded. Reload the page, or start a demo case in the case launcher.") +
+      "</p>" +
       '<a href="' +
       esc(launcher) +
       '" class="inline-flex w-fit items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 dark:text-blue-400 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
@@ -387,10 +591,37 @@
     }
   }
 
+  /** Bank / check skip Automatic Card Processing: links to it point at the step around it. */
+  function skipCardProcessingLinks() {
+    if (!skipsCardProcessing()) return;
+    var back = document.querySelectorAll('a[href="card-processing.html"]');
+    for (var i = 0; i < back.length; i += 1) back[i].setAttribute("href", "payment.html");
+  }
+
+  /**
+   * Demo case: below lg the "Demo case / New demo" bar (sx-demo-case.js, fixed
+   * bottom-right) covered the footer links of the taller steps; there it joins
+   * the page flow under the footer instead (it is already the body's last child).
+   */
+  function clearDemoBar() {
+    var bar = document.getElementById("sx-demo-bar");
+    if (!bar) return;
+    ["max-lg:static", "max-lg:mx-auto", "max-lg:mb-4", "max-lg:w-fit"].forEach(function (cls) {
+      bar.classList.add(cls);
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
+    clearDemoBar();
+    skipCardProcessingLinks();
     keepCaseOnLinks();
     var step = document.body.getAttribute("data-sx-step");
-    var ready = (window.SXDemoCase ? window.SXDemoCase.ready() : Promise.resolve())
+    var source = !CASE_ID
+      ? loadSample()
+      : window.SXDemoCase
+        ? window.SXDemoCase.ready()
+        : Promise.resolve();
+    var ready = source
       .then(function () {
         var c = currentCase();
         if (!c) {
@@ -400,7 +631,7 @@
         if (pages[step]) return pages[step](c);
       })
       .catch(function (error) {
-        console.error("[sx-enroll]", error);
+        console.error("[sx-onboarding]", error);
       });
     if (window.OnboardingTransitions && window.OnboardingTransitions.waitFor)
       window.OnboardingTransitions.waitFor(ready);
@@ -415,7 +646,7 @@
   page("declined", function (c) {
     var declined = window.SDOnboardingContext.getState().declined || {};
     if (declined.reason && !(c.enrol && c.enrol.declined))
-      window.SXDemoCase.update({ enrol: { declined: declined } });
+      update({ enrol: { declined: declined } });
     document.querySelector("[data-sx-declined-reason]").textContent = declined.reason || "—";
     document.querySelector("[data-sx-declined-note]").textContent = declined.note || "";
   });
@@ -633,7 +864,7 @@
         Object.keys(inputs).forEach(function (key) {
           patch[key] = inputs[key].value.trim();
         });
-        c = window.SXDemoCase.update({ supplier: patch }) || c;
+        c = update({ supplier: patch }) || c;
         renderView();
         editBtn.focus();
       });
@@ -705,9 +936,39 @@
           "</p>",
       );
     });
-    document.querySelector("[data-sx-method]").addEventListener("click", function () {
-      saveState({ paymentMethod: "card" });
-      go("card-processing.html");
+    // Payment method radio group (Figma list 37236:77372): picking a row saves the
+    // method and moves on, as the single card row did. Arrow keys only move the
+    // selection (native radio group); Enter / Space or a click on a row continues.
+    var NEXT = { card: "card-processing.html", "bank-account": "create-account.html", check: "create-account.html" };
+    var group = document.querySelector("[data-sx-methods]");
+    var radios = group.querySelectorAll('input[name="sx-payment-method"]');
+    var saved = paymentMethod();
+    for (var i = 0; i < radios.length; i += 1) radios[i].checked = radios[i].value === saved;
+    var arrowKey = false;
+    var leaving = false;
+    function choose(radio) {
+      if (leaving || !NEXT[radio.value]) return;
+      leaving = true;
+      radio.checked = true;
+      saveState({ paymentMethod: radio.value });
+      go(NEXT[radio.value]);
+    }
+    group.addEventListener("keydown", function (event) {
+      arrowKey = /^Arrow/.test(event.key);
+      if ((event.key === "Enter" || event.key === " ") && event.target.name === "sx-payment-method") {
+        event.preventDefault();
+        choose(event.target);
+      }
+    });
+    group.addEventListener("keyup", function () {
+      arrowKey = false;
+    });
+    group.addEventListener("click", function (event) {
+      var radio = event.target;
+      if (radio.name !== "sx-payment-method") return;
+      // An arrow key also fires a click on the newly checked radio: selection only.
+      if (arrowKey) return;
+      choose(radio);
     });
   });
 
@@ -875,7 +1136,7 @@
         },
         supplier: { contactFirst: first.value.trim(), contactLast: last.value.trim() },
       };
-      window.SXDemoCase.update(patch);
+      update(patch);
       go("summary.html");
     });
     sync();
@@ -895,18 +1156,34 @@
       row("Primary Contact Name", esc(contactName(c))) +
       row("Primary Contact Email Address", esc(c.supplier.email)) +
       row("Primary Contact Phone Number", esc(c.supplier.phone));
+    // Bank / check (TCDM-5262): processing-time chip as on the SMART Disburse bank and
+    // check summaries (Figma Multi-Party Flow); no card, so no cardholder block.
+    var ETA = {
+      "bank-account": { label: "Up to 3 Days", bg: "bg-amber-500", icon: "icon-check-circle-badge.svg" },
+      check: { label: "7-10 Days", bg: "bg-red-500", icon: "icon-exclamation-circle-badge.svg" },
+    }[paymentMethod()];
+    if (ETA) {
+      var chip = document.querySelector("[data-sx-eta]");
+      chip.classList.replace("bg-emerald-500", ETA.bg);
+      chip.querySelector("img").src = "../../assets/onboarding/" + ETA.icon;
+      chip.querySelector("[data-sx-eta-label]").textContent = ETA.label;
+      document.querySelector("[data-sx-cardholder]").hidden = true;
+    }
     document.querySelector("[data-sx-cardholder]").innerHTML =
       row("Cardholder Name", esc(c.payer.name)) +
       row("Cardholder Address", esc(c.payer.address), "whitespace-pre-line") +
       row("Type", document.getElementById("sx-visa-badge").innerHTML) +
-      row(
-        "Automatic Card Processing",
-        c.enrol && c.enrol.stp === "on"
-          ? c.enrol.signer === "other"
-            ? "Enrolled · waiting for the authorized signer"
-            : "Enrolled · agreement accepted"
-          : "Not enrolled",
-      );
+      // Bank / check never pass Automatic Card Processing: no row for it.
+      (skipsCardProcessing()
+        ? ""
+        : row(
+            "Automatic Card Processing",
+            c.enrol && c.enrol.stp === "on"
+              ? c.enrol.signer === "other"
+                ? "Enrolled · waiting for the authorized signer"
+                : "Enrolled · agreement accepted"
+              : "Not enrolled",
+          ));
 
     var submit = document.querySelector("[data-sx-submit]");
     var list = document.querySelector("[data-sx-consents]");
@@ -933,7 +1210,7 @@
               signedAt: new Date().toISOString(),
             },
           });
-          window.SXDemoCase.update({ enrol: { completedAt: new Date().toISOString() } });
+          update({ enrol: { completedAt: new Date().toISOString() } });
           window.OBModal.close();
           go("complete.html");
         },
@@ -961,7 +1238,7 @@
       if (!logo) continue;
       var mark = logo.parentNode;
       mark.classList.remove("rotate-180");
-      logo.src = "../../assets/sx-enroll/sx-menu-logo.svg";
+      logo.src = "../../assets/sx-onboarding/sx-menu-logo.svg";
       logo.width = 26;
       logo.height = 26;
       logo.className = "absolute inset-0 block size-full";
@@ -974,7 +1251,7 @@
   /**
    * Document dialogs (SX only): the Review Documents viewer (review-documents.js
    * → OBModal, max 752px tall with a 24px top/bottom gap) and the Visa agreement
-   * on Automatic Card Processing (sx-enroll-acp.js) fill the screen
+   * on Automatic Card Processing (sx-onboarding-acp.js) fill the screen
    * instead, with the same 16px gap on every side. The document area scrolls
    * inside; header and footer stay visible. OBModal itself is unchanged: the
    * call is wrapped and the frame padding swapped after it opens.
@@ -1016,6 +1293,14 @@
     getState: getState,
     saveState: saveState,
     currentCase: currentCase,
+    isSample: !CASE_ID,
+    isSignerSample: SIGNER_SAMPLE,
+    update: update,
+    urls: urls,
+    markCardProcessed: markCardProcessed,
+    CHANGE_EVENT: CHANGE_EVENT,
+    paymentMethod: paymentMethod,
+    skipsCardProcessing: skipsCardProcessing,
     esc: esc,
     money: money,
     amountParts: amountParts,

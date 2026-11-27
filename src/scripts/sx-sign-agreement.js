@@ -1,9 +1,9 @@
 /**
  * sx-sign-agreement.js — the other signer's "Review & Sign Agreement" page
- * (src/pages/sx-enroll/sign-agreement.html; Figma 9DRzbyv7FDCDYFYN5ZGuwZ
+ * (src/pages/sx-onboarding/sign-agreement.html; Figma 9DRzbyv7FDCDYFYN5ZGuwZ
  * 36525:45392, expired 37764:150589).
  *
- * Enrolment branch B (sx-enroll-acp.js) sends the request with
+ * Enrolment branch B (sx-onboarding-acp.js) sends the request with
  * STPState.sendAgreementEmail({ linkUrl: <this page> }). The worker drops
  * the query of linkUrl, so the email opens
  *   sign-agreement.html?stpAgreement=review&email=<signer>&token=<token>
@@ -43,6 +43,36 @@
     }
   })();
 
+  // The standalone flow's signer link (?sample=1) signs the sample; otherwise the stored demo case.
+  function getCase() {
+    if (X.isSignerSample) return X.currentCase();
+    return window.SXDemoCase ? window.SXDemoCase.get() : null;
+  }
+
+  /** Same steps as SXDemoCase.signAgreement, on the sample. */
+  function signAgreement(signedBy) {
+    if (!X.isSignerSample) return window.SXDemoCase.signAgreement(signedBy);
+    var current = getCase();
+    if (!current) return null;
+    var now = new Date().toISOString();
+    var S = window.STPState;
+    if (S && typeof S.setStpStep === "function") {
+      if (typeof S.markAgreementSigned === "function")
+        S.markAgreementSigned({ signedBy: signedBy, signedAt: now });
+      S.setStpStep(
+        (current.enrol || {}).cardProcessed
+          ? "bank_verification_required"
+          : "terminal_completed_tid_mid_received",
+      );
+    }
+    return X.update({
+      enrol: {
+        agreementSigned: true,
+        agreement: { signedBy: signedBy, confirmedAt: now, via: "email" },
+      },
+    });
+  }
+
   /** "pending" when this link can still be signed, else "invalid". */
   function linkState(c) {
     if (!c) return "invalid";
@@ -66,7 +96,7 @@
     var actions = document.querySelector("[data-sign-actions]");
     var confirmBtn = document.querySelector("[data-sign-confirm]");
 
-    var c = window.SXDemoCase ? window.SXDemoCase.get() : null;
+    var c = getCase();
     // "document" | "form" | "done" | "expired"
     var view = linkState(c) === "pending" ? "document" : "expired";
     var signer = (c && c.signer) || {};
@@ -109,7 +139,7 @@
 
     // Status card (components skill), same as branch A's acknowledgement.
     function doneView() {
-      var a = ((window.SXDemoCase.get() || {}).enrol || {}).agreement || {};
+      var a = ((getCase() || {}).enrol || {}).agreement || {};
       return (
         '<section aria-label="Acknowledgement Complete" class="overflow-hidden rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900">' +
         '<h2 tabindex="-1" class="border-b border-gray-200 dark:border-white/10 px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white focus:outline-hidden">Acknowledgement Complete</h2>' +
@@ -157,7 +187,7 @@
       });
       accept.addEventListener("click", function () {
         if (!filled() || busy) return;
-        if (linkState(window.SXDemoCase.get()) !== "pending") {
+        if (linkState(getCase()) !== "pending") {
           view = "expired";
           render();
           return;
@@ -165,7 +195,7 @@
         busy = true;
         render();
         window.setTimeout(function () {
-          window.SXDemoCase.signAgreement((form.first.trim() + " " + form.last.trim()).trim());
+          signAgreement((form.first.trim() + " " + form.last.trim()).trim());
           busy = false;
           view = "done";
           render();
@@ -181,7 +211,7 @@
       render();
       window.setTimeout(function () {
         busy = false;
-        view = linkState(window.SXDemoCase.get()) === "pending" ? "form" : "expired";
+        view = linkState(getCase()) === "pending" ? "form" : "expired";
         render();
         var input = document.getElementById("sx-sign-first");
         if (input) input.focus({ preventScroll: true });
@@ -192,12 +222,12 @@
     // signed elsewhere → this link is no longer valid.
     function recheck() {
       if (view === "done" || view === "expired" || busy) return;
-      if (linkState(window.SXDemoCase.get()) !== "pending") {
+      if (linkState(getCase()) !== "pending") {
         view = "expired";
         render();
       }
     }
-    window.addEventListener(window.SXDemoCase.CHANGE_EVENT, recheck);
+    window.addEventListener(X.CHANGE_EVENT, recheck);
     if (window.STPState) window.STPState.subscribe(recheck);
 
     render();

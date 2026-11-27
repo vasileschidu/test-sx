@@ -73,7 +73,7 @@
     "sm:text-sm dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10";
   var OPTION =
     "group/option relative block cursor-default py-2 pr-9 pl-3 text-gray-900 select-none focus:bg-blue-600 focus:text-white focus:outline-hidden dark:text-white dark:focus:bg-blue-500";
-  // Radio (sx-enroll-acp.js RADIO) and radio card label row.
+  // Radio (sx-onboarding-acp.js RADIO) and radio card label row.
   var RADIO =
     "relative size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-gray-300 dark:border-white/10 bg-white dark:bg-white/5 before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 dark:checked:border-blue-500 checked:bg-blue-600 dark:checked:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:border-gray-300 dark:disabled:border-white/10 disabled:bg-gray-100 dark:disabled:bg-white/10 disabled:before:bg-gray-400 dark:disabled:before:bg-white/30";
   var RADIO_ROW =
@@ -96,6 +96,7 @@
     chevronRight: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>',
     arrowRight: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M2 8a.75.75 0 0 1 .75-.75h8.69L8.22 4.03a.75.75 0 0 1 1.06-1.06l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 0 1-1.06-1.06l3.22-3.22H2.75A.75.75 0 0 1 2 8Z" clip-rule="evenodd" /></svg>',
     selector: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 group-hover/select:text-gray-700 sm:size-4 dark:text-gray-400 dark:group-hover/select:text-gray-200"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>',
+    calendar: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" /></svg>',
     search: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg>',
     // Figma Icon20/Solid "percent" (path from the Financial frame), currentColor.
     percent: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 7C6.55228 7 7 6.55228 7 6C7 5.44772 6.55228 5 6 5C5.44772 5 5 5.44772 5 6C5 6.55228 5.44772 7 6 7ZM6 9C7.65685 9 9 7.65685 9 6C9 4.34315 7.65685 3 6 3C4.34315 3 3 4.34315 3 6C3 7.65685 4.34315 9 6 9ZM14 15C14.5523 15 15 14.5523 15 14C15 13.4477 14.5523 13 14 13C13.4477 13 13 13.4477 13 14C13 14.5523 13.4477 15 14 15ZM14 17C15.6569 17 17 15.6569 17 14C17 12.3431 15.6569 11 14 11C12.3431 11 11 12.3431 11 14C11 15.6569 12.3431 17 14 17ZM16.2071 5.20711C16.5976 4.81658 16.5976 4.18342 16.2071 3.79289C15.8166 3.40237 15.1834 3.40237 14.7929 3.79289L3.79289 14.7929C3.40237 15.1834 3.40237 15.8166 3.79289 16.2071C4.18342 16.5976 4.81658 16.5976 5.20711 16.2071L16.2071 5.20711Z" /></svg>',
@@ -127,7 +128,7 @@
   }
 
   function blankFin() {
-    return { processor: "bluesnap", selecting: false, v: {}, files: {}, att: {} };
+    return { processor: "bluesnap", selecting: false, v: { currency: "USD" }, files: {}, att: {} };
   }
 
   function blankBp() {
@@ -151,6 +152,49 @@
     var bp = read(SE.storageKey(BP));
     S.fin = fin && typeof fin === "object" ? Object.assign(blankFin(), fin) : blankFin();
     S.bp = bp && typeof bp === "object" ? Object.assign(blankBp(), bp) : blankBp();
+  }
+
+  /* ---------- demo seed (shell Demo status: Pending Approval / Approved / Declined / Suspended = submitted complete) ---------- */
+
+  var DEMO_FILE = { name: "resume_back_end_developer.pdf", size: 245760, type: "PDF" };
+
+  function demoFin() {
+    var v = {
+      parentCompany: "Brightline Holdings", currency: "USD", mcc: cfg.mccCodes[0].value, incorporationDate: "03-15-2012",
+      productDescription: "Wholesale supply of packaging and office products to retail chains.",
+      revenueSources: "Product sales to retail and wholesale customers.", industry: "Wholesale trade", employees: "48",
+      salesVolume: "4,200,000.00", operatingStatus: "active", taxId: "93-1234567",
+      regulated: "no", cardPayments: "no", pci: "yes", pciLevel: (cfg.pciLevels[2] || cfg.pciLevels[0]).value,
+      volume12: "1,200,000.00", growth: "8.00", advanceOrders: "no",
+      purchaseProcess: "Customers order online or through their account manager, pay by card or ACH, and receive goods within 3 to 5 business days.",
+      subscription: "no", termsPublic: "yes", fraudProgram: "no", terminated: "no", ftcComplaint: "no",
+    };
+    v["geo_" + cfg.regions[0].id] = "100";
+    [1, 2, 3].forEach(function (y) {
+      v["y" + y + "Volume"] = (400000 * y).toLocaleString("en-US", { minimumFractionDigits: 2 });
+      v["y" + y + "Count"] = String(1600 * y);
+      v["y" + y + "Average"] = "250.00";
+      v["y" + y + "Highest"] = "12,000.00";
+      v["y" + y + "Refund"] = "1.00";
+      v["y" + y + "Chargeback"] = "0.20";
+    });
+    var files = { termsFile: [DEMO_FILE] };
+    cfg.proofingDocuments.forEach(function (d) { if (!d.optional) files["doc-" + d.id] = [DEMO_FILE]; });
+    var a = SE.getPeople()[0] || {};
+    return {
+      processor: "bluesnap", selecting: false, v: v, files: files,
+      att: { choice: "yes", accepted: { at: new Date().toISOString(), by: [a.firstName, a.lastName].filter(Boolean).join(" ") || "Jordan Ellis" } },
+    };
+  }
+
+  /** Completed demo statuses: fill both tabs once with valid answers (the shell's restore later drops these keys). */
+  function seedDemo() {
+    if (!SE.isDemoSeeded || !SE.isDemoSeeded() || !SE.hasAddon(ADDON)) return;
+    if (requiredFin().every(Boolean) && hasFiles("bp", "businessPlan")) return;
+    S.fin = demoFin();
+    S.bp = { files: { businessPlan: [DEMO_FILE] } };
+    save("fin");
+    save("bp");
   }
 
   function toast(message, tone) {
@@ -288,6 +332,13 @@
       suffix = '<span class="pointer-events-none absolute inset-y-0 right-3 flex items-center type-body-large text-gray-500 dark:text-gray-400">' +
         (opts.suffix === "percent" ? ICON.percent : esc(opts.suffix)) + "</span>";
     }
+    var isDate = opts.type === "date";
+    if (isDate) {
+      // R1 Financial: text field "mm-dd-yyyy" + calendar icon (masked like Ownership Date of Birth), not the native picker.
+      opts.kind = "date"; opts.inputmode = "numeric"; opts.placeholder = "mm-dd-yyyy"; opts.maxlength = 10; opts.type = "text";
+      pad += " pr-10";
+      suffix = '<span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400 dark:text-gray-500">' + ICON.calendar + "</span>";
+    }
     var describedBy = (opts.helper ? id + "-help " : "") + id + "-error";
     return (
       '<div class="flex min-w-0 flex-col gap-1">' +
@@ -299,8 +350,8 @@
       (opts.placeholder ? ' placeholder="' + esc(opts.placeholder) + '"' : "") +
       (opts.maxlength ? ' maxlength="' + opts.maxlength + '"' : "") +
       (opts.disabled ? " disabled" : "") +
-      ' aria-invalid="false" aria-describedby="' + describedBy + '" class="' + F().INPUT + pad + (opts.type === "date" ? " dark:scheme-dark" : "") + '">' +
-      suffix + (opts.suffix ? "" : F().errorIcon()) +
+      ' aria-invalid="false" aria-describedby="' + describedBy + '" class="' + F().INPUT + pad + '">' +
+      suffix + (opts.suffix || isDate ? "" : F().errorIcon()) +
       "</div>" +
       (opts.after || "") +
       (opts.helper ? '<p id="' + id + '-help" class="' + F().HELPER + '">' + esc(opts.helper) + "</p>" : "") +
@@ -339,8 +390,9 @@
       "</el-selectedcontent>" + ICON.selector + "</button>" +
       '<el-options anchor="bottom start" popover class="' + OPTIONS + '">' +
       options.map(function (o) {
+        var flag = o.flag ? '<img src="' + ASSETS + esc(o.flag) + '" alt="" width="20" height="14" class="h-3.5 w-5 shrink-0 rounded-xs ring-1 ring-black/10 dark:ring-white/10" />' : "";
         return '<el-option value="' + esc(o.value) + '" class="' + OPTION + '">' +
-          '<span class="block truncate font-normal group-aria-selected/option:font-semibold">' + esc(o.label) + "</span>" + ICON.checkSelected + "</el-option>";
+          '<span class="flex items-center gap-2">' + flag + '<span class="block truncate font-normal group-aria-selected/option:font-semibold">' + esc(o.label) + "</span></span>" + ICON.checkSelected + "</el-option>";
       }).join("") +
       "</el-options></el-select>" +
       errorLine(id) +
@@ -485,7 +537,7 @@
   function cardTile(period, card) {
     var name = "card_" + period.id + "_" + card.id;
     return (
-      '<label class="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-gray-300 bg-white px-4 py-4 shadow-xs hover:border-gray-400 has-checked:border-blue-300 has-checked:bg-blue-50 has-checked:hover:border-blue-400 has-disabled:cursor-not-allowed has-disabled:opacity-60 dark:border-white/10 dark:bg-white/5 dark:shadow-none dark:hover:border-white/20 dark:has-checked:border-blue-400/40 dark:has-checked:bg-blue-400/10 dark:has-checked:hover:border-blue-400/60">' +
+      '<label class="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-gray-300 bg-white px-4 py-4 shadow-xs hover:border-gray-400 group-data-invalid/cards:border-red-300 group-data-invalid/cards:hover:border-red-400 has-checked:border-blue-300 has-checked:bg-blue-50 has-checked:hover:border-blue-400 has-disabled:cursor-not-allowed has-disabled:opacity-60 dark:border-white/10 dark:bg-white/5 dark:shadow-none dark:hover:border-white/20 dark:group-data-invalid/cards:border-red-400/50 dark:group-data-invalid/cards:hover:border-red-400/70 dark:has-checked:border-blue-400/40 dark:has-checked:bg-blue-400/10 dark:has-checked:hover:border-blue-400/60">' +
       '<span class="flex min-w-0 items-center gap-2">' +
       '<img src="' + ASSETS + esc(card.logo) + '" alt="" width="35" height="24" class="h-6 w-auto shrink-0" />' +
       '<span class="truncate type-label text-default">' + esc(card.label) + "</span></span>" +
@@ -495,13 +547,25 @@
     );
   }
 
+  // SE Card Payments error: red tile borders when "Yes" is answered, the user has touched the tiles and none is selected.
+  var cardsTouched = false;
+  function anyCard() {
+    return cfg.cardPeriods.some(function (p) { return cfg.cards.some(function (c) { return S.fin.v["card_" + p.id + "_" + c.id] === true; }); });
+  }
+  function cardsInvalid() {
+    return cardsTouched && !anyCard();
+  }
+  function syncCards(root) {
+    root.querySelectorAll(".group\\/cards").forEach(function (g) { g.toggleAttribute("data-invalid", cardsInvalid()); });
+  }
+
   function processingHtml() {
     var geo = cfg.regions.map(function (r) {
       return textField("geo_" + r.id, r.label, { inputmode: "decimal", kind: "percent", placeholder: "0", prefix: r.flag, suffix: "percent" });
     }).join("");
     var cards = cfg.cardPeriods.map(function (p) {
       return '<fieldset class="flex flex-col gap-2"><legend class="mb-2 type-description text-tertiary">' + esc(p.label) + "</legend>" +
-        '<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">' + cfg.cards.map(function (c) { return cardTile(p, c); }).join("") + "</div></fieldset>";
+        '<div class="group/cards grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"' + (cardsInvalid() ? " data-invalid" : "") + ">" + cfg.cards.map(function (c) { return cardTile(p, c); }).join("") + "</div></fieldset>";
     }).join("");
     var cardInfo =
       '<p class="type-description text-tertiary">Select and specify what card payments you’ve accepted for each respective periods:</p>' + cards +
@@ -549,7 +613,7 @@
     var picker = "";
     if (y === 1) {
       var thisYear = new Date().getFullYear();
-      picker = '<div role="radiogroup" aria-label="First year" class="flex gap-2">' + [thisYear, thisYear + 1].map(function (yr) {
+      picker = '<div role="radiogroup" aria-label="First year" class="relative z-10 flex gap-2">' + [thisYear, thisYear + 1].map(function (yr) {
         var current = start;
         return window.SmartEnroll.ui.choicePill({ name: "ms-yearStart", value: yr, text: yr, checked: current === yr, attrs: ' data-ms-field="yearStart"' });
       }).join("") + "</div>";
@@ -563,10 +627,10 @@
       return textField("y" + y + key, label, o);
     }
     return (
-      '<div class="rounded-lg border border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900">' +
-      '<div class="flex items-center gap-4 px-4 py-3">' +
+      '<div class="rounded-lg border border-gray-300 bg-gray-50 max-sm:bg-gray-100 dark:border-white/15 dark:bg-white/5">' +
+      '<div class="relative flex items-center gap-4 px-4 py-3">' +
       '<div class="flex min-w-0 flex-1 flex-wrap items-center gap-x-6 gap-y-2"><span class="flex items-baseline gap-2">' + head + "</span>" + picker + "</div>" +
-      '<button type="button" data-ms-year="' + y + '" aria-expanded="' + open + '" aria-controls="ms-year-' + y + '" class="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 ' + FOCUS + ' dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white">' +
+      '<button type="button" data-ms-year="' + y + '" aria-expanded="' + open + '" aria-controls="ms-year-' + y + '" class="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-gray-500 hover:text-gray-700 after:absolute after:inset-0 after:rounded-lg ' + FOCUS + ' dark:text-gray-400 dark:hover:text-white">' +
       '<span class="sr-only">' + (open ? "Hide" : "Show") + " Year " + y + "</span>" + (open ? ICON.minus : ICON.plus) + "</button>" +
       "</div>" +
       '<div id="ms-year-' + y + '"' + (open ? "" : " hidden") + ' class="grid grid-cols-1 gap-x-9 gap-y-5 px-4 pb-4 md:grid-cols-2">' +
@@ -813,7 +877,7 @@
       '<div class="flex min-w-0 flex-col gap-1"><h2 class="type-title-card text-default">Need help with your business plan?</h2>' +
       '<p class="type-description text-tertiary">Answer some simple questions to create a lean business plan</p></div>' +
       // TODO(confirm): what Get Started Now opens is not drawn (wiki); prototype shows a "Coming soon" toast.
-      '<button type="button" data-ms-bp-start class="' + BTN_PRIMARY_XL + ' shrink-0 sm:w-78 sm:justify-between">Get Started Now ' + ICON.chevronRight + "</button>" +
+      '<button type="button" data-ms-bp-start class="' + BTN_PRIMARY_XL.replace("hover:bg-blue-500", "hover:bg-blue-700") + ' shrink-0 sm:w-78 sm:justify-between">Get Started Now ' + ICON.chevronRight + "</button>" +
       "</div></div>"
     );
   }
@@ -876,6 +940,10 @@
   function clean(kind, raw) {
     var s = String(raw);
     if (kind === "int") return s.replace(/[^\d]/g, "");
+    if (kind === "date") {
+      var d = s.replace(/\D/g, "").slice(0, 8);
+      return d.length > 4 ? d.slice(0, 2) + "-" + d.slice(2, 4) + "-" + d.slice(4) : d.length > 2 ? d.slice(0, 2) + "-" + d.slice(2) : d;
+    }
     if (kind === "money" || kind === "percent") {
       s = s.replace(/[^\d.]/g, "");
       var i = s.indexOf(".");
@@ -930,6 +998,7 @@
         if (cleaned !== t.value.replace(/,/g, "")) t.value = cleaned;
       }
       if (t.id === "ms-contactEmail" && t.getAttribute("aria-invalid") === "true") checkEmail(t);
+      if (kind === "date" && t.getAttribute("aria-invalid") === "true") checkDate(t);
       setField(name, t.value, null);
     });
     root.addEventListener("change", function (e) {
@@ -946,7 +1015,10 @@
       }
       var name = t.getAttribute && t.getAttribute("data-ms-field");
       if (!name || t.tagName === "EL-SELECT") return;
-      if (t.type === "checkbox") setField(name, t.checked, root);
+      if (t.type === "checkbox") {
+        setField(name, t.checked, root);
+        if (name.indexOf("card_") === 0) { cardsTouched = true; syncCards(root); }
+      }
       else if (t.type === "radio") {
         setField(name, t.value, root);
         if (name === "yearStart") renderFin();
@@ -960,6 +1032,7 @@
     });
     root.addEventListener("focusout", function (e) {
       if (e.target.id === "ms-contactEmail") checkEmail(e.target);
+      if (e.target.getAttribute && e.target.getAttribute("data-ms-kind") === "date") checkDate(e.target);
     });
     root.addEventListener("click", function (e) {
       var t = e.target;
@@ -1003,6 +1076,17 @@
       }
       if (t.closest("[data-ms-connect]")) { SE.goToTab("connectors"); return; }
     });
+  }
+
+  function checkDate(input) {
+    var v = input.value.trim();
+    var m = /^(\d{2})-(\d{2})-(\d{4})$/.exec(v);
+    var d = m && new Date(+m[3], +m[1] - 1, +m[2]);
+    var real = !!m && d.getMonth() === +m[1] - 1 && d.getDate() === +m[2] && +m[3] > 1900;
+    var past = input.id !== "ms-incorporationDate" || (real && d < new Date());
+    var msg = v && !(real && past) ? "Enter a valid date (mm-dd-yyyy)." : ""; // TODO(confirm): copy
+    F().setError(input, !!msg, document.getElementById(input.id + "-error"), msg);
+    return !msg;
   }
 
   function checkEmail(input) {
@@ -1225,6 +1309,7 @@
     base = res[0];
     cfg = res[1];
     restore();
+    seedDemo();
     pushProgress();
   }).catch(function (err) {
     console.error("SMART Enroll Merchant Services: could not load data", err);
@@ -1237,6 +1322,7 @@
     if (d.addon !== ADDON) return;
     if (d.added) {
       restore();
+      seedDemo();
       pushProgress();
     }
   });

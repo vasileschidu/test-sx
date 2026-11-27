@@ -28,11 +28,11 @@
     "settlementPlatform": "bmshiso"
   },
   "currencies": [
-    { "value": "USD", "label": "US Dollar (USD)" },
-    { "value": "CAD", "label": "Canadian Dollar (CAD)" },
-    { "value": "EUR", "label": "Euro (EUR)" },
+    { "value": "USD", "flag": "flag-us.svg", "label": "US Dollar (USD)" },
+    { "value": "CAD", "flag": "flag-ca.svg", "label": "Canadian Dollar (CAD)" },
+    { "value": "EUR", "flag": "flag-eu.svg", "label": "Euro (EUR)" },
     { "value": "GBP", "label": "British Pound (GBP)" },
-    { "value": "MXN", "label": "Mexican Peso (MXN)" }
+    { "value": "MXN", "flag": "flag-mx.svg", "label": "Mexican Peso (MXN)" }
   ],
   "mccCodes": [
     { "value": "5045", "label": "5045 · Computers, Peripherals and Software" },
