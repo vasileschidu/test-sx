@@ -521,7 +521,7 @@
       var last4 = acct.slice(-4);
       record.bankAccount = {
         id: "pb-bank-" + last4,
-        displayName: (st.bank.type === "savings" ? "Savings" : "Checking") + " Account",
+        displayName: (st.bank.type === "savings" ? "Savings" : st.bank.type === "business" ? "Business" : st.bank.type === "personal" ? "Personal" : "Checking") + " Account",
         name: st.bank.holder || b.name,
         last4: last4,
         routingNumber: digits(st.bank.routing),
@@ -1035,7 +1035,10 @@
         row("Cardholder Address", esc(s.buyer.address), "whitespace-pre-line") +
         row("Type", MASTERCARD);
     else if (m === "bank-account" && st.bank)
-      rows = row("Routing Number", esc(st.bank.routing)) + row("Account Number", esc(st.bank.account));
+      rows = st.bank.sortCode
+        ? row("Sort Code", esc(String(st.bank.sortCode).replace(/^(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3"))) +
+          row("Account Number", esc(st.bank.account))
+        : row("Routing Number", esc(st.bank.routing)) + row("Account Number", esc(st.bank.account));
     else if (m === "check" && st.check)
       rows = row(
         "Billing Address",

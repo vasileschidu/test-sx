@@ -74,7 +74,7 @@
     { id: "confirm-identity", label: "Confirm Identity" },
     { id: "confirm-business-details", label: "Confirm Business Details" },
     { id: "review-documents", label: "Review Documents" },
-    { id: "payment", label: "Confirm Payment" },
+    { id: "payment", label: "Confirm Payment", alsoMatches: ["bank-account"] },
     { id: "card-processing", label: "Automatic Card Processing" },
     { id: "create-account", label: "Create SMART Exchange" },
     { id: "summary", label: "Complete" },
@@ -101,6 +101,7 @@
       id: step.id,
       label: step.label,
       href: withCase(step.id + ".html"),
+      alsoMatches: step.alsoMatches,
     };
   });
 
@@ -595,7 +596,8 @@
   function skipCardProcessingLinks() {
     if (!skipsCardProcessing()) return;
     var back = document.querySelectorAll('a[href="card-processing.html"]');
-    for (var i = 0; i < back.length; i += 1) back[i].setAttribute("href", "payment.html");
+    var ukBank = window.SXRegion && window.SXRegion.region === "uk" && paymentMethod() === "bank-account";
+    for (var i = 0; i < back.length; i += 1) back[i].setAttribute("href", ukBank ? "bank-account.html" : "payment.html");
   }
 
   /**
@@ -939,7 +941,12 @@
     // Payment method radio group (Figma list 37236:77372): picking a row saves the
     // method and moves on, as the single card row did. Arrow keys only move the
     // selection (native radio group); Enter / Space or a click on a row continues.
-    var NEXT = { card: "card-processing.html", "bank-account": "create-account.html", check: "create-account.html" };
+    // UK (?region=uk): Send to Bank Account asks for the bank details first, with the CoP check (TCDM-5266).
+    var NEXT = {
+      card: "card-processing.html",
+      "bank-account": window.SXRegion && window.SXRegion.region === "uk" ? "bank-account.html" : "create-account.html",
+      check: "create-account.html",
+    };
     var group = document.querySelector("[data-sx-methods]");
     var radios = group.querySelectorAll('input[name="sx-payment-method"]');
     var saved = paymentMethod();
@@ -1029,6 +1036,28 @@
       "</button>"
     );
   }
+
+  // ---- Bank account (UK only, TCDM-5266) -------------------------------------
+
+  page("bank-account", function (c) {
+    if (!window.SXUkBank || !window.SXUkBank.isUk()) {
+      go("create-account.html");
+      return;
+    }
+    saveState({ paymentMethod: "bank-account" });
+    window.SXUkBank.mount({
+      fieldsEl: document.querySelector("[data-sx-bank]"),
+      nextBtn: document.querySelector("[data-sx-next]"),
+      saved: getState().bank || {},
+      defaultHolder: c.supplier.name,
+      withDefault: false,
+      paymentHref: withCase("payment.html"),
+      onVerified: function (bank) {
+        saveState({ bank: bank });
+        go("create-account.html");
+      },
+    });
+  });
 
   page("create-account", function (c) {
     var customer = document.querySelector("[data-sx-payer]");

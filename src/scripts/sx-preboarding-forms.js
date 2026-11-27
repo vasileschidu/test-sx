@@ -281,6 +281,31 @@
     var saved = P.getState().bank || {};
     var fieldsEl = document.querySelector("[data-pb-bank]");
     var next = document.querySelector("[data-pb-next]");
+    // UK (?region=uk): sort code / account number + Account validation with CoP (TCDM-5266, sx-uk-bank.js).
+    if (window.SXUkBank && window.SXUkBank.isUk()) {
+      window.SXUkBank.mount({
+        fieldsEl: fieldsEl,
+        nextBtn: next,
+        saved: { holder: saved.holder, type: saved.type, sortCode: saved.sortCode, account: saved.account, isDefault: saved.isDefault },
+        withDefault: true,
+        paymentHref: "payment-preference.html",
+        onVerified: function (bank) {
+          P.saveState({
+            method: "bank-account",
+            bank: {
+              holder: bank.holder,
+              type: bank.type,
+              sortCode: bank.sortCode,
+              routing: bank.sortCode,
+              account: bank.account,
+              isDefault: bank.isDefault,
+            },
+          });
+          P.go("create-account.html");
+        },
+      });
+      return;
+    }
     return window.OBBank.load().then(function (data) {
       if (!data) return;
       var msg = data.messages;
