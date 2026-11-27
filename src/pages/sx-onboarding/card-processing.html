@@ -1,9 +1,9 @@
 <!--
-  @file sx-enroll/card-processing.html
+  @file sx-onboarding/card-processing.html
   @description Step 6 "Automatic Card Processing" (Figma 8. 36525:48445,
     8.1 36525:50666, 8.2 36525:48634; A 36525:49670-50319; B 36525:48843-49486;
     C 33456:53560 / 33456:53422). Toggle + Visa agreement + who signs.
-    Logic: src/scripts/sx-enroll-acp.js; STP state: src/scripts/stp-state.js.
+    Logic: src/scripts/sx-onboarding-acp.js; STP state: src/scripts/stp-state.js.
 -->
 <!doctype html>
 <html lang="en" class="h-full">
@@ -22,15 +22,15 @@
   <script src="../../scripts/tailwind-theme.js"></script>
   <script src="../../scripts/design-tokens.js"></script>
   <script src="../../scripts/data-source.js"></script>
-  <script src="../../scripts/sx-demo-case.js?v=20261106e"></script>
+  <script src="../../scripts/sx-demo-case.js?v=20261127rn"></script>
   <script src="../../scripts/onboarding-transitions.js?v=20261106a"></script>
-  <script src="../../scripts/sx-enroll.js?v=20261116inp"></script>
+  <script src="../../scripts/sx-onboarding.js?v=20261116inp"></script>
   <script src="../../scripts/onboarding-sidebar.js?v=20261112cmp"></script>
   <script src="../../scripts/onboarding-field.js?v=20261106a"></script>
   <script src="../../scripts/onboarding-modal.js?v=20261124fix"></script>
   <script src="../../scripts/onboarding-decline.js?v=20261110a"></script>
-  <script src="../../scripts/stp-state.js?v=20261123mrg"></script>
-  <script src="../../scripts/sx-enroll-acp.js?v=20261123mrg"></script>
+  <script src="../../scripts/stp-state.js?v=20261127rn"></script>
+  <script src="../../scripts/sx-onboarding-acp.js?v=20261123mrg"></script>
   <script src="../../scripts/onboarding-stepper.js?v=20261104a"></script>
   <script src="../../scripts/onboarding-mobile-header.js"></script>
   <link rel="stylesheet" href="../../styles/cursor.css" />
@@ -48,7 +48,7 @@
           <div class="flex flex-col gap-6 px-4 pt-10 lg:px-14 lg:pt-14">
             <!-- Hero: the Figma banner exported as is (9DRzbyv7FDCDYFYN5ZGuwZ 36525:50125, 587x148 @2x):
                  card over the contactless terminal, soft background shapes, rounded corners. -->
-            <img src="../../assets/sx-enroll/acp-hero.png" alt="" width="587" height="148" class="block h-32 w-full rounded-2xl object-cover object-center md:h-auto">
+            <img src="../../assets/sx-onboarding/acp-hero.png" alt="" width="587" height="148" class="block h-32 w-full rounded-2xl object-cover object-center md:h-auto">
 
             <div class="flex w-full flex-col gap-4">
               <h1 class="type-title-page text-default">Enable Automatic Card Processing</h1>
@@ -73,7 +73,7 @@
               </div>
             </div>
 
-            <!-- Agreement / signer / status: rendered by sx-enroll-acp.js -->
+            <!-- Agreement / signer / status: rendered by sx-onboarding-acp.js -->
             <div data-acp-panel aria-live="polite" class="flex flex-col"></div>
           </div>
 

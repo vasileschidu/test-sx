@@ -71,7 +71,7 @@ The open questions from the 2026-11-17 audit are answered as decisions D-1…D-1
 (Invite reuses the User Management modal, invitee = Contributor; Supply Chain Financing = "Coming soon"; tablet/mobile derived by us).
 
 ## Code
-- Path in repo: `src/pages/smart-enroll/` (new, own shell). Not `src/pages/sx-enroll/` (SMART Exchange supplier enrollment)
+- Path in repo: `src/pages/smart-enroll/` (new, own shell). Not `src/pages/sx-onboarding/` (SMART Exchange supplier enrollment)
   and not `src/pages/onboarding/` (SMART Disburse).
 - Figma (current): [R1] SMART Enroll [Figma](https://www.figma.com/design/jLooCmHwqJcYV5p5d8BHnO/-R1--SMART-Enroll).
   Older concept: [REVIEW] Concept Enroll in Hub [Figma](https://www.figma.com/design/NrJlWBQph0rLI4yKzgktK2).

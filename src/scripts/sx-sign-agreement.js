@@ -1,9 +1,9 @@
 /**
  * sx-sign-agreement.js — the other signer's "Review & Sign Agreement" page
- * (src/pages/sx-enroll/sign-agreement.html; Figma 9DRzbyv7FDCDYFYN5ZGuwZ
+ * (src/pages/sx-onboarding/sign-agreement.html; Figma 9DRzbyv7FDCDYFYN5ZGuwZ
  * 36525:45392, expired 37764:150589).
  *
- * Enrolment branch B (sx-enroll-acp.js) sends the request with
+ * Enrolment branch B (sx-onboarding-acp.js) sends the request with
  * STPState.sendAgreementEmail({ linkUrl: <this page> }). The worker drops
  * the query of linkUrl, so the email opens
  *   sign-agreement.html?stpAgreement=review&email=<signer>&token=<token>

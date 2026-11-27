@@ -329,7 +329,7 @@
             '<button type="button" data-cc-terms-back class="inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
               '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5"></button>' +
           '</div>',
-          // Full height with a 16px gap on every side, like the SX document viewer (sx-enroll.js).
+          // Full height with a 16px gap on every side, like the SX document viewer (sx-onboarding.js).
           panelClass: 'relative flex h-[calc(100dvh-2rem)] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-900 shadow-lg ring-1 ring-black/5 dark:ring-white/10'
         }
       );

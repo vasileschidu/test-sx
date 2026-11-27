@@ -82,7 +82,7 @@
   // Status card badge "Completed" (sx-sign-agreement.js BADGE_DONE).
   var BADGE_DONE =
     "inline-flex w-fit items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400";
-  // Radio (sx-enroll-acp.js RADIO) and radio card label row (merchant-services.js).
+  // Radio (sx-onboarding-acp.js RADIO) and radio card label row (merchant-services.js).
   var RADIO =
     "relative size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-gray-300 dark:border-white/10 bg-white dark:bg-white/5 before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 dark:checked:border-blue-500 checked:bg-blue-600 dark:checked:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:border-gray-300 dark:disabled:border-white/10 disabled:bg-gray-100 dark:disabled:bg-white/10 disabled:before:bg-gray-400 dark:disabled:before:bg-white/30";
   var RADIO_ROW =

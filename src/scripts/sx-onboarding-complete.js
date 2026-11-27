@@ -1,6 +1,6 @@
 /**
- * sx-enroll-complete.js — final screen of the SMART Exchange enrolment
- * (src/pages/sx-enroll/complete.html, Figma "11. Final" 33456:52931 and the
+ * sx-onboarding-complete.js — final screen of the SMART Exchange enrolment
+ * (src/pages/sx-onboarding/complete.html, Figma "11. Final" 33456:52931 and the
  * card details dialog 33456:52985).
  *
  *   - Amount, mini card, Transaction ID, payment date, username from the case.

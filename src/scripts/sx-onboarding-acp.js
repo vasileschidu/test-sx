@@ -1,6 +1,6 @@
 /**
- * sx-enroll-acp.js — step 6 "Automatic Card Processing" of the SMART Exchange
- * enrolment (src/pages/sx-enroll/card-processing.html).
+ * sx-onboarding-acp.js — step 6 "Automatic Card Processing" of the SMART Exchange
+ * enrolment (src/pages/sx-onboarding/card-processing.html).
  * Figma 9DRzbyv7FDCDYFYN5ZGuwZ: 8. 36525:48445, 8.1 review 36525:50666,
  * 8.2 opened 36525:48634; A (I'm authorized) 36525:49670 → 50319;
  * B (send to a signer) 36525:48843 → 49486; C opt out 33456:53560 / 53422.
@@ -119,7 +119,7 @@
           M.SECONDARY_BUTTON_MD +
           '">Close Agreement</button>' +
           "</div>",
-        // Full height with a 16px gap: sx-enroll.js (fullHeightViewer).
+        // Full height with a 16px gap: sx-onboarding.js (fullHeightViewer).
       },
     );
     var scroller = backdrop && backdrop.querySelector("[data-sx-agr-scroll]");

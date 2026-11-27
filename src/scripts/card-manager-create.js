@@ -146,7 +146,7 @@
     );
   }
 
-  /** A text field: OBField label + input + error line (same structure as sx-enroll textField). */
+  /** A text field: OBField label + input + error line (same structure as sx-onboarding textField). */
   function textField(id, label, tipHtml, inputExtra, leadingIcon) {
     var F = window.OBField;
     return (

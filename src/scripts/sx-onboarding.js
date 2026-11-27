@@ -1,6 +1,6 @@
 /**
- * sx-enroll.js — SMART Exchange enrolment for the STP walkthrough
- * (src/pages/sx-enroll/, Figma 9DRzbyv7FDCDYFYN5ZGuwZ "STP Enabled During
+ * sx-onboarding.js — SMART Exchange enrolment for the STP walkthrough
+ * (src/pages/sx-onboarding/, Figma 9DRzbyv7FDCDYFYN5ZGuwZ "STP Enabled During
  * Payment Flow" 33456:52272).
  *
  * The pages reuse the SMART Disburse onboarding shell and scripts without
@@ -20,9 +20,9 @@
  * ?case= → a notice with a link to the case launcher instead of the step.
  *
  * Load order in <head>: sx-demo-case.js → onboarding-transitions.js →
- * sx-enroll.js → onboarding-sidebar.js → … → onboarding-stepper.js.
+ * sx-onboarding.js → onboarding-sidebar.js → … → onboarding-stepper.js.
  * Step pages set <body data-sx-step="…">; the Automatic Card Processing and
- * final pages add sx-enroll-acp.js / sx-enroll-complete.js.
+ * final pages add sx-onboarding-acp.js / sx-onboarding-complete.js.
  */
 (function () {
   "use strict";
@@ -38,7 +38,7 @@
   })();
 
   // Per case, so a tab reused for a new case never shows the previous case's answers.
-  var STATE_KEY = "sx-enroll-state:" + CASE_ID;
+  var STATE_KEY = "sx-enroll-state:" + CASE_ID; // old key name kept on purpose (TCDM-5261)
 
   /** "payment.html" → "payment.html?case=SX-…" (keeps any hash). */
   function withCase(href) {
@@ -400,7 +400,7 @@
         if (pages[step]) return pages[step](c);
       })
       .catch(function (error) {
-        console.error("[sx-enroll]", error);
+        console.error("[sx-onboarding]", error);
       });
     if (window.OnboardingTransitions && window.OnboardingTransitions.waitFor)
       window.OnboardingTransitions.waitFor(ready);
@@ -961,7 +961,7 @@
       if (!logo) continue;
       var mark = logo.parentNode;
       mark.classList.remove("rotate-180");
-      logo.src = "../../assets/sx-enroll/sx-menu-logo.svg";
+      logo.src = "../../assets/sx-onboarding/sx-menu-logo.svg";
       logo.width = 26;
       logo.height = 26;
       logo.className = "absolute inset-0 block size-full";
@@ -974,7 +974,7 @@
   /**
    * Document dialogs (SX only): the Review Documents viewer (review-documents.js
    * → OBModal, max 752px tall with a 24px top/bottom gap) and the Visa agreement
-   * on Automatic Card Processing (sx-enroll-acp.js) fill the screen
+   * on Automatic Card Processing (sx-onboarding-acp.js) fill the screen
    * instead, with the same 16px gap on every side. The document area scrolls
    * inside; header and footer stay visible. OBModal itself is unchanged: the
    * call is wrapped and the frame padding swapped after it opens.

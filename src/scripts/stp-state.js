@@ -11,7 +11,7 @@
   function demoScope() {
     try {
       var id = new URLSearchParams(window.location.search).get("case");
-      if (!id && /\/sx-enroll\/sign-agreement\.html$/.test(window.location.pathname)) {
+      if (!id && /\/sx-onboarding\/sign-agreement\.html$/.test(window.location.pathname)) {
         var stored = JSON.parse(localStorage.getItem("sx_demo_case_v1") || "null");
         id = stored && stored.id;
       }
@@ -246,7 +246,7 @@
   }
 
   // The other signer acknowledged the agreement from the email link
-  // (src/pages/sx-enroll/sign-agreement.html). Call before setStpStep.
+  // (src/pages/sx-onboarding/sign-agreement.html). Call before setStpStep.
   function markAgreementSigned(info) {
     var request = getAgreementRequest();
     if (!request) return null;
