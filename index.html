@@ -1,10 +1,9 @@
 <!--
   @file index.html
-  @description GitHub Pages entry point. Provides navigation links to the
-    Onboarding flow, the SMART Disburse folder (onboarding flow + UK demo),
-    the SMART Exchange, the STP walkthrough, the SMART Exchange onboarding
-    with payment (standalone, sample payment), the Consumer Portal and the
-    SMART Suite Wiki. Follows the saved theme (theme-init.js).
+  @description GitHub Pages entry point: compact launcher, one stacked list per product —
+    SMART Exchange (Supplier Portal, onboarding with payment, STP walkthrough), SMART Enroll
+    (sign in, speedy sign up, application), SMART Disburse (onboarding flow, all flows) and
+    More (Consumer Portal, SMART Suite Wiki). Follows the system theme unless one was chosen (theme-init.js).
 -->
 <!doctype html>
 <html lang="en">
@@ -12,7 +11,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>test-sx</title>
-    <script src="src/scripts/theme-init.js?v=20261123mrg"></script>
+    <script src="src/scripts/theme-init.js?v=20261127sys"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style type="text/tailwindcss">
       @custom-variant dark (&:where(.dark, .dark *));
@@ -22,77 +21,126 @@
     <link rel="stylesheet" href="src/styles/cursor.css" />
   </head>
   <body class="min-h-screen bg-gray-100 text-gray-900 antialiased dark:bg-gray-950 dark:text-white">
-    <main
-      class="mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center px-6 py-10"
-    >
-      <h1 class="text-3xl font-bold">test-sx</h1>
-      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">GitHub Pages entry point</p>
+    <main class="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
+      <header>
+        <h1 class="text-2xl/8 font-bold">test-sx</h1>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">GitHub Pages entry point</p>
+      </header>
 
-      <div class="mt-8 grid w-full gap-4 sm:grid-cols-2">
-        <a
-          href="src/pages/onboarding/index.html"
-          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:ring-white/10 dark:hover:bg-gray-800"
-        >
-          <h2 class="text-lg font-semibold">Onboarding Flow</h2>
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Start onboarding pages.</p>
-        </a>
+      <div class="mt-6 grid grid-cols-1 items-start gap-6 md:grid-cols-2">
+      <section aria-labelledby="g-sx">
+        <h2 id="g-sx" class="px-1 text-xs/5 font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">SMART Exchange</h2>
+        <ul role="list" class="mt-2 divide-y divide-gray-100 overflow-hidden rounded-lg bg-white shadow-xs ring-1 ring-gray-200 dark:divide-white/5 dark:bg-gray-900 dark:shadow-none dark:ring-white/10">
+          <li>
+            <a href="src/pages/dashboard/supplier-portal.html" class="group flex items-center gap-3 px-4 py-3 hover:bg-gray-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/5 dark:focus-visible:outline-blue-400">
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm/6 font-semibold text-gray-900 dark:text-white">Supplier Portal</span>
+                <span class="block truncate text-sm/5 text-gray-500 dark:text-gray-400">SMART Exchange portal for suppliers.</span>
+              </span>
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+            </a>
+          </li>
+          <li>
+            <a href="src/pages/sx-onboarding/index.html" class="group flex items-center gap-3 px-4 py-3 hover:bg-gray-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/5 dark:focus-visible:outline-blue-400">
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm/6 font-semibold text-gray-900 dark:text-white">Onboarding with payment</span>
+                <span class="block truncate text-sm/5 text-gray-500 dark:text-gray-400">Sample payment, opened from the Hub email.</span>
+              </span>
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+            </a>
+          </li>
+          <li>
+            <a href="src/pages/demo/stp-case.html" class="group flex items-center gap-3 px-4 py-3 hover:bg-gray-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/5 dark:focus-visible:outline-blue-400">
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm/6 font-semibold text-gray-900 dark:text-white">STP walkthrough</span>
+                <span class="block truncate text-sm/5 text-gray-500 dark:text-gray-400">Create a demo case, enrol with it, open its portal.</span>
+              </span>
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+            </a>
+          </li>
+        </ul>
+      </section>
 
-        <a href="src/pages/smart-disburse/index.html" class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:ring-white/10 dark:hover:bg-gray-800">
-          <h2 class="flex items-center gap-2 text-lg font-semibold">
-            <svg class="size-5 text-gray-500 dark:text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"/></svg>
-            SMART Disburse
-          </h2>
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">SMART Disburse - US Default Flow and US Multi-Party.</p>
-        </a>
+      <section aria-labelledby="g-se">
+        <h2 id="g-se" class="px-1 text-xs/5 font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">SMART Enroll</h2>
+        <ul role="list" class="mt-2 divide-y divide-gray-100 overflow-hidden rounded-lg bg-white shadow-xs ring-1 ring-gray-200 dark:divide-white/5 dark:bg-gray-900 dark:shadow-none dark:ring-white/10">
+          <li>
+            <a href="src/pages/smart-enroll/sign-in.html" class="group flex items-center gap-3 px-4 py-3 hover:bg-gray-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/5 dark:focus-visible:outline-blue-400">
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm/6 font-semibold text-gray-900 dark:text-white">Sign in</span>
+                <span class="block truncate text-sm/5 text-gray-500 dark:text-gray-400">Email code or Microsoft, then the application.</span>
+              </span>
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+            </a>
+          </li>
+          <li>
+            <a href="src/pages/smart-enroll/sign-up.html" class="group flex items-center gap-3 px-4 py-3 hover:bg-gray-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/5 dark:focus-visible:outline-blue-400">
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm/6 font-semibold text-gray-900 dark:text-white">Speedy Sign up</span>
+                <span class="block truncate text-sm/5 text-gray-500 dark:text-gray-400">New business in 3 steps.</span>
+              </span>
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+            </a>
+          </li>
+          <li>
+            <a href="src/pages/smart-enroll/application.html" class="group flex items-center gap-3 px-4 py-3 hover:bg-gray-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/5 dark:focus-visible:outline-blue-400">
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm/6 font-semibold text-gray-900 dark:text-white">Application</span>
+                <span class="block truncate text-sm/5 text-gray-500 dark:text-gray-400">Application tabs, products and submission.</span>
+              </span>
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+            </a>
+          </li>
+        </ul>
+      </section>
 
-        <a
-          href="src/pages/dashboard/supplier-portal.html"
-          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:ring-white/10 dark:hover:bg-gray-800"
-        >
-          <h2 class="text-lg font-semibold">SMART Exchange</h2>
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Open smart disburse page.</p>
-        </a>
+      <section aria-labelledby="g-sd">
+        <h2 id="g-sd" class="px-1 text-xs/5 font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">SMART Disburse</h2>
+        <ul role="list" class="mt-2 divide-y divide-gray-100 overflow-hidden rounded-lg bg-white shadow-xs ring-1 ring-gray-200 dark:divide-white/5 dark:bg-gray-900 dark:shadow-none dark:ring-white/10">
+          <li>
+            <a href="src/pages/onboarding/index.html" class="group flex items-center gap-3 px-4 py-3 hover:bg-gray-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/5 dark:focus-visible:outline-blue-400">
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm/6 font-semibold text-gray-900 dark:text-white">Onboarding Flow</span>
+                <span class="block truncate text-sm/5 text-gray-500 dark:text-gray-400">Start the onboarding pages.</span>
+              </span>
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+            </a>
+          </li>
+          <li>
+            <a href="src/pages/smart-disburse/index.html" class="group flex items-center gap-3 px-4 py-3 hover:bg-gray-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/5 dark:focus-visible:outline-blue-400">
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm/6 font-semibold text-gray-900 dark:text-white">All flows</span>
+                <span class="block truncate text-sm/5 text-gray-500 dark:text-gray-400">US Default Flow and US Multi-Party.</span>
+              </span>
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+            </a>
+          </li>
+        </ul>
+      </section>
 
-        <a
-          href="src/pages/demo/stp-case.html"
-          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:ring-white/10 dark:hover:bg-gray-800"
-        >
-          <h2 class="text-lg font-semibold">STP walkthrough (demo case)</h2>
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Create a payment case, enrol with it, open its SMART Exchange Portal.
-          </p>
-        </a>
-
-        <a
-          href="src/pages/sx-onboarding/index.html"
-          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:ring-white/10 dark:hover:bg-gray-800"
-        >
-          <h2 class="text-lg font-semibold">SMART Exchange Onboarding</h2>
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Onboarding with payment (token)</p>
-        </a>
-
-        <a
-          href="src/pages/dashboard/consumer-payments-received.html"
-          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:ring-white/10 dark:hover:bg-gray-800"
-        >
-          <h2 class="text-lg font-semibold">Consumer Portal</h2>
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Smart Disburse payments a person or business has received.
-          </p>
-        </a>
-
-        <a
-          href="src/pages/wiki/index.html"
-          class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:ring-white/10 dark:hover:bg-gray-800 sm:col-span-2"
-        >
-          <h2 class="flex items-center gap-2 text-lg font-semibold">
-            <svg class="size-5 text-gray-500 dark:text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg>
-            SMART Suite Wiki
-          </h2>
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Products, current standard versions, client variants, integrations, layouts and the design system.
-          </p>
-        </a>
+      <section aria-labelledby="g-more">
+        <h2 id="g-more" class="px-1 text-xs/5 font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">More</h2>
+        <ul role="list" class="mt-2 divide-y divide-gray-100 overflow-hidden rounded-lg bg-white shadow-xs ring-1 ring-gray-200 dark:divide-white/5 dark:bg-gray-900 dark:shadow-none dark:ring-white/10">
+          <li>
+            <a href="src/pages/dashboard/consumer-payments-received.html" class="group flex items-center gap-3 px-4 py-3 hover:bg-gray-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/5 dark:focus-visible:outline-blue-400">
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm/6 font-semibold text-gray-900 dark:text-white">Consumer Portal</span>
+                <span class="block truncate text-sm/5 text-gray-500 dark:text-gray-400">Payments a person or business has received.</span>
+              </span>
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+            </a>
+          </li>
+          <li>
+            <a href="src/pages/wiki/index.html" class="group flex items-center gap-3 px-4 py-3 hover:bg-gray-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/5 dark:focus-visible:outline-blue-400">
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm/6 font-semibold text-gray-900 dark:text-white">SMART Suite Wiki</span>
+                <span class="block truncate text-sm/5 text-gray-500 dark:text-gray-400">Products, versions, client variants, design system.</span>
+              </span>
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+            </a>
+          </li>
+        </ul>
+      </section>
       </div>
     </main>
   </body>
