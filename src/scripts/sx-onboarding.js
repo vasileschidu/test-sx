@@ -152,6 +152,36 @@
 
   var SAMPLE_KEY = "sx-enroll-sample"; // "sx-enroll" prefix: a new demo case / Reset demo clears it too
   var CHANGE_EVENT = "sx-demo-case:change"; // same event as SXDemoCase, so listeners work in both modes
+  // The sample is per tab (sessionStorage); a copy in localStorage lets the second
+  // signer's tab (sign-agreement.html?sample=1, opened with noopener or from the
+  // email) read and sign it, and the enrolment tab hear back (storage event).
+  var SHARED_SAMPLE_KEY = "sx-enroll-sample-shared";
+  var SIGNER_SAMPLE = (function () {
+    try {
+      return (
+        !CASE_ID &&
+        /\/sign-agreement\.html$/.test(window.location.pathname) &&
+        new URLSearchParams(window.location.search).get("sample") === "1"
+      );
+    } catch (error) {
+      return false;
+    }
+  })();
+
+  function readSharedSample() {
+    try {
+      var parsed = JSON.parse(localStorage.getItem(SHARED_SAMPLE_KEY) || "null");
+      return isPlainObject(parsed) && parsed.id ? parsed : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function shareSample(value) {
+    try {
+      localStorage.setItem(SHARED_SAMPLE_KEY, JSON.stringify(value));
+    } catch (error) {}
+  }
 
   function isPlainObject(value) {
     return (
@@ -178,16 +208,16 @@
   function readSample() {
     try {
       var parsed = JSON.parse(sessionStorage.getItem(SAMPLE_KEY) || "null");
-      return isPlainObject(parsed) && parsed.id ? parsed : null;
-    } catch (error) {
-      return null;
-    }
+      if (isPlainObject(parsed) && parsed.id) return parsed;
+    } catch (error) {}
+    return SIGNER_SAMPLE ? readSharedSample() : null;
   }
 
   function writeSample(value) {
     try {
       sessionStorage.setItem(SAMPLE_KEY, JSON.stringify(value));
     } catch (error) {}
+    shareSample(value);
     try {
       window.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: { case: value } }));
     } catch (error) {}
@@ -219,9 +249,27 @@
       try {
         sessionStorage.setItem(SAMPLE_KEY, JSON.stringify(sample));
       } catch (error) {}
+      shareSample(sample);
       return sample;
     });
   }
+
+  // The signer's tab signed the shared copy → this tab's sample follows (same sample only).
+  window.addEventListener("storage", function (event) {
+    if (CASE_ID || event.key !== SHARED_SAMPLE_KEY) return;
+    var mine = null;
+    try {
+      mine = JSON.parse(sessionStorage.getItem(SAMPLE_KEY) || "null");
+    } catch (error) {}
+    var shared = readSharedSample();
+    if (!shared || !mine || mine.id !== shared.id || mine.createdAt !== shared.createdAt) return;
+    try {
+      sessionStorage.setItem(SAMPLE_KEY, JSON.stringify(shared));
+    } catch (error) {}
+    try {
+      window.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: { case: shared } }));
+    } catch (error) {}
+  });
 
   function currentCase() {
     if (!CASE_ID) return readSample();
@@ -254,8 +302,8 @@
       enrol: abs("index.html"),
       portal: abs("../dashboard/supplier-portal.html"),
       launcher: abs("../demo/stp-case.html"),
-      // TODO(confirm): the signer page (sign-agreement.html) reads the stored demo case; there is no sample signer page yet.
-      sign: abs("sign-agreement.html"),
+      // ?sample=1: the signer page reads the shared sample, not the stored demo case.
+      sign: abs("sign-agreement.html") + "?sample=1",
     };
   }
 
@@ -1108,6 +1156,19 @@
       row("Primary Contact Name", esc(contactName(c))) +
       row("Primary Contact Email Address", esc(c.supplier.email)) +
       row("Primary Contact Phone Number", esc(c.supplier.phone));
+    // Bank / check (TCDM-5262): processing-time chip as on the SMART Disburse bank and
+    // check summaries (Figma Multi-Party Flow); no card, so no cardholder block.
+    var ETA = {
+      "bank-account": { label: "Up to 3 Days", bg: "bg-amber-500", icon: "icon-check-circle-badge.svg" },
+      check: { label: "7-10 Days", bg: "bg-red-500", icon: "icon-exclamation-circle-badge.svg" },
+    }[paymentMethod()];
+    if (ETA) {
+      var chip = document.querySelector("[data-sx-eta]");
+      chip.classList.replace("bg-emerald-500", ETA.bg);
+      chip.querySelector("img").src = "../../assets/onboarding/" + ETA.icon;
+      chip.querySelector("[data-sx-eta-label]").textContent = ETA.label;
+      document.querySelector("[data-sx-cardholder]").hidden = true;
+    }
     document.querySelector("[data-sx-cardholder]").innerHTML =
       row("Cardholder Name", esc(c.payer.name)) +
       row("Cardholder Address", esc(c.payer.address), "whitespace-pre-line") +
@@ -1233,6 +1294,7 @@
     saveState: saveState,
     currentCase: currentCase,
     isSample: !CASE_ID,
+    isSignerSample: SIGNER_SAMPLE,
     update: update,
     urls: urls,
     markCardProcessed: markCardProcessed,

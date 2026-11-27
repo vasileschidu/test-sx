@@ -469,7 +469,8 @@
                 recipientName: recipient,
                 senderName: X.contactName(current) || current.supplier.name,
                 // The email button opens the signer page, not this one.
-                linkUrl: window.location.origin + X.urls(current).sign.split("?")[0],
+                // Without ?case= / ?email= (the stored case is used); the sample keeps ?sample=1.
+                linkUrl: window.location.origin + X.urls(current).sign.split("?")[0] + (X.isSample ? "?sample=1" : ""),
               })
             : Promise.reject(new Error("STP service is not loaded."));
           // Keep the loading state on screen for a moment even when it's instant.

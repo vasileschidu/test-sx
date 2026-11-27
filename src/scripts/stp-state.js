@@ -10,7 +10,11 @@
   // sign-agreement.html opens without ?case= (email link): it uses the stored case.
   function demoScope() {
     try {
-      var id = new URLSearchParams(window.location.search).get("case");
+      var query = new URLSearchParams(window.location.search);
+      var id = query.get("case");
+      // The standalone flow's signer link (?sample=1) shares the sample's STP scope.
+      if (!id && query.get("sample") === "1" && /\/sx-onboarding\/sign-agreement\.html$/.test(window.location.pathname))
+        id = "sx-sample";
       if (!id && /\/sx-onboarding\/sign-agreement\.html$/.test(window.location.pathname)) {
         var stored = JSON.parse(localStorage.getItem("sx_demo_case_v1") || "null");
         id = stored && stored.id;
