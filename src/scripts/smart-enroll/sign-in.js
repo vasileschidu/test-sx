@@ -512,29 +512,54 @@
     );
   }
 
-  /* ---------- demo hint ---------- */
+  /* ---------- demo emails (floating, bottom-right) ---------- */
 
-  // Built when the hint opens (and emptied when it closes) so no hidden controls sit in the page.
+  // Prototype only. Same place and shell as the application's demo bar (shell.js #se-demo-bar), so it never
+  // moves the sign-in layout. A Tailwind Plus el-dropdown: click an email to fill the Sign in form.
+  var DEMO_ICON = '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 shrink-0"><path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" /><path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" /></svg>';
+  var DEMO_CHEVRON = '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 shrink-0 text-gray-400 transition-transform in-aria-expanded:rotate-180 motion-reduce:transition-none dark:text-gray-500"><path fill-rule="evenodd" d="M11.78 9.78a.75.75 0 0 1-1.06 0L8 7.06 5.28 9.78a.75.75 0 0 1-1.06-1.06l3.25-3.25a.75.75 0 0 1 1.06 0l3.25 3.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" /></svg>';
+  var DEMO_CHECK = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-blue-600 dark:text-blue-400"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" /></svg>';
+
   function renderDemo() {
-    var details = $("si-demo");
-    var list = document.querySelector("[data-si-demo-list]");
-    if (!details || !list) return;
-    details.addEventListener("toggle", function () {
-      list.innerHTML = !details.open
-        ? ""
-        : (data.accounts || []).map(function (a) {
-            return '<li class="flex flex-col"><button type="button" data-si-demo-email="' + esc(a.email) + '" class="w-fit ' + LINK + ' type-caption">' + esc(a.email) + "</button>" +
-              '<span class="type-caption text-tertiary">' + esc(a.hint || "") + "</span></li>";
-          }).join("") +
-          '<li class="type-caption text-tertiary">Any other email: one Not submitted business → the application. Any 6 digits pass.</li>';
-    });
-    list.addEventListener("click", function (e) {
+    var mount = $("si-demo");
+    if (!mount) return;
+    var rows = (data.accounts || []).map(function (a) {
+      var active = (session.email || "").toLowerCase() === String(a.email).toLowerCase();
+      return '<button type="button" data-si-demo-email="' + esc(a.email) + '"' + (active ? ' aria-current="true"' : "") +
+        ' class="flex w-full cursor-pointer items-start gap-3 px-4 py-2.5 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden aria-current:bg-blue-50 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:aria-current:bg-blue-500/10">' +
+        '<span class="flex min-w-0 flex-1 flex-col gap-0.5">' +
+        '<span class="truncate text-sm font-medium text-gray-900 dark:text-white">' + esc(a.email) + "</span>" +
+        '<span class="type-caption text-tertiary first-letter:uppercase">' + esc(a.hint || "") + "</span></span>" +
+        (active ? DEMO_CHECK : "") + "</button>";
+    }).join("");
+    mount.innerHTML =
+      '<el-dropdown class="block">' +
+      '<button type="button" class="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-white px-3 py-2 type-label-small text-secondary shadow-lg ring-1 ring-gray-900/10 hover:bg-gray-50 hover:text-gray-900 active:bg-gray-100 ' + FOCUS + ' dark:bg-gray-800 dark:ring-white/10 dark:hover:bg-gray-700 dark:hover:text-white dark:active:bg-gray-600">' +
+      DEMO_ICON + "Demo emails" + DEMO_CHEVRON + "</button>" +
+      '<el-menu anchor="top end" popover class="w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-lg bg-white shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(2)] transition transition-discrete data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-150 data-enter:ease-out data-leave:duration-100 data-leave:ease-in motion-reduce:transition-none dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
+      '<div class="border-b border-gray-200 px-4 pt-3 pb-2 dark:border-white/10">' +
+      '<p class="type-label-small text-default">Demo emails</p>' +
+      '<p class="type-caption text-tertiary">Prototype only. Pick one to fill the Sign in form.</p></div>' +
+      '<div class="max-h-[60vh] overflow-y-auto py-1">' + rows + "</div>" +
+      '<p class="border-t border-gray-200 bg-gray-50 px-4 py-2.5 type-caption text-tertiary dark:border-white/10 dark:bg-white/5">Any other email: one Not submitted business → the application. Any 6 digits pass.</p>' +
+      "</el-menu></el-dropdown>";
+  }
+
+  function bindDemo() {
+    var mount = $("si-demo");
+    if (!mount) return;
+    mount.addEventListener("click", function (e) {
       var btn = e.target.closest("[data-si-demo-email]");
       if (!btn) return;
+      var menu = btn.closest("el-menu");
+      if (menu && menu.hidePopover) { try { menu.hidePopover(); } catch (err) { /* already closed */ } }
       session.email = btn.getAttribute("data-si-demo-email");
       save();
       clearAlert();
       renderEmail();
+      renderDemo();
+      var input = $("si-email");
+      if (input) input.focus();
     });
   }
 
@@ -543,12 +568,13 @@
   function init(json) {
     data = json || {};
     load();
-    renderDemo();
     var params = new URLSearchParams(window.location.search);
     if (params.get("email")) {
       session.email = params.get("email");
       save();
     }
+    renderDemo();
+    bindDemo();
     var account = accountFor(session.email || "jordan.ellis@brightline-supply.example");
     var step = params.get("step");
     if (step === "code") return renderCode(account);

@@ -7,7 +7,7 @@
     Spec: wiki/products/smart-enroll/flows/sign-in.md. Figma [R1] SMART Enroll jLooCmHwqJcYV5p5d8BHnO:
     28429:27507 (email), 28437:29823 (code), 28437:30146 (Microsoft), 28456:32053 (Choose a Business),
     28437:30376 (Select Platform), 28465:1005 (loading), errors 28682:80726 / 80802 / 81133 / 81210 / 82192.
-    Demo: ?step=email|code|microsoft|business|platform|locked&email=<demo email> (see the "Demo emails" hint).
+    Demo: ?step=email|code|microsoft|business|platform|locked&email=<demo email> (see the floating "Demo emails" menu, bottom-right).
 -->
 <!doctype html>
 <html lang="en" class="h-full bg-gray-50 dark:bg-gray-950">
@@ -26,9 +26,10 @@
     <script src="../../scripts/tailwind-theme.js"></script>
     <script src="../../scripts/design-tokens.js"></script>
     <link rel="stylesheet" href="../../styles/cursor.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
     <script src="../../scripts/data-source.js"></script>
     <script src="../../scripts/onboarding-field.js?v=20261106a" defer></script>
-    <script src="../../scripts/smart-enroll/sign-in.js?v=20261126s1" defer></script>
+    <script src="../../scripts/smart-enroll/sign-in.js?v=20261127demo" defer></script>
   </head>
   <body class="h-full font-['Inter'] antialiased">
     <div id="si-page" class="relative isolate flex min-h-full flex-col overflow-hidden">
@@ -65,13 +66,11 @@
           </div>
         </div>
 
-        <!-- Prototype only: demo emails (filled by sign-in.js from smart-enroll-sign-in.json). -->
-        <details id="si-demo" class="group/demo w-full max-w-107 type-caption text-tertiary">
-          <summary class="mx-auto w-fit cursor-pointer list-none rounded-sm px-1 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:text-gray-300 dark:focus-visible:outline-blue-400 [&::-webkit-details-marker]:hidden">Demo emails <span aria-hidden="true" class="inline-block transition-transform group-open/demo:rotate-180 motion-reduce:transition-none">▾</span></summary>
-          <ul data-si-demo-list role="list" class="mt-2 flex flex-col gap-1 rounded-lg bg-white p-3 ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10"></ul>
-        </details>
       </main>
     </div>
+
+    <!-- Prototype only: demo emails, floating bottom-right like the application's demo bar (filled by sign-in.js from smart-enroll-sign-in.json). -->
+    <div id="si-demo" role="region" aria-label="Demo controls" class="fixed right-4 bottom-4 z-20"></div>
 
     <!-- Top alert (locked account, invalid code): Figma 28682:82192 / 28682:81210 -->
     <div id="si-alert" class="pointer-events-none fixed inset-x-0 top-4 z-40 flex justify-center px-4"></div>
