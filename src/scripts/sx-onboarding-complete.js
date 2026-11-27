@@ -33,8 +33,9 @@
     return m ? m[1] + "/" + m[2].slice(-2) : expires;
   }
 
-  // TODO(confirm): Figma has no final screen for bank / check; labels from the Confirm Payment rows.
-  var METHOD_LABEL = { "bank-account": "Bank Account", check: "Paper Check" };
+  // Figma has no SX final screen for bank / check: same labels as the SMART Disburse
+  // receipts (OBFlow METHOD_LABELS in onboarding-flow.js).
+  var METHOD_LABEL = { "bank-account": "Bank Transfer - ACH", check: "Check" };
 
   function methodText(c) {
     var label = METHOD_LABEL[X.paymentMethod()];
