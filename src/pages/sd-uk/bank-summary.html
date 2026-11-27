@@ -17,7 +17,6 @@
   <link rel="stylesheet" href="../../styles/sd-uk.css">
   <script src="../../data/sd-uk-claim.js"></script>
   <script src="../../scripts/sd-uk-flow.js"></script>
-  <script src="../../scripts/sd-uk-cop.js?v=20261127cop"></script>
   <link rel="stylesheet" href="../../styles/checkbox.css" />
   <script src="../../scripts/checkbox-component.js"></script>
 </head>
@@ -86,12 +85,7 @@
       var allDone = SDUK.initConsents(root, check);
       check();
       document.querySelector('[data-uk-eta]').addEventListener('click', function () { SDUK.infoModal('Estimated processing time', '<p>Most UK bank transfers arrive the same day through Faster Payments. Allow up to 3 working days.</p>'); });
-      // Account validation with CoP (TCDM-5266): the check runs on Confirm, the outcome is a demo choice.
-      btn.addEventListener('click', function () {
-        if (btn.disabled) return;
-        SDUKCop.run(btn, function () { SDUK.go('bank-done.html'); });
-      });
-      SDUKCop.mountDemo();
+      btn.addEventListener('click', function () { if (!btn.disabled) SDUK.go('bank-done.html'); });
     });
   </script>
 </body>
