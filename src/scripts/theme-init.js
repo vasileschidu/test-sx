@@ -1,16 +1,26 @@
 (function () {
   // Theme: "system" | "light" | "dark" in localStorage.theme (avatar menu → Theme).
+  // No saved choice = "system" (follows the OS). Choices saved before 2026-11-27 are
+  // dropped once (RESET_KEY), so every browser starts on system again.
   // Runs in <head> so the right class is on <html> before first paint.
   // ?theme=dark|light|system (testers on pages without a menu) is applied and remembered.
   var root = document.documentElement;
   var media = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+
+  var RESET_KEY = "theme-reset-20261127";
+  try {
+    if (!localStorage.getItem(RESET_KEY)) {
+      localStorage.removeItem("theme");
+      localStorage.setItem(RESET_KEY, "1");
+    }
+  } catch (e) {}
 
   function read() {
     try {
       var saved = localStorage.getItem("theme");
       if (saved === "system" || saved === "light" || saved === "dark") return saved;
     } catch (e) {}
-    return null;
+    return "system";
   }
 
   function apply(mode) {
@@ -149,9 +159,9 @@
   injectDarkIconStyles();
 
   window.SXTheme = {
-    // No saved choice yet: show the current look (light unless the page is dark).
+    // No saved choice: "system".
     get: function () {
-      return read() || (root.classList.contains("dark") ? "dark" : "light");
+      return read();
     },
     set: set,
   };
