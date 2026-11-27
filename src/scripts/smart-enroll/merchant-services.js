@@ -154,6 +154,49 @@
     S.bp = bp && typeof bp === "object" ? Object.assign(blankBp(), bp) : blankBp();
   }
 
+  /* ---------- demo seed (shell Demo status: Pending Approval / Approved / Declined / Suspended = submitted complete) ---------- */
+
+  var DEMO_FILE = { name: "resume_back_end_developer.pdf", size: 245760, type: "PDF" };
+
+  function demoFin() {
+    var v = {
+      parentCompany: "Brightline Holdings", currency: "USD", mcc: cfg.mccCodes[0].value, incorporationDate: "03-15-2012",
+      productDescription: "Wholesale supply of packaging and office products to retail chains.",
+      revenueSources: "Product sales to retail and wholesale customers.", industry: "Wholesale trade", employees: "48",
+      salesVolume: "4,200,000.00", operatingStatus: "active", taxId: "93-1234567",
+      regulated: "no", cardPayments: "no", pci: "yes", pciLevel: (cfg.pciLevels[2] || cfg.pciLevels[0]).value,
+      volume12: "1,200,000.00", growth: "8.00", advanceOrders: "no",
+      purchaseProcess: "Customers order online or through their account manager, pay by card or ACH, and receive goods within 3 to 5 business days.",
+      subscription: "no", termsPublic: "yes", fraudProgram: "no", terminated: "no", ftcComplaint: "no",
+    };
+    v["geo_" + cfg.regions[0].id] = "100";
+    [1, 2, 3].forEach(function (y) {
+      v["y" + y + "Volume"] = (400000 * y).toLocaleString("en-US", { minimumFractionDigits: 2 });
+      v["y" + y + "Count"] = String(1600 * y);
+      v["y" + y + "Average"] = "250.00";
+      v["y" + y + "Highest"] = "12,000.00";
+      v["y" + y + "Refund"] = "1.00";
+      v["y" + y + "Chargeback"] = "0.20";
+    });
+    var files = { termsFile: [DEMO_FILE] };
+    cfg.proofingDocuments.forEach(function (d) { if (!d.optional) files["doc-" + d.id] = [DEMO_FILE]; });
+    var a = SE.getPeople()[0] || {};
+    return {
+      processor: "bluesnap", selecting: false, v: v, files: files,
+      att: { choice: "yes", accepted: { at: new Date().toISOString(), by: [a.firstName, a.lastName].filter(Boolean).join(" ") || "Jordan Ellis" } },
+    };
+  }
+
+  /** Completed demo statuses: fill both tabs once with valid answers (the shell's restore later drops these keys). */
+  function seedDemo() {
+    if (!SE.isDemoSeeded || !SE.isDemoSeeded() || !SE.hasAddon(ADDON)) return;
+    if (requiredFin().every(Boolean) && hasFiles("bp", "businessPlan")) return;
+    S.fin = demoFin();
+    S.bp = { files: { businessPlan: [DEMO_FILE] } };
+    save("fin");
+    save("bp");
+  }
+
   function toast(message, tone) {
     if (typeof window.showGlobalTopToast === "function") window.showGlobalTopToast(message, { tone: tone || "success" });
   }
@@ -1266,6 +1309,7 @@
     base = res[0];
     cfg = res[1];
     restore();
+    seedDemo();
     pushProgress();
   }).catch(function (err) {
     console.error("SMART Enroll Merchant Services: could not load data", err);
@@ -1278,6 +1322,7 @@
     if (d.addon !== ADDON) return;
     if (d.added) {
       restore();
+      seedDemo();
       pushProgress();
     }
   });

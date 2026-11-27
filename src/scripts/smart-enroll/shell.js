@@ -679,7 +679,8 @@ window.SmartEnroll = (function () {
 
   // Pending Approval / Approved / Declined / Suspended mean the application was submitted complete: every tab is filled with
   // valid demo data (the same sessionStorage keys the tab scripts read). Not submitted / Pending enrollment data restore
-  // what the user had before (snapshot in SEED_BACKUP). Financial and Business Plan (Merchant Services add-on) are not seeded.
+  // what the user had before (snapshot in SEED_BACKUP). Financial and Business Plan (Merchant Services add-on) are seeded by
+  // merchant-services.js itself (it owns that config), when SmartEnroll.isDemoSeeded() is true.
   var SEED_BACKUP = "se_demo_backup_v1";
   var COMPLETE_STATUSES = { "pending-approval": true, approved: true, declined: true, suspended: true };
   var DEMO_FILE = { name: "resume_back_end_developer.pdf", size: 245760, type: "PDF" };
@@ -1212,6 +1213,7 @@ window.SmartEnroll = (function () {
     prev: function () { return step(-1); },
     on: on,
     storageKey: storageKey,
+    isDemoSeeded: function () { return !!store("sessionStorage", SEED_BACKUP); },
     ui: { CHOICE: CHOICE, choicePill: choicePill, yesNo: yesNo },
   };
 })();
