@@ -1,0 +1,40 @@
+{
+  "_comment": "Built-in sample payment for the SMART Exchange onboarding opened without ?case= (src/pages/sx-onboarding/, sx-onboarding.js). Same shape as a demo case (sx-demo-case.js defaults()); an empty dateInitiated becomes today.",
+  "id": "SAMPLE",
+  "supplier": {
+    "name": "Pinnacle Group",
+    "address": "2972 Westheimer Rd\nSuite 1010\nChicago, Illinois 85486\nUnited States",
+    "tin": "12-3450001",
+    "contactFirst": "Johnny",
+    "contactLast": "Anderson",
+    "email": "johnny@hotmail.com",
+    "phone": "+1 (555) 987-6543"
+  },
+  "payer": {
+    "name": "Horizon Inc",
+    "address": "3476 Orphan Road\nSuite 1010\nHayward, Wisconsin 54843\nUnited States"
+  },
+  "payment": {
+    "amount": 3526.0,
+    "currency": "USD",
+    "invoice": "PG-3526",
+    "dateInitiated": "",
+    "cardBrand": "Visa",
+    "cardNumber": "5444123400005612",
+    "expires": "12/2026",
+    "cvc": "999"
+  },
+  "signer": {
+    "firstName": "Michelle",
+    "lastName": "Jackson",
+    "email": ""
+  },
+  "enrol": {
+    "stp": null,
+    "signer": null,
+    "cardProcessed": null,
+    "account": null,
+    "completedAt": null
+  },
+  "stp": { "mid": null, "tid": null }
+}

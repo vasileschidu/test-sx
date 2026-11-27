@@ -339,7 +339,7 @@
 
     // Same link the email button opens (sign-agreement.html?case=…&email=…).
     function signerLink(email) {
-      var href = window.SXDemoCase.urls(latest()).sign;
+      var href = X.urls(latest()).sign;
       return href + (href.indexOf("?") === -1 ? "?" : "&") + "email=" + encodeURIComponent(email || "");
     }
 
@@ -469,14 +469,14 @@
                 recipientName: recipient,
                 senderName: X.contactName(current) || current.supplier.name,
                 // The email button opens the signer page, not this one.
-                linkUrl: window.location.origin + window.SXDemoCase.urls(current).sign.split("?")[0],
+                linkUrl: window.location.origin + X.urls(current).sign.split("?")[0],
               })
             : Promise.reject(new Error("STP service is not loaded."));
           // Keep the loading state on screen for a moment even when it's instant.
           Promise.all([send, new Promise(function (r) { window.setTimeout(r, 900); })])
             .then(function (all) {
               var result = all[0] || {};
-              window.SXDemoCase.update({
+              X.update({
                 signer: { firstName: bFirst.value.trim(), lastName: bLast.value.trim(), email: email },
                 enrol: {
                   stp: "on",
@@ -519,7 +519,7 @@
           setBusy(true);
           window.setTimeout(function () {
             var signedBy = (aFirst.value.trim() + " " + aLast.value.trim()).trim();
-            window.SXDemoCase.update({
+            X.update({
               enrol: {
                 stp: "on",
                 signer: "self",
@@ -582,7 +582,7 @@
       }
       if (event.target.closest("[data-acp-change]")) {
         // Back to the choice; the request stays sent until a new one replaces it.
-        window.SXDemoCase.update({ enrol: { agreement: { sentAt: null } } });
+        X.update({ enrol: { agreement: { sentAt: null } } });
         choice = "other";
         persist();
         render();
@@ -596,7 +596,7 @@
         return;
       }
       confirmOptOut(function () {
-        window.SXDemoCase.update({
+        X.update({
           enrol: { stp: "skipped", signer: null, agreementSigned: false, agreement: null },
         });
         if (window.STPState) window.STPState.setStpStep(window.STPState.STEP_OPT_IN_REQUIRED);
@@ -605,7 +605,7 @@
     });
 
     // The signer signs in another tab → "Waiting" turns into "Acknowledgement Complete".
-    window.addEventListener(window.SXDemoCase.CHANGE_EVENT, function () {
+    window.addEventListener(X.CHANGE_EVENT, function () {
       if (mode === "waiting" && X.currentCase() && acknowledged()) render();
     });
 

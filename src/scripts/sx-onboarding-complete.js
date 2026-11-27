@@ -7,10 +7,13 @@
  *   - Info banner "Continue processing payments manually…" only with STP on.
  *   - Reveal Card Details → el-dialog with the card, copy buttons (OBModal.copyButton) and a demo
  *     control "I've processed this card in my terminal" →
- *     SXDemoCase.markCardProcessed() (row Paid, MID/TID, STP step).
+ *     SXEnroll.markCardProcessed() (case: row Paid, MID/TID, STP step).
+ *   - Bank account / paper check (TCDM-5262): no card, so no mini card,
+ *     Reveal Card Details, STP or "card processed" banners; Payment method
+ *     names the chosen method.
  *     Used or not, it decides whether the card was processed during enrolment
  *     (otherwise the payment stays pending and is processed in the portal).
- *   - "Go to SMART Exchange" → SXDemoCase.urls().portal.
+ *   - "Go to SMART Exchange" → SXEnroll.urls().portal.
  *   - Sets enrol.completedAt if Submit didn't (direct visit).
  */
 (function () {
@@ -30,6 +33,15 @@
     return m ? m[1] + "/" + m[2].slice(-2) : expires;
   }
 
+  // TODO(confirm): Figma has no final screen for bank / check; labels from the Confirm Payment rows.
+  var METHOD_LABEL = { "bank-account": "Bank Account", check: "Paper Check" };
+
+  function methodText(c) {
+    var label = METHOD_LABEL[X.paymentMethod()];
+    if (label) return label;
+    return (c.payment.cardBrand || "Visa") + " •••• " + String(c.payment.cardNumber || "").replace(/\D/g, "").slice(-4);
+  }
+
   function download(c) {
     var lines = [
       "SMART Exchange · Payment receipt",
@@ -39,7 +51,9 @@
       "Invoice: " + c.payment.invoice,
       "Transaction ID: " + txid(c),
       "Payment date: " + X.longDate(c.payment.dateInitiated),
-      "Payment method: " + (c.payment.cardBrand || "Visa") + " ending in " + String(c.payment.cardNumber).slice(-4),
+      "Payment method: " +
+        (METHOD_LABEL[X.paymentMethod()] ||
+          (c.payment.cardBrand || "Visa") + " ending in " + String(c.payment.cardNumber).slice(-4)),
     ];
     var blob = new Blob([lines.join("\n") + "\n"], { type: "text/plain" });
     var a = document.createElement("a");
@@ -55,7 +69,7 @@
 
   X.page("complete", function (c) {
     if (!c.enrol || !c.enrol.completedAt)
-      c = window.SXDemoCase.update({ enrol: { completedAt: new Date().toISOString() } }) || c;
+      c = X.update({ enrol: { completedAt: new Date().toISOString() } }) || c;
 
     var $ = function (sel) {
       return document.querySelector(sel);
@@ -66,14 +80,16 @@
     var amount = X.money(c.payment.amount, c.payment.currency);
     var digits = String(c.payment.cardNumber || "").replace(/\D/g, "");
     var last4 = digits.slice(-4);
-    var stpOn = c.enrol && c.enrol.stp === "on";
+    var isCard = !X.skipsCardProcessing();
+    var stpOn = isCard && c.enrol && c.enrol.stp === "on";
 
     $("[data-sx-amount]").textContent = amount;
     $("[data-sx-last4]").textContent = last4;
     $("[data-sx-txid]").textContent = txid(c);
     $("[data-sx-txid]").title = txid(c);
     $("[data-sx-date]").textContent = X.longDate(c.payment.dateInitiated);
-    $("[data-sx-method]").textContent = (c.payment.cardBrand || "Visa") + " •••• " + last4;
+    $("[data-sx-method]").textContent = methodText(c);
+    $("[data-sx-card-section]").hidden = !isCard;
     var username = (c.enrol.account && c.enrol.account.username) || c.supplier.email;
     var userEl = $("[data-sx-username]");
     userEl.textContent = username;
@@ -126,18 +142,18 @@
       processBtn.hidden = done;
       hint.hidden = done;
       processed.hidden = !done;
-      paidBanner.hidden = !done;
+      paidBanner.hidden = !done || !isCard;
       $("[data-sx-stp-banner]").hidden = !stpOn || done;
       if (done && cur.stp)
         processed.querySelector("[data-sx-mid-tid]").textContent =
           "MID " + cur.stp.mid + " · TID " + cur.stp.tid;
-      portal.href = window.SXDemoCase.urls(cur).portal;
+      portal.href = X.urls(cur).portal;
     }
 
     processBtn.addEventListener("click", function () {
       var restore = X.setLoading(processBtn, "Processing…");
       window.setTimeout(function () {
-        window.SXDemoCase.markCardProcessed();
+        X.markCardProcessed();
         restore();
         paint();
         processed.setAttribute("tabindex", "-1");
@@ -145,7 +161,7 @@
       }, 1200);
     });
 
-    window.addEventListener(window.SXDemoCase.CHANGE_EVENT, paint);
+    window.addEventListener(X.CHANGE_EVENT, paint);
     paint();
   });
 })();

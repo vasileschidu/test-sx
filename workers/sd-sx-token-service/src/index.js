@@ -134,10 +134,11 @@ function buildOnboardingUrl(baseUrl, flow, email, extraParams) {
   const rawBaseUrl = String(baseUrl || "").trim();
   if (!rawBaseUrl) return "";
 
-  // Both flows were merged into src/pages/onboarding/; onboarding-sd/ no longer
-  // exists, so a link built against it 404s. `flow` still rides along as a
-  // query parameter for anything that wants to branch on it.
-  const onboardingFolder = "onboarding";
+  // SMART Disburse links open src/pages/onboarding/ (onboarding-sd/ no longer
+  // exists, so a link built against it 404s). SMART Exchange links open the
+  // SX onboarding with payment, src/pages/sx-onboarding/ (TCDM-5262). `flow`
+  // still rides along as a query parameter for anything that wants to branch on it.
+  const onboardingFolder = flow === "sx" ? "sx-onboarding" : "onboarding";
 
   try {
     const url = new URL(rawBaseUrl);
@@ -146,9 +147,9 @@ function buildOnboardingUrl(baseUrl, flow, email, extraParams) {
         /\/src\/pages\/tools\/[^/]+$/i,
         `/src/pages/${onboardingFolder}/index.html`,
       );
-    } else if (/\/src\/pages\/onboarding(?:-sd)?\/[^/]+$/i.test(url.pathname)) {
+    } else if (/\/src\/pages\/(?:sx-)?onboarding(?:-sd)?\/[^/]+$/i.test(url.pathname)) {
       url.pathname = url.pathname.replace(
-        /\/src\/pages\/onboarding(?:-sd)?\/[^/]+$/i,
+        /\/src\/pages\/(?:sx-)?onboarding(?:-sd)?\/[^/]+$/i,
         `/src/pages/${onboardingFolder}/index.html`,
       );
     } else {
