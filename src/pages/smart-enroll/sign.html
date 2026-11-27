@@ -8,7 +8,7 @@
       review       "Review & Sign Application": read-only summary + E-Sign Consent → Confirm (Figma 29624:11990 / 12117)
       form         "Agreement was confirmed" + First / Last Name → Confirm Acceptance (29624:12245 / 12407 / 12569)
       done         "Acknowledgement Complete": Status Completed, Signed by, Confirmed at (29624:12732; Figma typo "Competed" fixed)
-      expired      unknown, cancelled or already used link (pattern of sx-enroll/sign-agreement.html)
+      expired      unknown, cancelled or already used link (pattern of sx-onboarding/sign-agreement.html)
     The request lives in localStorage `se_sign_v1` (shared with the applicant's tab, which turns the application into
     Pending Approval when the signer completes). Spec: wiki/products/smart-enroll/flows/submission.md.
 -->
@@ -103,7 +103,7 @@
       </footer>
     </div>
 
-    <!-- Invalid / used link (same card as sx-enroll/sign-agreement.html) -->
+    <!-- Invalid / used link (same card as sx-onboarding/sign-agreement.html) -->
     <main data-sign-expired hidden class="flex min-h-screen w-full items-center justify-center bg-gray-100 px-4 py-12 dark:bg-gray-950">
       <div role="status" class="flex w-full max-w-sm flex-col items-center gap-3 rounded-lg bg-white p-6 text-center shadow-xs dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
         <div class="flex size-12 items-center justify-center rounded-full bg-red-50 dark:bg-red-500/10">

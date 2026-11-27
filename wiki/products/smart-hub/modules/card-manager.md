@@ -149,7 +149,7 @@ Figma: [`8014:104715`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node
 | Element | Component |
 |---|---|
 | Card visual (mini card) | `PPComponents.createMiniCardComponent`; check it against the Figma card |
-| Reveal Details | Gray button ("Reveal Card Details", `sx-enroll/complete.html`) |
+| Reveal Details | Gray button ("Reveal Card Details", `sx-onboarding/complete.html`) |
 | Info rows | `@details card` + description list |
 | ⋯ menu | `el-dropdown` / `el-menu` as in the table row actions |
 

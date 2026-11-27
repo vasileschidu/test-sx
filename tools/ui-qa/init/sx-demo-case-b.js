@@ -1,4 +1,4 @@
-// QA seed for the other signer's page (src/pages/sx-enroll/sign-agreement.html?case=SX-QA-B):
+// QA seed for the other signer's page (src/pages/sx-onboarding/sign-agreement.html?case=SX-QA-B):
 // enrolment branch B with a signing request sent and STP at agreement_signature_pending.
 (function () {
   try {

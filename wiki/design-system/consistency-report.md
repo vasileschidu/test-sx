@@ -105,7 +105,7 @@ SMART Disburse follows its own Figma file (56px onboarding buttons), so its off-
 | `src/pages/demo/stp-case.html` | Demo / internal | 5 | 5 |
 | `src/pages/sd-uk/payment.html` | SMART Disburse | 5 | 5 |
 | `src/pages/sd-uk/review.html` | SMART Disburse | 5 | 5 |
-| `src/pages/sx-enroll/payment.html` | SX enrolment | 5 | 5 |
+| `src/pages/sx-onboarding/payment.html` | SX enrolment | 5 | 5 |
 | `src/pages/dashboard/bills-and-payables.html` | Hub / SX portal | 4 | 13 |
 | `src/scripts/consumer-exchanges-table.js` | Consumer Portal | 4 | 11 |
 | `src/pages/dashboard/my-company-profile.html` | Hub / SX portal | 4 | 10 |
@@ -158,7 +158,7 @@ SMART Disburse follows its own Figma file (56px onboarding buttons), so its off-
 | `gap-2 px-6 py-4` | 2 | 2 | `src/scripts/card-created.js:327` |
 | `gap-2 pl-6 pr-4 py-2` | 1 | 1 | `src/pages/dashboard/consumer-payments-received.html:1243` |
 | `gap-4 pl-6 pr-3 py-3` | 1 | 1 | `src/pages/dashboard/user-management.html:323` |
-| `gap-2 pl-6 pr-3 py-3` | 1 | 1 | `src/scripts/sx-enroll-acp.js:111` |
+| `gap-2 pl-6 pr-3 py-3` | 1 | 1 | `src/scripts/sx-onboarding-acp.js:111` |
 | `gap-3 px-6 py-5` | 1 | 1 | `src/scripts/vendors-page.js:1174` |
 
 ## Text inputs

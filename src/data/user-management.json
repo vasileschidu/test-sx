@@ -13,7 +13,7 @@
         "name": "SMART Enroll",
         "status": "under-review",
         "note": "Edits are only possible in SMART Enroll",
-        "portalHref": "../sx-enroll/index.html"
+        "portalHref": "../sx-onboarding/index.html"
       },
       {
         "id": "smart-hub",

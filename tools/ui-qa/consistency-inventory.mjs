@@ -41,7 +41,7 @@ const FONT = { "text-xs": [12, 16], "text-sm": [14, 20], "text-base": [16, 24], 
 
 function product(rel) {
   if (/src\/pages\/(onboarding|sd-uk)\/|src\/scripts\/(onboarding-|sd-|review-documents)/.test(rel)) return "SMART Disburse";
-  if (/sx-enroll|sx-sign-agreement/.test(rel)) return "SX enrolment";
+  if (/sx-onboarding|sx-sign-agreement/.test(rel)) return "SX enrolment";
   if (/src\/pages\/dashboard\/consumer-|consumer-/.test(rel)) return "Consumer Portal";
   if (/src\/pages\/(demo|wiki|reports)\/|src\/pages\/index/.test(rel)) return "Demo / internal";
   if (/src\/pages\//.test(rel)) return "Hub / SX portal";

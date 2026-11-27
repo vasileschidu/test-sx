@@ -14,7 +14,7 @@
   "use strict";
 
   var TAB = "configuration";
-  var LOGO = "../../assets/sx-enroll/sx-logomark.svg";
+  var LOGO = "../../assets/sx-onboarding/sx-logomark.svg";
   var FOCUS = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400";
   var BTN_PRIMARY =
     "inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md bg-blue-600 px-2.5 py-1.5 type-button text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 dark:disabled:hover:bg-blue-500/40 " + FOCUS;

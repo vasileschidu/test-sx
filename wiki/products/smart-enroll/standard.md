@@ -16,7 +16,7 @@ data and bank, and submits it to compliance. When it is approved, the business g
 Client differences are **not** here; see [variants/](variants/README.md).
 
 Status: designed in Figma, **not built yet**. Code will live in `src/pages/smart-enroll/` (its own shell; not
-`src/pages/sx-enroll/`, which is SMART Exchange supplier enrollment).
+`src/pages/sx-onboarding/`, which is SMART Exchange supplier enrollment).
 
 ## Areas (one page each)
 

@@ -399,7 +399,7 @@
       '<input id="ua-business-search" type="search" placeholder="Search profile" aria-label="Search profile" class="' + F.INPUT + ' pl-10" /></div></div>' +
       '<ul id="ua-business-list" class="max-h-72 divide-y divide-gray-200 overflow-y-auto dark:divide-white/10">' + rows + "</ul>" +
       '<p id="ua-business-empty" class="hidden px-6 py-6 text-center text-sm/5 text-gray-500 dark:text-gray-400">No business matches your search.</p>' +
-      '<div class="flex justify-center border-t border-gray-200 px-6 py-4 dark:border-white/10"><a href="../sx-enroll/index.html" class="inline-flex items-center gap-1 text-sm/5 ' + LINK + '">' +
+      '<div class="flex justify-center border-t border-gray-200 px-6 py-4 dark:border-white/10"><a href="../sx-onboarding/index.html" class="inline-flex items-center gap-1 text-sm/5 ' + LINK + '">' +
       '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>Set Up a New Business</a></div>',
     );
     var t = document.getElementById("ua-title");

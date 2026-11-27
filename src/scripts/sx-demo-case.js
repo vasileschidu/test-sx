@@ -3,7 +3,7 @@
  *
  * A case is one payment plus the supplier who receives it. It is created on
  * the launcher (src/pages/demo/stp-case.html), walked through the enrolment
- * (src/pages/sx-enroll/) and then shown in a Supplier Portal instance that
+ * (src/pages/sx-onboarding/) and then shown in a Supplier Portal instance that
  * holds only that payment (supplier-portal.html?case=<id>).
  *
  * Source of truth: localStorage `sx_demo_case_v1`. Changes are announced on
@@ -41,6 +41,7 @@
       localStorage.setItem(ISOLATED_FLAG, "1");
     }
   } catch (error) {}
+  // Storage prefix keeps the old "sx-enroll" name (TCDM-5261 renamed only files and paths) so saved demo sessions survive.
   var DEMO_SESSION_PREFIX = "sx-enroll";
 
   // Paths resolve against this script, so they work from any page depth
@@ -323,7 +324,7 @@
     // once processed during enrolment (markCardProcessed) it is on Paid.
     var tab = c && c.enrol && c.enrol.cardProcessed ? "paid" : "action-required";
     return {
-      enrol: resolve("../pages/sx-enroll/index.html" + query),
+      enrol: resolve("../pages/sx-onboarding/index.html" + query),
       portal: resolve(
         "../pages/dashboard/supplier-portal.html" +
           (query ? query + "&tab=" + tab : ""),
@@ -331,7 +332,7 @@
       launcher: resolve("../pages/demo/stp-case.html"),
       // The other signer's page (Batch 3). The email link has no ?case=
       // (the worker drops the query); the page then uses the stored case.
-      sign: resolve("../pages/sx-enroll/sign-agreement.html" + query),
+      sign: resolve("../pages/sx-onboarding/sign-agreement.html" + query),
     };
   }
 

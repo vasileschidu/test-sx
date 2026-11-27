@@ -143,7 +143,7 @@
     " dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20";
   var BTN_DANGER_XL = "inline-flex w-full cursor-pointer items-center justify-center rounded-md bg-red-600 px-3.5 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 dark:bg-red-500 dark:shadow-none dark:hover:bg-red-400 dark:focus-visible:outline-red-400";
   var BADGE = "inline-flex shrink-0 items-center rounded-full border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs/4 font-medium text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300";
-  // Radio (sx-enroll-acp.js) + hover and error.
+  // Radio (sx-onboarding-acp.js) + hover and error.
   var RADIO = "relative size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden " +
     "not-checked:hover:border-gray-400 group-hover/radio:not-checked:border-gray-400 checked:border-blue-600 checked:bg-blue-600 checked:hover:bg-blue-500 group-hover/radio:checked:bg-blue-500 group-hover/radio:checked:border-blue-500 aria-invalid:border-red-300 aria-invalid:not-checked:hover:border-red-400 " + FOCUS +
     " disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 " +
